@@ -19,7 +19,6 @@ class ScriptLoader
      */
     private $commandBuilder;
 
-
     /**
      * @param CommandBuilder $commandBuilder
      */
@@ -28,6 +27,10 @@ class ScriptLoader
         $this->commandBuilder = $commandBuilder;
     }
 
+    /**
+     * @param Script $script
+     * @return array
+     */
     public function loadScript(Script $script): array
     {
         $content = $this->loadFileContents($script->getPath());
@@ -47,11 +50,9 @@ class ScriptLoader
 
             if($this->startsWith(self::INCLUDE_STATEMENT_PREFIX, $currentLine)) {
                 $path = $this->findInclude($script, $this->removeFromStart(self::INCLUDE_STATEMENT_PREFIX, $currentLine));
-
                 $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
 
                 $commands = $this->loadScript($includeScript);
-
                 $this->commandBuilder->setCommands($commands);
 
                 continue;
@@ -70,6 +71,11 @@ class ScriptLoader
         return $this->commandBuilder->getAll();
     }
 
+    /**
+     * @param Script $fromScript
+     * @param string $includeStatement
+     * @return string
+     */
     private function findInclude(Script $fromScript, string $includeStatement): string
     {
         if(file_exists($includeStatement)) {

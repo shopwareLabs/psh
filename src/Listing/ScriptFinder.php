@@ -24,6 +24,9 @@ class ScriptFinder
         $this->scriptPaths = $scriptPaths;
     }
 
+    /**
+     * @return Script[]
+     */
     public function getAllScripts(): array
     {
         $scripts = [];
@@ -45,5 +48,16 @@ class ScriptFinder
         }
 
         return $scripts;
+    }
+
+    public function findScriptByName(string $scriptName): Script
+    {
+        foreach($this->getAllScripts() as $script) {
+            if($script->getName() === $scriptName) {
+                return $script;
+            }
+        }
+
+        throw new \RuntimeException('Unable to find script named "' . $scriptName . '"');
     }
 }

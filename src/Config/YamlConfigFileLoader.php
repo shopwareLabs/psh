@@ -46,7 +46,14 @@ class YamlConfigFileLoader implements ConfigLoader
         $rawConfigData = $this->parseFileContents($contents);
 
         $header = $this->extractData(self::KEY_HEADER, $rawConfigData, false);
-        $commandPaths = $this->extractData(self::KEY_COMMAND_PATHS, $rawConfigData);
+        $commandPaths = array_map(function($path) use($file) {
+            if(file_exists($path)) {
+                return $path;
+            }
+
+            return pathinfo($file, PATHINFO_DIRNAME) . '/' . $path;
+
+        }, $this->extractData(self::KEY_COMMAND_PATHS, $rawConfigData));
         $environmentVariable = $this->extractData(self::KEY_DYNAMIC_VARIABLES, $rawConfigData);
         $constants = $this->extractData(self::KEY_CONST_VARIABLES, $rawConfigData);
 

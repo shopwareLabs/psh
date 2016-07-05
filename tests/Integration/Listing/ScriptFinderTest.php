@@ -30,6 +30,16 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         $this->assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
     }
 
+    public function test_script_finder_finds_script_by_name_if_two_directories_are_passed_and_filters_noise()
+    {
+        $finder = new ScriptFinder([__DIR__ . '/_scripts', __DIR__ . '/_scripts_with_misc_stuff']);
+        $this->assertInstanceOf(ScriptFinder::class, $finder);
+
+        $script = $finder->findScriptByName('foo');
+        $this->assertInstanceOf(Script::class, $script);
+        $this->assertEquals('foo', $script->getName());
+    }
+
 
 
 }

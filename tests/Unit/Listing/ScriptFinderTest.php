@@ -13,5 +13,4 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ScriptFinder::class, $finder);
         $this->assertInternalType('array', $finder->getAllScripts());
     }
-
 }

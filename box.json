@@ -1,0 +1,14 @@
+{
+  "alias": "psh.phar",
+  "chmod": "0755",
+  "directories": [
+    "src",
+    "vendor"
+  ],
+  "files": [
+    "psh"
+  ],
+  "main": "psh",
+  "output": ".build/psh.phar",
+  "stub": true
+}

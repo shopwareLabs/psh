@@ -11,7 +11,7 @@ class Config
     /**
      * @var array
      */
-    private $environmentVariable;
+    private $dynamicVariables;
     /**
      * @var array
      */
@@ -25,19 +25,50 @@ class Config
      * Config constructor.
      * @param string $header
      * @param array $commandPaths
-     * @param array $environmentVariable
+     * @param array $dynamicVariables
      * @param array $constants
      */
     public function __construct(
         string $header = null,
         array $commandPaths,
-        array $environmentVariable,
+        array $dynamicVariables,
         array $constants
     ) {
         $this->commandPaths = $commandPaths;
-        $this->environmentVariable = $environmentVariable;
+        $this->dynamicVariables = $dynamicVariables;
         $this->constants = $constants;
         $this->header = $header;
     }
 
+    /**
+     * @return array
+     */
+    public function getScriptPaths()
+    {
+        return $this->commandPaths;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDynamicVariables()
+    {
+        return $this->dynamicVariables;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConstants()
+    {
+        return $this->constants;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHeader()
+    {
+        return $this->header;
+    }
 }
