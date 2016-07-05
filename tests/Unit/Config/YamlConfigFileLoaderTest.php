@@ -32,7 +32,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function test_it_throws_a_axception_if_no_paths_are_present()
+    public function test_it_throws_a_exception_if_no_paths_are_present()
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -50,7 +50,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $loader->load(__DIR__ . '/_test.txt');
     }
 
-    public function test_it_throws_a_axception_if_no_dynamics_are_present()
+    public function test_it_throws_a_exception_if_no_dynamics_are_present()
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -69,7 +69,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $loader->load(__DIR__ . '/_test.txt');
     }
 
-    public function test_it_throws_a_axception_if_no_consts_are_present()
+    public function test_it_throws_a_exception_if_no_consts_are_present()
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
