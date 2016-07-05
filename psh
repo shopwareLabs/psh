@@ -6,5 +6,12 @@ if (file_exists($a = __DIR__.'/../../autoload.php')) {
 } else {
     require_once __DIR__.'/vendor/autoload.php';
 }
-$application = new \Shopware\Psh\Application\Application(__DIR__);
+
+$rootDir = Phar::running(false);
+
+if(!$rootDir) {
+    $rootDir = __DIR__;
+}
+
+$application = new \Shopware\Psh\Application\Application($rootDir);
 $application->run($argv);

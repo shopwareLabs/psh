@@ -46,7 +46,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $loader = new YamlConfigFileLoader($yamlMock->reveal());
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->setExpectedException(\InvalidArgumentException::class);
         $loader->load(__DIR__ . '/_test.txt');
     }
 
@@ -65,7 +65,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $loader = new YamlConfigFileLoader($yamlMock->reveal());
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->setExpectedException(\InvalidArgumentException::class);
         $loader->load(__DIR__ . '/_test.txt');
     }
 
@@ -84,7 +84,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $loader = new YamlConfigFileLoader($yamlMock->reveal());
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->setExpectedException(\InvalidArgumentException::class);
         $loader->load(__DIR__ . '/_test.txt');
     }
 

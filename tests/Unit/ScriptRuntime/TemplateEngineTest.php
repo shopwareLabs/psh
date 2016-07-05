@@ -54,7 +54,7 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
     {
         $engine = new TemplateEngine();
 
-        $this->expectException(\RuntimeException::class);
+        $this->setExpectedException(\RuntimeException::class);
         $engine->render('foo __BAR__, __BUZ__', ['BAR' => 'baz']);
     }
 

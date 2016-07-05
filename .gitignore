@@ -2,11 +2,13 @@
 .DS_Store
 .idea/
 
+# build
+build/*
+!build/.gitkeep
+
 # composer
 vendor
 bin
 
-#humbug
-humbug.phar
-humbug.phar.pubkey
+#externals
 humbuglog.txt
