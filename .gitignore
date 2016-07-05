@@ -1,0 +1,11 @@
+# OS / ENV
+.DS_Store
+.idea/
+
+# composer
+vendor
+bin
+
+#humbug
+humbug.phar
+humbug.phar.pubkey
