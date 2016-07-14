@@ -10,7 +10,7 @@ class TemplateEngine
 
     /**
      * @param string $shellCommand
-     * @param array $allValues
+     * @param ValueProvider[] $allValues
      * @return string
      */
     public function render(string $shellCommand, array $allValues): string
@@ -36,7 +36,7 @@ class TemplateEngine
 
         foreach($allValues as $key => $value) {
             if(strtoupper($key) == $valueName) {
-                return $allValues[$key];
+                return $allValues[$key]->getValue();
             }
         }
 

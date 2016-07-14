@@ -4,6 +4,7 @@
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
 
+use Shopware\Psh\ScriptRuntime\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
 
 class TemplateEngineTest extends \PHPUnit_Framework_TestCase
@@ -29,25 +30,25 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
     {
         $engine = new TemplateEngine();
         $this->assertEquals('foo', $engine->render('foo', []));
-        $this->assertEquals('foo', $engine->render('foo', ['BAR' => 'baz']));
+        $this->assertEquals('foo', $engine->render('foo', ['BAR' => new SimpleValueProvider('baz')]));
     }
 
     public function test_it_replaces_a_value()
     {
         $engine = new TemplateEngine();
-        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => 'baz']));
-        $this->assertEquals('baz foo', $engine->render('__BAR__ foo', ['BAR' => 'baz']));
-        $this->assertEquals('foo baz foo', $engine->render('foo __BAR__ foo', ['BAR' => 'baz']));
+        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('baz foo', $engine->render('__BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo baz foo', $engine->render('foo __BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
     }
 
     public function test_values_can_be_set_case_insensitive()
     {
         $engine = new TemplateEngine();
-        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => 'baz']));
-        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['Bar' => 'baz']));
-        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['bar' => 'baz']));
-        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['baR' => 'baz']));
-        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['bAr' => 'baz']));
+        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['Bar' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['bar' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['baR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['bAr' => new SimpleValueProvider('baz')]));
     }
 
     public function test_it_throw_exceptions_for_missing_values()
@@ -55,7 +56,7 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
         $engine = new TemplateEngine();
 
         $this->setExpectedException(\RuntimeException::class);
-        $engine->render('foo __BAR__, __BUZ__', ['BAR' => 'baz']);
+        $engine->render('foo __BAR__, __BUZ__', ['BAR' => new SimpleValueProvider('baz')]);
     }
 
     public function test_it_replaces_multiple_values()
@@ -66,7 +67,11 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
             'ssh -u foo -pfoo th_db',
             $engine->render(
                 'ssh -u __USER__ -p__PASSWORD__ __DATABASE__',
-                ['user' => 'foo', 'password' => 'foo', 'database' => 'th_db']
+                [
+                    'user' => new SimpleValueProvider('foo'),
+                    'password' => new SimpleValueProvider('foo'),
+                    'database' => new SimpleValueProvider('th_db')
+                ]
             )
         );
     }
