@@ -12,9 +12,15 @@ header: |
                            '''=.....        / !
                                      `''''''
 
-
 paths:
-  - scripts/
-const: []
+  - scripts/specific
+  - scripts/common
+  - dev-ops/scripts/docker
+
+const:
+  env: prod
+  host: http://www.selfish.de
+
 dynamic:
-  test: id
+  id: id
+  ll: ll
