@@ -3,7 +3,7 @@ PSH - PHP shell helper
 
 A Tool to execute *.sh scripts through php, including a templating language and environment settings.
 
-# Set up
+## Build
 
 Check out the repository and create a phar file using box.phar
 
@@ -12,10 +12,20 @@ php box.phar build
 cd build/
 chmod +x psh.phar
 ```
+## Develop
 
-# Usage
+Execute tests:
 
-## Configuration
+```
+bin/phpunit
+php humbug.phar
+```
+
+Go on from here!
+
+## Usage
+
+### Configuration
 
 Create a config file named `.psh.yaml` in your base directory an example file could look like this:
 
@@ -44,7 +54,7 @@ This will:
 * Replace __ENV__ and __HOST__ in these files with the constant values
 * Execute `id` and `ll` and replace __ID__ and __LSAHL__ with the output
 
-## Writing SH-Scripts
+### Writing SH-Scripts
 
 Of course you can just reuse your existing sh scripts and they should work just fine. If not, please open an issue in the issue tracker. 
 
@@ -57,6 +67,10 @@ There are some *special syntax* changes here:
 * Prefixing a line with `I: ` will trigger it to ignore the errors.
 * Prefixing a line with `INCLUDE: ` will treat the rest of the line as a path assignment to another script to be included here.
 * Prefixing a line with three spaces will append the line to the previous statement allowing for easy multi line statements.
+
+#### Downsides
+
+* Variables and exports do not work
 
 #### Variables
 

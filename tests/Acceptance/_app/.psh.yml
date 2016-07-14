@@ -1,21 +1,8 @@
 header: |
-  SHOPWARE B2B Enterprise Suite
-
-  ===-----------------------------!!*.               .--*--.
-   ==IIII  ------- NCC-1701 -->-  !!**    I'''''''''''''''''''''''''''!
-    =----------------------------I!!*'    !...........................!
-                             !=!         /   /       ''=.=''
-                             !=!        / ../
-                             !=!       / ../
-                           *'!.!''''''''''''L !
-                          (''  ..  ... --->=I(!-
-                           '''=.....        / !
-                                     `''''''
+  SHOPWARE PHP-SH
 
 paths:
-  - scripts/specific
-  - scripts/common
-  - dev-ops/scripts/docker
+  - scripts/
 
 const:
   env: prod
@@ -23,4 +10,4 @@ const:
 
 dynamic:
   id: id
-  ll: ll
+  ll: ls -ahl
