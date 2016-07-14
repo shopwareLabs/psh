@@ -3,25 +3,12 @@ PSH - PHP shell helper
 
 A Tool to execute *.sh scripts through php, including a templating language and environment settings.
 
-## Build
-
-Check out the repository and create a phar file using box.phar
+## Contained actions
 
 ```
-php box.phar build
-cd build/
-chmod +x psh.phar
+./psh build #Create the release phar in build/psh.phar
+./psh unit #Execute the unit and mutation suite
 ```
-## Develop
-
-Execute tests:
-
-```
-bin/phpunit
-php humbug.phar
-```
-
-Go on from here!
 
 ## Usage
 
@@ -66,6 +53,7 @@ There are some *special syntax* changes here:
 
 * Prefixing a line with `I: ` will trigger it to ignore the errors.
 * Prefixing a line with `INCLUDE: ` will treat the rest of the line as a path assignment to another script to be included here.
+* Prefixing a line with `TTY: ` will enable the TTY mode for the following command, this enables you to add ssh statements.
 * Prefixing a line with three spaces will append the line to the previous statement allowing for easy multi line statements.
 
 #### Downsides

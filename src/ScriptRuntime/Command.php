@@ -18,12 +18,28 @@ class Command
      * @var int
      */
     private $lineNumber;
+    /**
+     * @var bool
+     */
+    private $tty;
 
-    public function __construct(string $shellCommand, int $lineNumber, bool $ignoreError)
-    {
+    /**
+     * Command constructor.
+     * @param string $shellCommand
+     * @param int $lineNumber
+     * @param bool $ignoreError
+     * @param bool $tty
+     */
+    public function __construct(
+        string $shellCommand,
+        int $lineNumber,
+        bool $ignoreError,
+        bool $tty
+    ) {
         $this->shellCommand = $shellCommand;
         $this->ignoreError = $ignoreError;
         $this->lineNumber = $lineNumber;
+        $this->tty = $tty;
     }
 
     /**
@@ -48,5 +64,13 @@ class Command
     public function getLineNumber(): int
     {
         return $this->lineNumber;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTTy(): bool
+    {
+        return $this->tty;
     }
 }

@@ -26,15 +26,23 @@ class CommandBuilder
      */
     private $ignoreError;
 
+    private $tty;
+
     private function reset()
     {
         if($this->currentShellCommand) {
-            $this->allCommands[] = new Command($this->currentShellCommand, $this->startLine, $this->ignoreError);
+            $this->allCommands[] = new Command(
+                $this->currentShellCommand,
+                $this->startLine,
+                $this->ignoreError,
+                $this->tty
+            );
         }
 
         $this->currentShellCommand = null;
         $this->startLine = null;
         $this->ignoreError = false;
+        $this->tty = false;
     }
 
     /**
@@ -43,13 +51,14 @@ class CommandBuilder
      * @param bool $ignoreError
      * @return CommandBuilder
      */
-    public function next(string $shellCommand, int $startLine, bool $ignoreError): CommandBuilder
+    public function next(string $shellCommand, int $startLine, bool $ignoreError, bool $tty): CommandBuilder
     {
         $this->reset();
 
         $this->currentShellCommand = $shellCommand;
         $this->startLine = $startLine;
         $this->ignoreError = $ignoreError;
+        $this->tty = $tty;
 
         return $this;
     }

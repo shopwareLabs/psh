@@ -28,7 +28,7 @@ class Environment
             $process = $this->createProcess($shellCommand);
             $process->mustRun();
 
-            $resolvedVariables[$name] = $process->getOutput();
+            $resolvedVariables[$name] = trim($process->getOutput());
         }
 
         return $resolvedVariables;

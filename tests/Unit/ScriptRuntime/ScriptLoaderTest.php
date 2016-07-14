@@ -50,6 +50,20 @@ class ScriptLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($lastCommand->isIgnoreError());
     }
 
+    public function test_it_sets_tty()
+    {
+        $loader = new ScriptLoader(new CommandBuilder());
+
+        $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'tty.sh'));
+
+        $this->assertCount(1, $commands);
+
+        $lastCommand = array_pop($commands);
+        $this->assertEquals(2, $lastCommand->getLineNumber());
+        $this->assertEquals('ls -al', $lastCommand->getShellCommand());
+        $this->assertTrue($lastCommand->isTty());
+    }
+
     public function test_it_includes_local_commands()
     {
         $loader = new ScriptLoader(new CommandBuilder());

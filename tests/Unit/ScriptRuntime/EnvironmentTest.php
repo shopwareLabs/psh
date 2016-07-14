@@ -24,7 +24,18 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_resolves_variables()
     {
-        $env = new Environment([], ['FOO' => 'ls']);
-        $this->assertInternalType('string', $env->getAllValues()['FOO']);
+        $env = new Environment([], [
+            'FOO' => 'ls',
+            'BAR' => 'echo "HEY"'
+        ]);
+
+        $resolvedValues = $env->getAllValues();
+
+        $this->assertContainsOnly('string', $resolvedValues);
+        $this->assertCount(2, $resolvedValues);
+
+        foreach($resolvedValues as $value) {
+            $this->assertEquals(trim($value), $value);
+        }
     }
 }

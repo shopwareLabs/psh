@@ -106,7 +106,8 @@ class Application
         $executor = new ProcessExecutor(
             new Environment($config->getConstants(), $config->getDynamicVariables()),
             new TemplateEngine(),
-            $logger
+            $logger,
+            $this->rootDirectory
         );
 
         try {

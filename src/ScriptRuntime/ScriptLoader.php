@@ -8,6 +8,8 @@ use Shopware\Psh\Listing\Script;
 
 class ScriptLoader
 {
+    const MODIFIER_IS_TTY = 'TTY: ';
+
     const MODIFIER_IGNORE_ERROR_PREFIX = 'I: ';
 
     const INCLUDE_STATEMENT_PREFIX = 'INCLUDE: ';
@@ -38,6 +40,7 @@ class ScriptLoader
 
         foreach($lines as $lineNumber => $currentLine) {
             $ignoreError = false;
+            $tty = false;
 
             if(!$this->isExecutableLine($currentLine)) {
                 continue;
@@ -63,8 +66,13 @@ class ScriptLoader
                 $ignoreError = true;
             }
 
+            if($this->startsWith(self::MODIFIER_IS_TTY, $currentLine)) {
+                $currentLine = $this->removeFromStart(self::MODIFIER_IS_TTY, $currentLine);
+                $tty = true;
+            }
+
             $this->commandBuilder
-                ->next($currentLine, $lineNumber, $ignoreError);
+                ->next($currentLine, $lineNumber, $ignoreError, $tty);
 
         }
 
