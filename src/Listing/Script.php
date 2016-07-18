@@ -13,15 +13,21 @@ class Script
      * @var string
      */
     private $scriptName;
+    /**
+     * @var string
+     */
+    private $namespace;
 
     /**
      * @param string $directory
      * @param string $scriptName
+     * @param string $namespace
      */
-    public function __construct(string $directory, string $scriptName)
+    public function __construct(string $directory, string $scriptName, string $namespace = null)
     {
         $this->directory = $directory;
         $this->scriptName = $scriptName;
+        $this->namespace = $namespace;
     }
 
     /**
@@ -45,6 +51,12 @@ class Script
      */
     public function getName(): string
     {
-        return pathinfo($this->scriptName, PATHINFO_FILENAME);
+        $name = pathinfo($this->scriptName, PATHINFO_FILENAME);
+
+        if (!$this->namespace) {
+            return $name;
+        }
+
+        return $this->namespace . ':' . $name;
     }
 }

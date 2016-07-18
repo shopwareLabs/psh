@@ -39,4 +39,14 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Script::class, $script);
         $this->assertEquals('foo', $script->getName());
     }
+
+    public function test_script_finder_prefixes_script_names_with_namespace_if_present()
+    {
+        $finder = new ScriptFinder([__DIR__ . '/_scripts', 'biz' => __DIR__ . '/_scripts_with_misc_stuff']);
+        $this->assertInstanceOf(ScriptFinder::class, $finder);
+
+        $script = $finder->findScriptByName('biz:test');
+        $this->assertInstanceOf(Script::class, $script);
+        $this->assertEquals('biz:test', $script->getName());
+    }
 }

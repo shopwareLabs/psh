@@ -31,8 +31,10 @@ class ScriptFinder
     {
         $scripts = [];
 
-        foreach ($this->scriptPaths as $path) {
+        foreach ($this->scriptPaths as $pathNamespace => $path) {
             foreach (scandir($path) as $fileName) {
+                $scriptNamespace = null;
+
                 if (strpos($fileName, '.') === 0) {
                     continue;
                 }
@@ -43,7 +45,11 @@ class ScriptFinder
                     continue;
                 }
 
-                $scripts[] = new Script($path, $fileName);
+                if (!is_numeric($pathNamespace)) {
+                    $scriptNamespace = $pathNamespace;
+                }
+
+                $scripts[] = new Script($path, $fileName, $scriptNamespace);
             }
         }
 

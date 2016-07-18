@@ -46,14 +46,7 @@ class YamlConfigFileLoader implements ConfigLoader
         $rawConfigData = $this->parseFileContents($contents);
 
         $header = $this->extractData(self::KEY_HEADER, $rawConfigData, false);
-        $commandPaths = array_map(function ($path) use ($file) {
-            if (file_exists($path)) {
-                return $path;
-            }
-
-            return pathinfo($file, PATHINFO_DIRNAME) . '/' . $path;
-
-        }, $this->extractData(self::KEY_COMMAND_PATHS, $rawConfigData));
+        $commandPaths = $this->extractCommandPaths($file, $rawConfigData);
         $environmentVariable = $this->extractData(self::KEY_DYNAMIC_VARIABLES, $rawConfigData);
         $constants = $this->extractData(self::KEY_CONST_VARIABLES, $rawConfigData);
 
@@ -88,7 +81,7 @@ class YamlConfigFileLoader implements ConfigLoader
      * @param string $file
      * @return string
      */
-    protected function loadFileContents(string $file): string
+    private function loadFileContents(string $file): string
     {
         $contents = file_get_contents($file);
 
@@ -103,8 +96,39 @@ class YamlConfigFileLoader implements ConfigLoader
      * @param string $contents
      * @return array
      */
-    protected function parseFileContents(string $contents): array
+    private function parseFileContents(string $contents): array
     {
         return $this->yamlReader->parse($contents);
+    }
+
+    /**
+     * @param string $file
+     * @param $rawConfigData
+     * @return array
+     */
+    private function extractCommandPaths(string $file, array $rawConfigData): array
+    {
+        $paths = $this->extractData(self::KEY_COMMAND_PATHS, $rawConfigData);
+        $splitPaths = [];
+
+        foreach ($paths as $path) {
+            if (false === strpos($path, ':')) {
+                $splitPaths[] = $path;
+                continue;
+            }
+
+            list($namespace, $namespacePath) = explode(':', $path);
+            $splitPaths[$namespace] = $namespacePath;
+        }
+
+
+        return array_map(function ($path) use ($file) {
+            if (file_exists($path)) {
+                return $path;
+            }
+
+            return pathinfo($file, PATHINFO_DIRNAME) . '/' . $path;
+
+        }, $splitPaths);
     }
 }

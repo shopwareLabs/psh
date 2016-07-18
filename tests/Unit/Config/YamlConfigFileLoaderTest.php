@@ -3,7 +3,6 @@
 
 namespace Shopware\Psh\Test\Unit\Config;
 
-use Prophecy\Argument;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigLoader;
 use Shopware\Psh\Config\YamlConfigFileLoader;
@@ -53,8 +52,8 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
             'paths' => [
-                __DIR__ . '/foo',
-                __DIR__ . '/bar',
+                __DIR__ . '/_foo',
+                __DIR__ . '/_bar',
             ],
             'const' => [
                 'FOO' => 'bar',
@@ -72,8 +71,8 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
             'paths' => [
-                __DIR__ . '/foo',
-                __DIR__ . '/bar',
+                __DIR__ . '/_foo',
+                __DIR__ . '/_bar',
             ],
             'dynamic' => [
                 'filesystem' => 'ls -al',
@@ -91,8 +90,8 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
             'paths' => [
-                __DIR__ . '/foo',
-                __DIR__ . '/bar',
+                __DIR__ . '/_foo',
+                __DIR__ . '/_bar',
             ],
             'dynamic' => [
                 'filesystem' => 'ls -al',
@@ -109,14 +108,42 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Config::class, $config);
     }
 
+    public function test_it_loads_script_prefixes_if_present()
+    {
+        $yamlMock = $this->prophesize(Parser::class);
+        $yamlMock->parse('foo')->willReturn([
+            'paths' => [
+                __DIR__ . '/_foo',
+                'namespace:' . __DIR__ . '/_bar',
+            ],
+            'dynamic' => [
+                'filesystem' => 'ls -al',
+            ],
+            'const' => [
+                'FOO' => 'bar',
+            ],
+        ]);
+
+
+        $loader = new YamlConfigFileLoader($yamlMock->reveal());
+        $config = $loader->load(__DIR__ . '/_test.txt');
+
+        $this->assertInstanceOf(Config::class, $config);
+
+        $this->assertEquals([
+            __DIR__ . '/_foo',
+            'namespace' => __DIR__ . '/_bar',
+        ], $config->getScriptPaths());
+    }
+
     public function test_it_creates_a_valid_config_file_if_all_params_are_present()
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
             'header' => 'foo',
             'paths' => [
-                __DIR__ . '/foo',
-                __DIR__ . '/bar',
+                __DIR__ . '/_foo',
+                __DIR__ . '/_bar',
             ],
             'dynamic' => [
                 'filesystem' => 'ls -al',
