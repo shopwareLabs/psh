@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\ScriptRuntime;
-
 
 use Shopware\Psh\Listing\Script;
 
@@ -31,5 +30,4 @@ interface Logger
      * @param string $response
      */
     public function out(string $response);
-
 }

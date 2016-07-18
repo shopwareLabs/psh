@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\Config;
@@ -46,8 +46,8 @@ class YamlConfigFileLoader implements ConfigLoader
         $rawConfigData = $this->parseFileContents($contents);
 
         $header = $this->extractData(self::KEY_HEADER, $rawConfigData, false);
-        $commandPaths = array_map(function($path) use($file) {
-            if(file_exists($path)) {
+        $commandPaths = array_map(function ($path) use ($file) {
+            if (file_exists($path)) {
                 return $path;
             }
 
@@ -73,8 +73,8 @@ class YamlConfigFileLoader implements ConfigLoader
      */
     private function extractData(string $key, array $rawConfig, bool $strict = true)
     {
-        if(!array_key_exists($key, $rawConfig)) {
-            if($strict) {
+        if (!array_key_exists($key, $rawConfig)) {
+            if ($strict) {
                 throw new \InvalidArgumentException('Config does not contain "' . $key . '"');
             }
 

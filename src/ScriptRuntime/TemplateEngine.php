@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\ScriptRuntime;
-
 
 class TemplateEngine
 {
@@ -18,7 +17,7 @@ class TemplateEngine
         preg_match_all(self::REGEX, $shellCommand, $matches);
         $placeholders = $matches[0];
         
-        foreach($placeholders as $match) {
+        foreach ($placeholders as $match) {
             $shellCommand = str_replace($match, $this->getValue($match, $allValues), $shellCommand);
         }
 
@@ -34,8 +33,8 @@ class TemplateEngine
     {
         $valueName = substr($placeholder, 2, -2);
 
-        foreach($allValues as $key => $value) {
-            if(strtoupper($key) == $valueName) {
+        foreach ($allValues as $key => $value) {
+            if (strtoupper($key) == $valueName) {
                 return $allValues[$key]->getValue();
             }
         }

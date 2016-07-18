@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\Test\Integration\Config;
-
 
 use Shopware\Psh\Config\ConfigFileFinder;
 

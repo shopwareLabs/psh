@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\ScriptRuntime;
-
 
 use Shopware\Psh\Listing\Script;
 
@@ -38,20 +37,20 @@ class ScriptLoader
         $content = $this->loadFileContents($script->getPath());
         $lines = explode("\n", $content);
 
-        foreach($lines as $lineNumber => $currentLine) {
+        foreach ($lines as $lineNumber => $currentLine) {
             $ignoreError = false;
             $tty = false;
 
-            if(!$this->isExecutableLine($currentLine)) {
+            if (!$this->isExecutableLine($currentLine)) {
                 continue;
             }
 
-            if($this->startsWith(self::CONCATENATE_PREFIX, $currentLine)) {
+            if ($this->startsWith(self::CONCATENATE_PREFIX, $currentLine)) {
                 $this->commandBuilder->add($currentLine);
                 continue;
             }
 
-            if($this->startsWith(self::INCLUDE_STATEMENT_PREFIX, $currentLine)) {
+            if ($this->startsWith(self::INCLUDE_STATEMENT_PREFIX, $currentLine)) {
                 $path = $this->findInclude($script, $this->removeFromStart(self::INCLUDE_STATEMENT_PREFIX, $currentLine));
                 $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
 
@@ -61,19 +60,18 @@ class ScriptLoader
                 continue;
             }
 
-            if($this->startsWith(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine)) {
+            if ($this->startsWith(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine)) {
                 $currentLine = $this->removeFromStart(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine);
                 $ignoreError = true;
             }
 
-            if($this->startsWith(self::MODIFIER_IS_TTY, $currentLine)) {
+            if ($this->startsWith(self::MODIFIER_IS_TTY, $currentLine)) {
                 $currentLine = $this->removeFromStart(self::MODIFIER_IS_TTY, $currentLine);
                 $tty = true;
             }
 
             $this->commandBuilder
                 ->next($currentLine, $lineNumber, $ignoreError, $tty);
-
         }
 
         return $this->commandBuilder->getAll();
@@ -86,11 +84,11 @@ class ScriptLoader
      */
     private function findInclude(Script $fromScript, string $includeStatement): string
     {
-        if(file_exists($includeStatement)) {
+        if (file_exists($includeStatement)) {
             return $includeStatement;
         }
 
-        if(file_exists($fromScript->getDirectory() . '/' . $includeStatement)) {
+        if (file_exists($fromScript->getDirectory() . '/' . $includeStatement)) {
             return $fromScript->getDirectory() . '/' . $includeStatement;
         }
 
@@ -101,12 +99,13 @@ class ScriptLoader
      * @param string $command
      * @return bool
      */
-    private function isExecutableLine(string $command): bool {
-        if(!strlen(trim($command))) {
+    private function isExecutableLine(string $command): bool
+    {
+        if (!strlen(trim($command))) {
             return false;
         }
 
-        if($this->startsWith('#', trim($command))) {
+        if ($this->startsWith('#', trim($command))) {
             return false;
         }
 

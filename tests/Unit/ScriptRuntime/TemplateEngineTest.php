@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
-
 
 use Shopware\Psh\ScriptRuntime\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
@@ -19,7 +18,7 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
 
     public function test_regex_matches_fixtures()
     {
-        foreach($this->fixtures as $fixture => $expectedOccurrences) {
+        foreach ($this->fixtures as $fixture => $expectedOccurrences) {
             preg_match_all(TemplateEngine::REGEX, $fixture, $matches);
             $this->assertCount($expectedOccurrences, $matches[0]);
         }

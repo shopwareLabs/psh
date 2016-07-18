@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
-
 
 use Shopware\Psh\ScriptRuntime\Environment;
 use Shopware\Psh\ScriptRuntime\SimpleValueProvider;
@@ -36,7 +35,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
         $this->assertContainsOnlyInstancesOf(ValueProvider::class, $resolvedValues);
         $this->assertCount(2, $resolvedValues);
 
-        foreach($resolvedValues as $value) {
+        foreach ($resolvedValues as $value) {
             $this->assertEquals(trim($value->getValue()), $value->getValue());
         }
     }

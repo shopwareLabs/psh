@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 namespace Shopware\Psh\Listing;
 
@@ -31,15 +31,15 @@ class ScriptFinder
     {
         $scripts = [];
 
-        foreach($this->scriptPaths as $path) {
-            foreach(scandir($path) as $fileName) {
-                if(strpos($fileName, '.') === 0) {
+        foreach ($this->scriptPaths as $path) {
+            foreach (scandir($path) as $fileName) {
+                if (strpos($fileName, '.') === 0) {
                     continue;
                 }
 
                 $extension = pathinfo($fileName, PATHINFO_EXTENSION);
 
-                if(!in_array($extension, self::VALID_EXTENSIONS)) {
+                if (!in_array($extension, self::VALID_EXTENSIONS)) {
                     continue;
                 }
 
@@ -52,8 +52,8 @@ class ScriptFinder
 
     public function findScriptByName(string $scriptName): Script
     {
-        foreach($this->getAllScripts() as $script) {
-            if($script->getName() === $scriptName) {
+        foreach ($this->getAllScripts() as $script) {
+            if ($script->getName() === $scriptName) {
                 return $script;
             }
         }

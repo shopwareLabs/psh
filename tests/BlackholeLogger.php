@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 namespace Shopware\Psh\Test;
 
@@ -16,7 +16,6 @@ class BlackholeLogger implements Logger
      */
     public function logScript(Script $script)
     {
-        
     }
 
     /**

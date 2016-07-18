@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 namespace Shopware\Psh\ScriptRuntime;
 
@@ -32,7 +32,7 @@ class Environment
     private function initializeConstants(array $constants): array
     {
         $resolvedValues = [];
-        foreach($constants as $name => $value) {
+        foreach ($constants as $name => $value) {
             $resolvedValues[$name] = new SimpleValueProvider($value);
         }
         return $resolvedValues;
@@ -45,7 +45,7 @@ class Environment
     private function initializeVariables(array $variables): array
     {
         $resolvedVariables = [];
-        foreach($variables as $name => $shellCommand) {
+        foreach ($variables as $name => $shellCommand) {
             $process = $this->createProcess($shellCommand);
             $resolvedVariables[$name] = new ProcessValueProvider($process);
         }

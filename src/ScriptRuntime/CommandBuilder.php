@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\ScriptRuntime;
-
 
 class CommandBuilder
 {
@@ -30,7 +29,7 @@ class CommandBuilder
 
     private function reset()
     {
-        if($this->currentShellCommand) {
+        if ($this->currentShellCommand) {
             $this->allCommands[] = new Command(
                 $this->currentShellCommand,
                 $this->startLine,

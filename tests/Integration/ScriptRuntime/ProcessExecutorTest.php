@@ -1,7 +1,6 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
-
 
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\CommandBuilder;

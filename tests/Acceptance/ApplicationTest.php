@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Acceptance\Test;
-
 
 use League\CLImate\Util\Writer\WriterInterface;
 use Shopware\Psh\Application\Application;
@@ -35,7 +34,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotFalse(strpos(MockWriter::$content, 'ls -al'));
     }
-
 }
 
 class MockWriter implements WriterInterface

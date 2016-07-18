@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 namespace Shopware\Psh\Application;
 
@@ -51,8 +51,8 @@ class ClimateLogger implements Logger
     {
         $lines = explode("\n", $response);
 
-        foreach($lines as $line) {
-            $this->cliMate->tab()->red($line);
+        foreach ($lines as $line) {
+            $this->cliMate->red("\t$line");
         }
     }
 
@@ -63,8 +63,8 @@ class ClimateLogger implements Logger
     {
         $lines = explode("\n", $response);
 
-        foreach($lines as $line) {
-            $this->cliMate->tab()->green($line);
+        foreach ($lines as $line) {
+            $this->cliMate->green("\t" . trim($line));
         }
     }
 }

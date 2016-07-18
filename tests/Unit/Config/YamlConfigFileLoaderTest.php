@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\Test\Unit\Config;
-
 
 use Prophecy\Argument;
 use Shopware\Psh\Config\Config;
@@ -29,7 +28,6 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($loader->isSupported('fo.txt'));
         $this->assertFalse($loader->isSupported('fo.yaml.dist'));
-
     }
 
     public function test_it_throws_a_exception_if_no_paths_are_present()
@@ -133,5 +131,4 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(Config::class, $config);
     }
-
 }

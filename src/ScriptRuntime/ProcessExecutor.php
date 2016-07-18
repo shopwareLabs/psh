@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\ScriptRuntime;
-
 
 use Shopware\Psh\Listing\Script;
 use Symfony\Component\Process\Process;
@@ -50,7 +49,7 @@ class ProcessExecutor
     {
         $this->logger->logScript($script);
 
-        foreach($commands as $index => $command) {
+        foreach ($commands as $index => $command) {
             $parsedCommand = $this->getParsedShellCommand($command);
 
             $this->logger->logCommandStart($parsedCommand, $command->getLineNumber(), $command->isIgnoreError(), $index, count($commands));

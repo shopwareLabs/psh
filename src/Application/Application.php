@@ -1,8 +1,7 @@
-<?php declare(strict_types = 1);
+<?php declare (strict_types = 1);
 
 
 namespace Shopware\Psh\Application;
-
 
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
@@ -44,7 +43,7 @@ class Application
 
         $configLoader = new YamlConfigFileLoader(new Parser());
 
-        if(!$configLoader->isSupported($configFile)) {
+        if (!$configLoader->isSupported($configFile)) {
             throw new \RuntimeException('Unable to reaf configuration from "' . $configFile . '"');
         }
 
@@ -70,7 +69,7 @@ class Application
 
         $this->printHeader($config);
 
-        if(count($inputArgs) > 1) {
+        if (count($inputArgs) > 1) {
             $this->execute($this->findScripts($config, $inputArgs[1]), $config);
             return;
         }
@@ -82,11 +81,11 @@ class Application
     {
         $this->cliMate->green()->bold("Available commands\n");
 
-        if(!count($scripts)) {
+        if (!count($scripts)) {
             $this->cliMate->yellow()->bold("-> Currently no scripts available");
         }
 
-        foreach($scripts as $script) {
+        foreach ($scripts as $script) {
             $this->cliMate->tab()->out("- " . $script->getName());
         }
 
@@ -120,11 +119,13 @@ class Application
         $this->exitWithSuccess("\nAll commands sucessfull executed!\n");
     }
 
-    public function exitWithSuccess($string) {
+    public function exitWithSuccess($string)
+    {
         $this->cliMate->bold()->green($string);
     }
 
-    public function exitWithError($string) {
+    public function exitWithError($string)
+    {
         $this->cliMate->bold()->red($string);
     }
 
