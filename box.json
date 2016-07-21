@@ -9,6 +9,6 @@
     "psh"
   ],
   "main": "psh",
-  "output": "./build/psh.phar",
+  "output": "psh.phar",
   "stub": true
 }
