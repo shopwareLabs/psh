@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b8c5941cd9ce924f980075ce82c2ccbd",
-    "content-hash": "755c4cfbe0e249e092f94f6ed6f5133a",
+    "hash": "a1ad397e92e52a7cfb4a504a8f268437",
+    "content-hash": "c6796822bb3e90a1d14b5a15f986d80c",
     "packages": [
         {
             "name": "fabpot/php-cs-fixer",
@@ -698,6 +698,53 @@
             "time": "2015-06-14 21:17:01"
         },
         {
+            "name": "janpiet/php-version-transpiler",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/JanPietrzyk/php-version-transpiler.git",
+                "reference": "5fbd734cc94729bccbfba360760dae6edb959ad8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JanPietrzyk/php-version-transpiler/zipball/5fbd734cc94729bccbfba360760dae6edb959ad8",
+                "reference": "5fbd734cc94729bccbfba360760dae6edb959ad8",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/php-parser": "^2.1",
+                "php": ">=7.0.0",
+                "symfony/console": "^3.0",
+                "symfony/filesystem": "^3.0",
+                "symfony/finder": "^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.3",
+                "symfony/process": "^3.0"
+            },
+            "bin": [
+                "php-version-transpiler"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "JanPiet\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Pietrzyk",
+                    "email": "mail@jpietrzyk.de"
+                }
+            ],
+            "description": "Transpile php 7 code to php 5.6 code",
+            "time": "2016-05-24 18:28:07"
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.5.1",
             "source": {
@@ -738,6 +785,57 @@
                 "object graph"
             ],
             "time": "2015-11-20 12:04:31"
+        },
+        {
+            "name": "nikic/php-parser",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikic/PHP-Parser.git",
+                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
+                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-tokenizer": "*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "bin": [
+                "bin/php-parse"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpParser\\": "lib/PhpParser"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Popov"
+                }
+            ],
+            "description": "A PHP parser written in PHP",
+            "keywords": [
+                "parser",
+                "php"
+            ],
+            "time": "2016-04-19 13:41:41"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -1193,16 +1291,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.4.6",
+            "version": "5.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2f1fc94b77ea6418bd6a06c64a1dac0645fbce59"
+                "reference": "6c8a756c17a1a92a066c99860eb57922e8b723da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2f1fc94b77ea6418bd6a06c64a1dac0645fbce59",
-                "reference": "2f1fc94b77ea6418bd6a06c64a1dac0645fbce59",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6c8a756c17a1a92a066c99860eb57922e8b723da",
+                "reference": "6c8a756c17a1a92a066c99860eb57922e8b723da",
                 "shasum": ""
             },
             "require": {
@@ -1267,7 +1365,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-06-16 06:01:15"
+            "time": "2016-07-21 06:55:27"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1840,9 +1938,11 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "janpiet/php-version-transpiler": 20
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7"
