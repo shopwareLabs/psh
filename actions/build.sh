@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-rm -R build/php56
+I: rm -R build/php56
 mkdir build/php56
 
 cp psh build/php56
@@ -18,7 +18,6 @@ php box.phar build
 mv psh.phar build/psh.phar
 chmod +x build/psh.phar
 
-cp build/psh.phar ../b2b/
-cp build/psh56.phar ../b2b/
+cp build/psh56.phar ../b2b/psh.phar
 
 rm -R build/php56
