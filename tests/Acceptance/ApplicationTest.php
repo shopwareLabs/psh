@@ -8,6 +8,15 @@ use Shopware\Psh\Application\Application;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @befoe
+     * @after
+     */
+    public function clearCreatedResults()
+    {
+        @unlink(__DIR__ . '/_app/result.txt');
+    }
+
     public function test_application_listing()
     {
         MockWriter::$content = '';
@@ -39,6 +48,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'));
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "prod"'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'));
+        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'prod');
     }
 
     public function test_environment_application_execution()
@@ -58,6 +68,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'), '(3/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
+        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 }
 

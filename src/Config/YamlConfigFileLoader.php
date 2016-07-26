@@ -17,6 +17,8 @@ class YamlConfigFileLoader implements ConfigLoader
 
     const KEY_ENVIRONMENTS = 'environments';
 
+    const KEY_TEMPLATES = 'templates';
+
     /**
      * @var Parser
      */
@@ -86,6 +88,15 @@ class YamlConfigFileLoader implements ConfigLoader
         $this->configBuilder->setConstants(
             $this->extractData(self::KEY_CONST_VARIABLES, $rawConfigData, [])
         );
+
+        $this->configBuilder->setTemplates(
+            array_map(function ($template) use ($file) {
+                $template['source'] = $this->fixPath($template['source'], $file);
+                $template['destination'] = $this->fixPath($template['destination'], $file);
+
+                return $template;
+            }, $this->extractData(self::KEY_TEMPLATES, $rawConfigData, []))
+        );
     }
 
     /**
@@ -133,12 +144,21 @@ class YamlConfigFileLoader implements ConfigLoader
         $paths = $this->extractData(self::KEY_COMMAND_PATHS, $rawConfigData, []);
 
         return array_map(function ($path) use ($file) {
-            if (file_exists($path)) {
-                return $path;
-            }
-
-            return pathinfo($file, PATHINFO_DIRNAME) . '/' . $path;
-
+            return $this->fixPath($path, $file);
         }, $paths);
+    }
+
+    /**
+     * @param string $absoluteOrRelativePath
+     * @param string $baseFile
+     * @return string
+     */
+    private function fixPath(string $absoluteOrRelativePath, string $baseFile): string
+    {
+        if (file_exists($absoluteOrRelativePath)) {
+            return $absoluteOrRelativePath;
+        }
+
+        return pathinfo($baseFile, PATHINFO_DIRNAME) . '/' . $absoluteOrRelativePath;
     }
 }

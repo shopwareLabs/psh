@@ -20,7 +20,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], []),
+            new ProcessEnvironment([], [], []),
             new TemplateEngine(),
             $logger,
             __DIR__
@@ -40,7 +40,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], []),
+            new ProcessEnvironment([], [], []),
             new TemplateEngine(),
             $logger,
             __DIR__

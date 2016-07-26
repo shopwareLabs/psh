@@ -17,6 +17,8 @@ class ConfigBuilder
 
     private $currentDynamicVariables;
 
+    private $templates;
+
     private $currentConstants;
 
     public function setHeader(string $header = null): ConfigBuilder
@@ -54,6 +56,12 @@ class ConfigBuilder
         return $this;
     }
 
+    public function setTemplates(array $templates): ConfigBuilder
+    {
+        $this->templates = $templates;
+        return $this;
+    }
+
     public function create(): Config
     {
         $this->reset();
@@ -66,12 +74,14 @@ class ConfigBuilder
             $this->environments[$this->currentEnvironment] = new ConfigEnvironment(
                 $this->currentCommandPaths,
                 $this->currentDynamicVariables,
-                $this->currentConstants
+                $this->currentConstants,
+                $this->templates
             );
         }
 
         $this->currentCommandPaths = null;
         $this->currentDynamicVariables = null;
         $this->currentConstants = null;
+        $this->templates = null;
     }
 }

@@ -7,22 +7,27 @@ use Symfony\Component\Process\Process;
 class ProcessEnvironment
 {
     /**
-     * @var array
+     * @var ValueProvider[]
      */
     private $constants;
     /**
-     * @var array
+     * @var ValueProvider[]
      */
     private $variables;
+    /**
+     * @var Template[]
+     */
+    private $templates;
 
     /**
      * @param array $constants
      * @param array $variables
      */
-    public function __construct(array $constants, array $variables)
+    public function __construct(array $constants, array $variables, array $templates)
     {
         $this->constants = $this->initializeConstants($constants);
         $this->variables = $this->initializeVariables($variables);
+        $this->templates = $this->initializeTemplates($templates);
     }
 
     /**
@@ -54,6 +59,20 @@ class ProcessEnvironment
         return $resolvedVariables;
     }
 
+    /**
+     * @param array $variables
+     * @return ValueProvider[]
+     */
+    private function initializeTemplates(array $variables): array
+    {
+        $resolvedVariables = [];
+        foreach ($variables as $template) {
+            $resolvedVariables[] = new Template($template['source'], $template['destination']);
+        }
+
+        return $resolvedVariables;
+    }
+
 
     /**
      * @return ValueProvider[]
@@ -65,6 +84,16 @@ class ProcessEnvironment
             $this->variables
         );
     }
+
+    /**
+     * @return Template[]
+     */
+    public function getTemplates(): array
+    {
+        return $this->templates;
+    }
+
+
 
     public function createProcess(string $shellCommand): Process
     {

@@ -56,6 +56,18 @@ class Config
      * @param string|null $environment
      * @return array
      */
+    public function getTemplates(string $environment = null): array
+    {
+        return $this->createResult(
+            [$this->getEnvironment(), 'getTemplates'],
+            [$this->getEnvironment($environment), 'getTemplates']
+        );
+    }
+
+    /**
+     * @param string|null $environment
+     * @return array
+     */
     public function getDynamicVariables(string $environment = null): array
     {
         return $this->createResult(

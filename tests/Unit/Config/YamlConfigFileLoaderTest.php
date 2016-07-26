@@ -270,4 +270,25 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             'namespace' => __DIR__ . '/_bar',
         ], $config->getAllScriptPaths());
     }
+
+    public function test_it_loads_templates()
+    {
+        $yamlMock = $this->prophesize(Parser::class);
+        $yamlMock->parse('foo')->willReturn([
+            'paths' => [
+            ],
+            'templates' => [
+                ['source' => '_the_template.tpl', 'destination' => 'the_destination.txt']
+            ]
+        ]);
+
+        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $config = $loader->load(__DIR__ . '/_test.txt');
+
+        $this->assertInstanceOf(Config::class, $config);
+
+        $this->assertEquals([
+            ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt']
+        ], $config->getTemplates());
+    }
 }
