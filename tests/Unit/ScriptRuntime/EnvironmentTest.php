@@ -3,7 +3,7 @@
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
-use Shopware\Psh\ScriptRuntime\Environment;
+use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\ValueProvider;
 use Symfony\Component\Process\Process;
@@ -12,20 +12,20 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
 {
     public function test_it_returns_all_passed_constants()
     {
-        $env = new Environment(['FOO' => 'BAR'], []);
+        $env = new ProcessEnvironment(['FOO' => 'BAR'], []);
         $this->assertEquals(['FOO' => new SimpleValueProvider('BAR')], $env->getAllValues());
     }
 
     public function test_it_creates_processes()
     {
-        $env = new Environment([], []);
+        $env = new ProcessEnvironment([], []);
         $this->assertInstanceOf(Process::class, $env->createProcess('foo'));
         $this->assertEquals('foo', $env->createProcess('foo')->getCommandLine());
     }
 
     public function test_it_resolves_variables()
     {
-        $env = new Environment([], [
+        $env = new ProcessEnvironment([], [
             'FOO' => 'ls',
             'BAR' => 'echo "HEY"'
         ]);

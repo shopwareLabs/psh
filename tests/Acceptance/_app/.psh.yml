@@ -5,9 +5,17 @@ paths:
   - scripts/
 
 const:
-  env: prod
-  host: http://www.selfish.de
+  ENV: prod
+  TEST: prod
+  HOST: http://www.selfish.de
 
 dynamic:
-  id: id
-  ll: ls -ahl
+  ID: id
+  LL: ls -ahl
+
+environments:
+  test:
+    paths:
+      - "envpath/"
+    const:
+      ENV: "test"

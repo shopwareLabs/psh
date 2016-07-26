@@ -61,10 +61,16 @@ class ClimateLogger implements Logger
      */
     public function out(string $response)
     {
-        $lines = explode("\n", $response);
+        $lines = explode(PHP_EOL, $response);
 
-        foreach ($lines as $line) {
-            $this->cliMate->green("\t" . trim($line));
+        foreach ($lines as $rowRaw) {
+            $row = trim($rowRaw);
+
+            if (!$row) {
+                continue;
+            }
+
+            $this->cliMate->green("\t" . $row);
         }
     }
 }

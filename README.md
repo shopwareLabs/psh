@@ -23,7 +23,6 @@ header: |
 paths:
   - scripts/specific
   - scripts/common
-  - "docker:dev-ops/scripts/docker"
 
 const:
   env: prod
@@ -32,6 +31,15 @@ const:
 dynamic:
   id: id
   lsahl: ll
+  
+environments:
+    docker:
+        scripts
+            - - "dev-ops/scripts/docker"
+        dynamic:
+            id: "500:20"
+        const:
+            docker: "1"
 ```
   
 This will:
@@ -40,7 +48,7 @@ This will:
 * load *.sh and *.psh files from scripts/specific, scripts/common, dev-ops/scripts/docker
 * Replace __ENV__ and __HOST__ in these files with the constant values
 * Execute `id` and `ll` and replace __ID__ and __LSAHL__ with the output
-* prefix all commands in the docker directory with `docker:_NAME_`
+* Load additional commands from the docker environment and prefix them with `docker:_NAME_`
 
 ### Writing SH-Scripts
 

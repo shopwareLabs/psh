@@ -4,7 +4,7 @@ namespace Shopware\Psh\ScriptRuntime;
 
 use Symfony\Component\Process\Process;
 
-class Environment
+class ProcessEnvironment
 {
     /**
      * @var array
@@ -35,6 +35,7 @@ class Environment
         foreach ($constants as $name => $value) {
             $resolvedValues[$name] = new SimpleValueProvider($value);
         }
+
         return $resolvedValues;
     }
 
