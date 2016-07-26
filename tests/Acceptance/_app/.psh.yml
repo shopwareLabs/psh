@@ -1,6 +1,10 @@
 header: |
   SHOPWARE PHP-SH
 
+templates:
+  - source: templates/test.tpl
+    destination: result.txt
+
 paths:
   - scripts/
 

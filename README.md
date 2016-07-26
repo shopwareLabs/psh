@@ -23,6 +23,10 @@ header: |
 paths:
   - scripts/specific
   - scripts/common
+  
+templates:
+  - source: templates/consts.tpl
+    destination: app/consts.php
 
 const:
   env: prod
@@ -49,6 +53,7 @@ This will:
 * Replace __ENV__ and __HOST__ in these files with the constant values
 * Execute `id` and `ll` and replace __ID__ and __LSAHL__ with the output
 * Load additional commands from the docker environment and prefix them with `docker:_NAME_`
+* Create or overwrite the template destination files from the source template and replace variables according to the current environment. 
 
 ### Writing SH-Scripts
 

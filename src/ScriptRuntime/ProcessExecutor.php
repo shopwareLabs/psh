@@ -49,6 +49,11 @@ class ProcessExecutor
     {
         $this->logger->logScript($script);
 
+        foreach ($this->environment->getTemplates() as $template) {
+            $renderedTemplate = $this->templateEngine->render($template->getContent(), $this->environment->getAllValues());
+            $template->setContents($renderedTemplate);
+        }
+
         foreach ($commands as $index => $command) {
             $parsedCommand = $this->getParsedShellCommand($command);
 

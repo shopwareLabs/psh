@@ -57,7 +57,11 @@ class ApplicationFactory
     public function createProcessExecutor(Script $script, Config $config, Logger $logger, string $rootDirectory): ProcessExecutor
     {
         return  new ProcessExecutor(
-            new ProcessEnvironment($config->getConstants($script->getEnvironment()), $config->getDynamicVariables($script->getEnvironment())),
+            new ProcessEnvironment(
+                $config->getConstants($script->getEnvironment()),
+                $config->getDynamicVariables($script->getEnvironment()),
+                $config->getTemplates($script->getEnvironment())
+            ),
             new TemplateEngine(),
             $logger,
             $rootDirectory
