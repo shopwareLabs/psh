@@ -4,7 +4,7 @@ namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\CommandBuilder;
-use Shopware\Psh\ScriptRuntime\Environment;
+use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\ProcessExecutor;
 use Shopware\Psh\ScriptRuntime\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
@@ -20,7 +20,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new Environment([], []),
+            new ProcessEnvironment([], []),
             new TemplateEngine(),
             $logger,
             __DIR__
@@ -31,6 +31,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($logger->errors, count($logger->errors) . ' stderr: ' . implode("\n", $logger->errors));
         $this->assertEquals('', trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
     }
+
     public function test_root_dir_is_application_directory()
     {
         $script = new Script(__DIR__ . '/_scripts', 'root-dir.sh');
@@ -39,7 +40,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new Environment([], []),
+            new ProcessEnvironment([], []),
             new TemplateEngine(),
             $logger,
             __DIR__

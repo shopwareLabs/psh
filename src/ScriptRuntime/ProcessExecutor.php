@@ -10,7 +10,7 @@ class ProcessExecutor
 {
 
     /**
-     * @var Environment
+     * @var ProcessEnvironment
      */
     private $environment;
     /**
@@ -28,12 +28,12 @@ class ProcessExecutor
 
     /**
      * ProcessExecutor constructor.
-     * @param Environment $environment
+     * @param ProcessEnvironment $environment
      * @param TemplateEngine $templateEngine
      * @param Logger $logger
      * @param string $applicationDirectory
      */
-    public function __construct(Environment $environment, TemplateEngine $templateEngine, Logger $logger, string $applicationDirectory)
+    public function __construct(ProcessEnvironment $environment, TemplateEngine $templateEngine, Logger $logger, string $applicationDirectory)
     {
         $this->environment = $environment;
         $this->templateEngine = $templateEngine;
@@ -58,7 +58,7 @@ class ProcessExecutor
 
             $this->setUpProcess($command, $process);
             $this->runProcess($process);
-            $this->validateProcessResult($command, $process);
+            $this->testProcessResultValid($command, $process);
         }
     }
 
@@ -106,7 +106,7 @@ class ProcessExecutor
      * @param Command $command
      * @param Process $process
      */
-    protected function validateProcessResult(Command $command, Process $process)
+    protected function testProcessResultValid(Command $command, Process $process)
     {
         if (!$command->isIgnoreError() && !$process->isSuccessful()) {
             throw new ExecutionErrorException('Command exited with Error');

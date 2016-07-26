@@ -16,18 +16,18 @@ class Script
     /**
      * @var string
      */
-    private $namespace;
+    private $environment;
 
     /**
      * @param string $directory
      * @param string $scriptName
-     * @param string $namespace
+     * @param string $environment
      */
-    public function __construct(string $directory, string $scriptName, string $namespace = null)
+    public function __construct(string $directory, string $scriptName, string $environment = null)
     {
         $this->directory = $directory;
         $this->scriptName = $scriptName;
-        $this->namespace = $namespace;
+        $this->environment = $environment;
     }
 
     /**
@@ -53,10 +53,18 @@ class Script
     {
         $name = pathinfo($this->scriptName, PATHINFO_FILENAME);
 
-        if (!$this->namespace) {
+        if (!$this->environment) {
             return $name;
         }
 
-        return $this->namespace . ':' . $name;
+        return $this->environment . ':' . $name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
     }
 }

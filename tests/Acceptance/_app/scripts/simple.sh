@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
 ls -al
-__LL__
+echo "__ENV__"
+echo "__LL__"
 #foo

@@ -5,18 +5,8 @@ namespace Shopware\Psh\Application;
 
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
-use Shopware\Psh\Config\ConfigFileFinder;
-use Shopware\Psh\Config\YamlConfigFileLoader;
 use Shopware\Psh\Listing\Script;
-use Shopware\Psh\Listing\ScriptFinder;
-use Shopware\Psh\ScriptRuntime\CommandBuilder;
-use Shopware\Psh\ScriptRuntime\Environment;
 use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
-use Shopware\Psh\ScriptRuntime\ProcessExecutor;
-use Shopware\Psh\ScriptRuntime\ScriptLoader;
-use Shopware\Psh\ScriptRuntime\TemplateEngine;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Yaml\Parser;
 
 class Application
 {
@@ -30,51 +20,34 @@ class Application
      */
     private $rootDirectory;
 
+    /**
+     * @var ApplicationFactory
+     */
+    private $applicationFactory;
+
     public function __construct(string $rootDirectory)
     {
         $this->rootDirectory = $rootDirectory;
+        $this->applicationFactory = new ApplicationFactory();
         $this->cliMate = new CLImate();
-    }
-
-    private function setUpConfig(): Config
-    {
-        $configFinder = new ConfigFileFinder();
-        $configFile = $configFinder->discoverFile($this->rootDirectory);
-
-        $configLoader = new YamlConfigFileLoader(new Parser());
-
-        if (!$configLoader->isSupported($configFile)) {
-            throw new \RuntimeException('Unable to reaf configuration from "' . $configFile . '"');
-        }
-
-        return $configLoader->load($configFile, $this->rootDirectory);
-    }
-
-    private function setUpScripts(Config $config): array
-    {
-        $listing = new ScriptFinder($config->getScriptPaths());
-        return $listing->getAllScripts();
-    }
-
-    private function findScripts(Config $config, string $scriptName): Script
-    {
-        $listing = new ScriptFinder($config->getScriptPaths());
-        return $listing->findScriptByName($scriptName);
     }
 
     public function run(array $inputArgs)
     {
-        $config = $this->setUpConfig();
-        $allScripts = $this->setUpScripts($config);
+        $config = $this->applicationFactory
+            ->createConfig($this->rootDirectory);
+
+        $scriptFinder = $this->applicationFactory
+            ->createScriptFinder($config);
 
         $this->printHeader($config);
 
         if (count($inputArgs) > 1) {
-            $this->execute($this->findScripts($config, $inputArgs[1]), $config);
+            $this->execute($scriptFinder->findScriptByName($inputArgs[1]), $config);
             return;
         }
 
-        $this->showListing($allScripts);
+        $this->showListing($scriptFinder->getAllScripts());
     }
 
     public function showListing(array $scripts)
@@ -98,16 +71,12 @@ class Application
      */
     protected function execute(Script $script, Config $config)
     {
-        $scriptLoader = new ScriptLoader(new CommandBuilder());
+        $commands = $this->applicationFactory
+            ->createCommands($script);
 
         $logger = new ClimateLogger($this->cliMate);
-        $commands = $scriptLoader->loadScript($script);
-        $executor = new ProcessExecutor(
-            new Environment($config->getConstants(), $config->getDynamicVariables()),
-            new TemplateEngine(),
-            $logger,
-            $this->rootDirectory
-        );
+        $executor = $this->applicationFactory
+            ->createProcessExecutor($script, $config, $logger, $this->rootDirectory);
 
         try {
             $executor->execute($script, $commands);
@@ -116,7 +85,7 @@ class Application
             return;
         }
 
-        $this->exitWithSuccess("\nAll commands sucessfull executed!\n");
+        $this->exitWithSuccess("\nAll commands successfully executed!\n");
     }
 
     public function exitWithSuccess($string)

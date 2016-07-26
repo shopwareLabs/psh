@@ -5,63 +5,76 @@ namespace Shopware\Psh\Config;
 class Config
 {
     /**
-     * @var array
-     */
-    private $commandPaths;
-    /**
-     * @var array
-     */
-    private $dynamicVariables;
-    /**
-     * @var array
-     */
-    private $constants;
-    /**
      * @var string
      */
     private $header;
+    /**
+     * @var string
+     */
+    private $defaultEnvironment;
+    /**
+     * @var ConfigEnvironment[]
+     */
+    private $environments;
 
     /**
-     * Config constructor.
-     * @param string $header
-     * @param array $commandPaths
-     * @param array $dynamicVariables
-     * @param array $constants
+     * @param string|null $header
+     * @param string $defaultEnvironment
+     * @param ConfigEnvironment[] $environments
      */
     public function __construct(
         string $header = null,
-        array $commandPaths,
-        array $dynamicVariables,
-        array $constants
+        string $defaultEnvironment,
+        array $environments
     ) {
-        $this->commandPaths = $commandPaths;
-        $this->dynamicVariables = $dynamicVariables;
-        $this->constants = $constants;
         $this->header = $header;
+        $this->defaultEnvironment = $defaultEnvironment;
+        $this->environments = $environments;
     }
 
     /**
      * @return array
      */
-    public function getScriptPaths()
+    public function getAllScriptPaths(): array
     {
-        return $this->commandPaths;
+        $paths = [];
+
+        foreach ($this->environments as $name => $environmentConfig) {
+            foreach ($environmentConfig->getAllScriptPaths() as $path) {
+                if ($name !== $this->defaultEnvironment) {
+                    $paths[$name] = $path;
+                } else {
+                    $paths[] = $path;
+                }
+            }
+        }
+
+        return $paths;
     }
 
     /**
+     * @param string|null $environment
      * @return array
      */
-    public function getDynamicVariables()
+    public function getDynamicVariables(string $environment = null): array
     {
-        return $this->dynamicVariables;
+        return $this->createResult(
+            [$this->getEnvironment(), 'getDynamicVariables'],
+            [$this->getEnvironment($environment), 'getDynamicVariables']
+        );
     }
 
+
     /**
+     * @param string|null $environment
      * @return array
      */
-    public function getConstants()
+    public function getConstants(string $environment = null): array
     {
-        return $this->constants;
+        return $this->createResult(
+            [$this->getEnvironment(), 'getConstants'],
+            [$this->getEnvironment($environment), 'getConstants']
+        );
     }
 
     /**
@@ -70,5 +83,33 @@ class Config
     public function getHeader()
     {
         return $this->header;
+    }
+
+    private function createResult(callable $defaultValues, callable $specificValues): array
+    {
+        $mergedKeyValues = [];
+
+        foreach ($defaultValues() as $key => $value) {
+            $mergedKeyValues[$key] = $value;
+        }
+
+        foreach ($specificValues() as $key => $value) {
+            $mergedKeyValues[$key] = $value;
+        }
+
+        return $mergedKeyValues;
+    }
+
+    /**
+     * @param string|null $name
+     * @return ConfigEnvironment
+     */
+    private function getEnvironment(string $name = null): ConfigEnvironment
+    {
+        if (!$name) {
+            return $this->environments[$this->defaultEnvironment];
+        }
+
+        return $this->environments[$name];
     }
 }
