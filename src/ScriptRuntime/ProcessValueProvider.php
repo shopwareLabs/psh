@@ -4,6 +4,9 @@ namespace Shopware\Psh\ScriptRuntime;
 
 use Symfony\Component\Process\Process;
 
+/**
+ * Enables lazy initialization of variables
+ */
 class ProcessValueProvider implements ValueProvider
 {
 

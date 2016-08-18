@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\Config;
 
+/**
+ * A single configuration environment
+ */
 class ConfigEnvironment
 {
 
@@ -26,7 +29,6 @@ class ConfigEnvironment
     private $templates;
 
     /**
-     * ConfigEnvironment constructor.
      * @param array $commandPaths
      * @param array $dynamicVariables
      * @param array $constants

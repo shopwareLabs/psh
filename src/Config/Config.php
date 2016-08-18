@@ -2,6 +2,9 @@
 
 namespace Shopware\Psh\Config;
 
+/**
+ * Represents the global configuration consisting of multiple environments
+ */
 class Config
 {
     /**

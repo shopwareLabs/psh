@@ -4,6 +4,9 @@ namespace Shopware\Psh\ScriptRuntime;
 
 use Symfony\Component\Process\Process;
 
+/**
+ * Create representation of the current environment variables and constants
+ */
 class ProcessEnvironment
 {
     /**
@@ -93,8 +96,10 @@ class ProcessEnvironment
         return $this->templates;
     }
 
-
-
+    /**
+     * @param string $shellCommand
+     * @return Process
+     */
     public function createProcess(string $shellCommand): Process
     {
         return new Process($shellCommand);

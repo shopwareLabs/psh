@@ -6,6 +6,9 @@ use League\CLImate\CLImate;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\Logger;
 
+/**
+ * A CLImate implementation of the runtime logger
+ */
 class ClimateLogger implements Logger
 {
 
@@ -15,7 +18,6 @@ class ClimateLogger implements Logger
     private $cliMate;
 
     /**
-     * ClimateLogger constructor.
      * @param CLImate $cliMate
      */
     public function __construct(CLImate $cliMate)

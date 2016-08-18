@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+/**
+ * Enables different sources to provide and lazy load values for the templates
+ */
 interface ValueProvider
 {
     /**

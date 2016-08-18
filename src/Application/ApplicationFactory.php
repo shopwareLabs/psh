@@ -18,6 +18,9 @@ use Shopware\Psh\ScriptRuntime\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
 use Symfony\Component\Yaml\Parser;
 
+/**
+ * Create the various interdependent objects for the application.
+ */
 class ApplicationFactory
 {
     /**

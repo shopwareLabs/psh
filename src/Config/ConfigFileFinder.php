@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\Config;
 
+/**
+ * Resolve the path to the config file
+ */
 class ConfigFileFinder
 {
     const VALID_FILE_NAME_GLOB = '.psh.*';

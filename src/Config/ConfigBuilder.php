@@ -3,6 +3,11 @@
 
 namespace Shopware\Psh\Config;
 
+/**
+ * Builder pattern
+ *
+ * Create a config from a more complicated proto format by representing a statefull representation of config read so far.
+ */
 class ConfigBuilder
 {
     const DEFAULT_ENV = '##default##';

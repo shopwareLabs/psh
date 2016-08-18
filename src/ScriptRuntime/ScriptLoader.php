@@ -5,6 +5,9 @@ namespace Shopware\Psh\ScriptRuntime;
 
 use Shopware\Psh\Listing\Script;
 
+/**
+ * Load scripts and parse it into commands
+ */
 class ScriptLoader
 {
     const MODIFIER_IS_TTY = 'TTY: ';

@@ -5,6 +5,9 @@ namespace Shopware\Psh\Config;
 
 use Symfony\Component\Yaml\Parser;
 
+/**
+ * Load the config data from a yaml file
+ */
 class YamlConfigFileLoader implements ConfigLoader
 {
     const KEY_HEADER = 'header';
