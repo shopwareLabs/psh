@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+/**
+ * Access template content and write the content to the target destination
+ */
 class Template
 {
     /**

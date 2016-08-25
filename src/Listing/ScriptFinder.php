@@ -2,8 +2,9 @@
 
 namespace Shopware\Psh\Listing;
 
-use Symfony\Component\Finder\Finder;
-
+/**
+ * Load all scripts from all the supplied paths and create an array of scripts
+ */
 class ScriptFinder
 {
     const VALID_EXTENSIONS = [
@@ -56,6 +57,10 @@ class ScriptFinder
         return $scripts;
     }
 
+    /**
+     * @param string $scriptName
+     * @return Script
+     */
     public function findScriptByName(string $scriptName): Script
     {
         foreach ($this->getAllScripts() as $script) {
@@ -64,6 +69,6 @@ class ScriptFinder
             }
         }
 
-        throw new \RuntimeException('Unable to find script named "' . $scriptName . '"');
+        throw new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"');
     }
 }

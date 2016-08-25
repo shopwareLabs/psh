@@ -6,21 +6,26 @@ namespace Shopware\Psh\ScriptRuntime;
 use Shopware\Psh\Listing\Script;
 use Symfony\Component\Process\Process;
 
+/**
+ * Execute a command in a separate process
+ */
 class ProcessExecutor
 {
-
     /**
      * @var ProcessEnvironment
      */
     private $environment;
+
     /**
      * @var TemplateEngine
      */
     private $templateEngine;
+
     /**
      * @var Logger
      */
     private $logger;
+
     /**
      * @var string
      */

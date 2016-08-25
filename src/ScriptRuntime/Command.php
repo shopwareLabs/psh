@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+/**
+ * A single command of a script
+ */
 class Command
 {
     /**

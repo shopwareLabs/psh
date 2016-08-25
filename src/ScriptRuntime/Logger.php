@@ -5,6 +5,9 @@ namespace Shopware\Psh\ScriptRuntime;
 
 use Shopware\Psh\Listing\Script;
 
+/**
+ * Since the script execution must produce live output this removes a direct dependency and enables testability of command execution
+ */
 interface Logger
 {
     /**

@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+/**
+ * Replace the placeholders with there values
+ */
 class TemplateEngine
 {
     const REGEX = '/__[A-Z,_]+__/';

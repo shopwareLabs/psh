@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+/**
+ * Again, a statefull builder to ease the parsing
+ */
 class CommandBuilder
 {
     /**
@@ -25,6 +28,9 @@ class CommandBuilder
      */
     private $ignoreError;
 
+    /**
+     * @var bool
+     */
     private $tty;
 
     private function reset()

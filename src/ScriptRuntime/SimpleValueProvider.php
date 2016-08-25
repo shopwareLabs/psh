@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+/**
+ * represents a constant environment variable
+ */
 class SimpleValueProvider implements ValueProvider
 {
     /**
@@ -11,7 +14,6 @@ class SimpleValueProvider implements ValueProvider
     private $value;
 
     /**
-     * @param string $name
      * @param string $value
      */
     public function __construct(string $value)

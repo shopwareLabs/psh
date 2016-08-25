@@ -3,6 +3,9 @@
 
 namespace Shopware\Psh\Listing;
 
+/**
+ * ValueObject containing all information for a single script to be executed
+ */
 class Script
 {
     /**
