@@ -1,9 +1,8 @@
 <?php declare (strict_types = 1);
 
 
-namespace Shopware\Acceptance\Test;
+namespace Shopware\Psh\Test\Acceptance;
 
-use League\CLImate\Util\Writer\WriterInterface;
 use Shopware\Psh\Application\Application;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
@@ -19,12 +18,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function test_application_listing()
     {
-        MockWriter::$content = '';
         $application = new Application(__DIR__ . '/_app');
-        $application->cliMate->output->add('out', new MockWriter());
-        $application->cliMate->output->add('error', new MockWriter());
-        $application->cliMate->output->add('buffer', new MockWriter());
-        $application->cliMate->output->defaultTo('out');
+        MockWriter::addToApplication($application);
 
         $application->run([]);
 
@@ -33,12 +28,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function test_application_execution()
     {
-        MockWriter::$content = '';
         $application = new Application(__DIR__ . '/_app');
-        $application->cliMate->output->add('out', new MockWriter());
-        $application->cliMate->output->add('error', new MockWriter());
-        $application->cliMate->output->add('buffer', new MockWriter());
-        $application->cliMate->output->defaultTo('out');
+        MockWriter::addToApplication($application);
 
         $application->run(['', 'simple']);
 
@@ -53,12 +44,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function test_environment_application_execution()
     {
-        MockWriter::$content = '';
         $application = new Application(__DIR__ . '/_app');
-        $application->cliMate->output->add('out', new MockWriter());
-        $application->cliMate->output->add('error', new MockWriter());
-        $application->cliMate->output->add('buffer', new MockWriter());
-        $application->cliMate->output->defaultTo('out');
+        MockWriter::addToApplication($application);
+
 
         $application->run(['', 'test:env']);
 
@@ -69,20 +57,5 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
-    }
-}
-
-class MockWriter implements WriterInterface
-{
-    public static $content = '';
-
-    /**
-     * @param  string $content
-     *
-     * @return void
-     */
-    public function write($content)
-    {
-        self::$content .= $content;
     }
 }
