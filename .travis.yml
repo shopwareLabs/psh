@@ -1,0 +1,17 @@
+language: php
+
+php:
+    - 7.0
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_script:
+    - composer self-update
+    - composer install
+
+script:
+    - ./psh unit
