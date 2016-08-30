@@ -1,6 +1,6 @@
 {
     "name": "shopware/psh",
-    "description": "A build tool written in ph utilizing sh scripts",
+    "description": "A build tool written in PHP utilizing sh scripts",
     "type": "application",
     "autoload": {
         "psr-4": {
