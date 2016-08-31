@@ -1,25 +1,24 @@
 PSH - PHP shell helper
 ====================
 
+PSH is intended to be a **simple** and **easy** alternative other build script solutions. 
+
 Introduction
 ------------
 
-A Tool to execute shell scripts through php, including a small templating engine and environment settings. It can be used
-as an easy way to create adaptable dev-ops scripts from existing or newly written shell scripts. You do not have to learn
-a new - and in most cases much more verbose - language, but can scale your existing skills.
+You do not have to learn a new - and in most cases much more verbose - language, but can scale your existing skills 
+on the command line
 
 Key Features are:
 
-* Extend sh scripts with variables
-* Add error handling if single lines in sh scripts fail
-* Overload variables and scripts in a environmant configuratiuon
+* Add error handling if single statement in the sh scripts fails
+* Replace placeholders in sh scripts with variables
+* Overload variables and scripts in a environment configuration
  
-PSH is intended to be a **simple** and **easy** alternative other build script solutions. 
-
 Installation
 ------------
 
-Although you can use psh as a composer dependency, we recommend to use the *PHAR archive* instead. PSH only communicates through
+Although you can use PSH as a composer dependency, we recommend to use the *PHAR archive* instead. PSH only communicates through
 the shell with your application and therefore does not need any influence on your other project dependencies.
 
 ### Through composer
@@ -28,84 +27,42 @@ the shell with your application and therefore does not need any influence on you
 composer require shopware/psh --dev
 ```
 
-### As a PHAR archive
+### As a PHAR archive (preferred)
 
 Download `psh.phar` to your local environment. 
 
 ```
-wget shop.ware/psh.phar
+wget https://shopwarelabs.github.io/psh/psh.phar # PHP7 Version
+# OR wget https://shopwarelabs.github.io/psh/psh56.phar for the PHP5.6 Version
 chmod +x psh.phar
 ```
 
-### PHAR creation
+### Build it yourself
+
+PSH is used to build itself. You need to clone the repository and install the composer dependencies by yourself first.
 
 ```
+git clone https://github.com/shopwareLabs/psh.git
+cd psh
+composer install # assuming you have composer installed globally
+
+./psh unit
 ./psh build 
 ```
 
-Psh is used to build itself. This will create a release phar in the `build/psh.phar` directory. Although the project itself requires PHP7 a
- PHP 5.6 compatible version is created with it `build/psh56.phar`. This can be useful if your CI environment is not as recent as your development machines. 
+After installing you should execute the test suite in order to verify your installation.
 
-### Testing
-
-```
-./psh.phar unit
-```
-
-Execute the Unit-Test suite and mutation testing through `humbug`.
+This will create a release phar in the `build/psh.phar` directory. Although the project itself requires PHP7 a PHP 5.6 
+compatible version is currently created with it `build/psh56.phar`. 
 
 Usage
 ------------
 
-## Writing SH-Scripts
-
-Keep in mind: **Commands will be validated for successful execution -> All failures will fail the script!**
-
-### Including other scripts
-
-Prefixing a line with `INCLUDE: ` will treat the rest of the line as a path to another script to be included and executed here.
-
-```
-INCLUDE: my/sub/script.sh
-```
-
-If the path is relative. PSH will atempt to load the script relative to the location of the current script or relative to the configuration file.
- 
-### Open a ssh connection to another machine
-
-Many dev-ops script open a SSH channel to a locally running virtual machine / container or a remote staging / test system. If you do this 
-through psh you have to prefix the line with `TTY:` 
-
-```
-TTY: vagrant ssh
-```
-
-### Ignoring if a statement errored
-
-Contrary to your usual shell scripts, to psh it matters if a sh statement fails or not. If you need it to ignore errors, you have to prefix the line with `I:`
-
-```
-I: rm -R sometimes/there
-```
-## Breaking statements into multiple lines
-
-If a single shell statement is to long for a single line, you can break it in psh and intend it with three spaces in the next line. 
-PSH will then concatenate it prior to execution and execute it all in one.
-
-```
-bin/phpunit
-    --debug
-    --verbose
-```
-
-#### Downsides
-
-* `export` statements and internal variables do not work, since the statements do no longer share a single environment.
-* Statements that change the flow of a script do not work out of the box.
+PSH is a CLI application. Before you can use it you need to create configuration `.psh.yml`.
 
 ## Configuration
 
-Create a config file named `.psh.yaml` in your base directory. The minimum required file looks like this:
+Create a config file named `.psh.yml` in your base directory. The minimum required file looks like this:
 
 ```
 paths:
@@ -117,8 +74,8 @@ dynamic: []
 ```
 
 * `paths` - The locations of your `*.sh` scripts
-* `const` - The constant environment values you want psh to replace in your scripts
-* `dynamic` - The dynamic values you want psh to replace in your scripts
+* `const` - The constant environment values you want PSH to replace in your scripts
+* `dynamic` - The dynamic values you want PSH to replace in your scripts
 
 This just lists all `*.sh` scripts in `my/sh/scripts` and allows you to call them by filename.
 
@@ -164,7 +121,7 @@ This is equivalent to:
 ln -s `echo $HOME`
 ```
 
-### Templates
+#### Templates
 
 If your application depends on files that are not part of your repository because they differ for different systems (Typically `*.dist` files), 
 you can use templates to achieve automatic deployment of these files.
@@ -197,7 +154,7 @@ This environment loads all scripts from `foo/sh/scripts`, adds a constant `TEST`
 If you want to call a script in this environment you have to prefix the call with `foo:`.
 
 
-### Headers
+#### Headers
 
 Optionally - and just for fun - you can output a ASCII header in front of every PSH execution.
 
@@ -211,8 +168,59 @@ header: |
                     |_|
 ```
 
+## SH-Scripts
+
+Although most of your existing sh scripts should work just fine, you may find some of the following additions useful or necessary.
+
+Keep in mind: **Commands will be validated for successful execution -> All failures will fail the script!**
+
+#### Defining placeholders
+
+In order to ensure that your scripts are reusable you can add placeholders that PSH will replace with configured values. All placeholders
+start and end with `__`, and contain only upper case letters, numbers, and single `_` characters.
+
+```
+__TEST_IT__
+```
+
+#### Including other scripts
+
+Prefixing a line with `INCLUDE: ` will treat the rest of the line as a path to another script to be included and executed here.
+
+```
+INCLUDE: my/sub/script.sh
+```
+
+If the path is relative. PSH will attempt to load the script relative to the location of the current script or relative to the configuration file.
  
- 
+#### Open a ssh connection to another machine
 
+Many dev-ops script open a SSH channel to a locally running virtual machine / container or a remote staging / test system. If you do this 
+through PSH you have to prefix the line with `TTY:` 
 
+```
+TTY: vagrant ssh
+```
 
+#### Ignoring if a statement errored
+
+Contrary to your usual shell scripts, to PSH it matters if a sh statement fails or not. If you need it to ignore errors, you have to prefix the line with `I:`
+
+```
+I: rm -R sometimes/there
+```
+#### Breaking statements into multiple lines
+
+If a single shell statement is to long for a single line, you can break it in PSH and intend it with three spaces in the next line. 
+PSH will then concatenate it prior to execution and execute it all in one.
+
+```
+bin/phpunit
+    --debug
+    --verbose
+```
+
+#### Downsides
+
+* `export` statements and internal variables do not work, since the statements do **no longer share a single environment**.
+* Statements that change the flow of a script do not work out of the box.
