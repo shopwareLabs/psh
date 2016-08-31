@@ -3,7 +3,7 @@ PSH - PHP shell helper
 
 **Keep using your standard shell scripts**
 
-PSH is intended to be a **simple** and **easy** alternative other build script solutions. 
+PSH is intended to be a **simple** and **easy** alternative to other build script solutions.
 
 Introduction
 ------------
@@ -13,9 +13,9 @@ on the command line.
 
 Key benefits are:
 
-* Share your existing shell scripts with the rest of your team 
-* Add error handling if single statement in the sh scripts fails
-* Replace placeholders in sh scripts with variables
+* Share your existing shell scripts with your team members
+* Add error handling if single statement in the *sh* scripts fails
+* Replace placeholders in *sh* scripts with variables
 * Overload variables and scripts in a environment configuration
  
 Installation
@@ -94,7 +94,7 @@ The placeholder `__PATH__` now needs to be part of your configuration file as ei
 
 #### Constants
 
-Constants are the basic solution to placeholder replacement. You define placeholders in your config like this:
+Constants are the basic solution to placeholder replacements. You define placeholders in your config like this:
 
 ```yaml
 const:
@@ -116,7 +116,7 @@ dynamic:
   PATH: echo $HOME
 ```
 
-The Variables get executed before the actual statement is executed, but you can imgine the outcome to be equivalent to:
+The Variables get executed before the actual statement is executed, but you can imagine the outcome to be equivalent to:
 
 ```yaml
 ln -s `echo $HOME`
@@ -138,7 +138,7 @@ This reads the contents of `templates/consts.tpl`, replaces placeholders with co
 #### Environments
 
 Environments are used to extend or overwrite your base configuration. You can add more scripts, redefine or add constants or variables. 
-A environemnt called `foo` may look like this:
+A environment called `foo` may look like this:
 
 ```yaml
 environments:
@@ -152,7 +152,7 @@ environments:
 ```
 
 This environment loads all scripts from `foo/sh/scripts`, adds a constant `TEST` and a variable `ID`. 
-If you want to call a script in this environment you have to prefix the call with `foo:`.
+If you want to call a script in this environment you have to prefix your call with `foo:`.
 
 
 #### Headers
@@ -186,13 +186,13 @@ __TEST_IT__
 
 #### Including other scripts
 
-Prefixing a line with `INCLUDE: ` will treat the rest of the line as the path to another script to be included and executed here.
+Prefixing a line with `INCLUDE: ` will treat the remaining part of the line as the path to another script to be included and executed here.
 
 ```sh
 INCLUDE: my/sub/script.sh
 ```
 
-If the path is relative. PSH will attempt to load the script relative to the location of the current script or relative to the configuration file.
+If the path is relative, PSH will attempt to load the script relative to the location of the current script or relative to the configuration file.
  
 #### Open a ssh connection to another machine
 
