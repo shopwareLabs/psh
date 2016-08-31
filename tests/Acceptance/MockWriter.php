@@ -1,7 +1,6 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Acceptance;
-
 
 use League\CLImate\Util\Writer\WriterInterface;
 use Shopware\Psh\Application\Application;

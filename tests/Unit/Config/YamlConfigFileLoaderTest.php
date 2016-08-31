@@ -1,4 +1,4 @@
-<?php declare (strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Config;
 
@@ -10,7 +10,6 @@ use Symfony\Component\Yaml\Parser;
 
 class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 {
-
     private function createConfigLoader(Parser $parser = null)
     {
         if (!$parser) {
