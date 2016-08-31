@@ -17,7 +17,4 @@ chmod +x build/psh56.phar
 php box.phar build
 mv psh.phar build/psh.phar
 chmod +x build/psh.phar
-
-cp build/psh56.phar ../b2b/psh.phar
-
 rm -R build/php56

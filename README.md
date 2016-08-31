@@ -1,99 +1,227 @@
 PSH - PHP shell helper
 ====================
 
-A Tool to execute *.sh scripts through php, including a templating language and environment settings.
+**Keep using your standard shell scripts**
 
-## Contained actions
+PSH is intended to be a **simple** and **easy** alternative other build script solutions. 
 
+Introduction
+------------
+
+You do not have to learn a new - and in most cases much more verbose - language, but can scale your existing skills 
+on the command line.
+
+Key benefits are:
+
+* Share your existing shell scripts with the rest of your team 
+* Add error handling if single statement in the sh scripts fails
+* Replace placeholders in sh scripts with variables
+* Overload variables and scripts in a environment configuration
+ 
+Installation
+------------
+
+Although you can use PSH as a composer dependency, we recommend to use the **PHAR archive** instead. PSH only communicates through
+the shell with your application and therefore does not need any influence on your other project dependencies.
+
+### Through composer
+
+```sh
+composer require shopware/psh --dev
 ```
-./psh build #Create the release phar in build/psh.phar
-./psh unit #Execute the unit and mutation suite
+
+### As a PHAR archive (preferred)
+
+Download `psh.phar` to your local environment. 
+
+```sh
+wget https://shopwarelabs.github.io/psh/psh.phar # PHP7 Version
+# OR wget https://shopwarelabs.github.io/psh/psh56.phar for the PHP5.6 Version
+chmod +x psh.phar
 ```
 
-## Usage
+### Build it yourself
 
-### Configuration
+PSH is used to build itself. You need to clone the repository and install the composer dependencies by yourself first.
 
-Create a config file named `.psh.yaml` in your base directory an example file could look like this:
+```sh
+git clone https://github.com/shopwareLabs/psh.git
+cd psh
+composer install # assuming you have composer installed globally
 
+./psh unit # verify your installation by executing the test suite.
+./psh build 
 ```
-header: |
-  SHOPWARE PHP-SH
 
+This will create a release phar in the `build/psh.phar` directory. Although the project itself requires PHP7 a PHP 5.6 
+compatible version is currently created with it `build/psh56.phar`. 
+
+Usage
+------------
+
+PSH is a CLI application. Before you can use it you need to create a configuration file in your project root named `.psh.yml`.
+
+## Configuration
+
+The minimum required file looks like this:
+
+```yaml
 paths:
-  - scripts/specific
-  - scripts/common
-  
-templates:
-  - source: templates/consts.tpl
-    destination: app/consts.php
+  - my/sh/scripts
 
-const:
-  env: prod
-  host: http://www.selfish.de
+const: []
 
-dynamic:
-  id: id
-  lsahl: ll
-  
-environments:
-    docker:
-        scripts
-            - - "dev-ops/scripts/docker"
-        dynamic:
-            id: "500:20"
-        const:
-            docker: "1"
+dynamic: []
 ```
-  
-This will:
 
-* Output `Shopware PHP-SH` as the header of each command
-* load *.sh and *.psh files from scripts/specific, scripts/common, dev-ops/scripts/docker
-* Replace __ENV__ and __HOST__ in these files with the constant values
-* Execute `id` and `ll` and replace __ID__ and __LSAHL__ with the output
-* Load additional commands from the docker environment and prefix them with `docker:_NAME_`
-* Create or overwrite the template destination files from the source template and replace variables according to the current environment. 
+* `paths` - The locations of your `*.sh` scripts
+* `const` - The constant environment values you want PSH to replace in your scripts
+* `dynamic` - The dynamic values you want PSH to replace in your scripts
 
-### Writing SH-Scripts
+This just lists all `*.sh` scripts in `my/sh/scripts` and allows you to call them by filename.
 
-Of course you can just reuse your existing sh scripts and they should work just fine. If not, please open an issue in the issue tracker. 
+#### Placeholders
 
-Keep in mind: **Commands will be validated for successful execution -> All failures will fail the script!**
+Placeholders in your scripts looks like this:
 
-#### Specials
+```sh
+ln -s __PATH__
+```
 
-There are some *special syntax* changes here:
+The placeholder `__PATH__` now needs to be part of your configuration file as either a constant or a variable.
 
-* Prefixing a line with `I: ` will trigger it to ignore the errors.
-* Prefixing a line with `INCLUDE: ` will treat the rest of the line as a path assignment to another script to be included here.
-* Prefixing a line with `TTY: ` will enable the TTY mode for the following command, this enables you to add ssh statements.
-* Prefixing a line with three spaces will append the line to the previous statement allowing for easy multi line statements.
+> Notice: All placeholders must be written in uppercase in scripts. Even if defined otherwise in configuration, replacement only works uppercase.
 
-#### Downsides
+#### Constants
 
-* Variables and exports do not work
+Constants are the basic solution to placeholder replacement. You define placeholders in your config like this:
+
+```yaml
+const:
+  PATH: /var/www
+```
+
+This will then execute 
+
+```sh
+ln -s /var/www
+```
 
 #### Variables
 
-All Variables must start with `__`, end with `__` and contain upper case letters and `_` only. Even if configured as lower case they will be converted to upper case before the replacement takes place.
- 
- 
-#### Example Script
-
+With variables you can use the output of one line shell statements in your scripts.
+  
+```yaml
+dynamic:
+  PATH: echo $HOME
 ```
-#!/usr/bin/env bash
 
-ls -al
-I: chmod +x /dir
-INCLUDE: simple.sh
+The Variables get executed before the actual statement is executed, but you can imgine the outcome to be equivalent to:
 
+```yaml
+ln -s `echo $HOME`
+```
+
+#### Templates
+
+If your application depends on files that are not part of your repository because they differ for different systems (Typically `*.dist` files), 
+you can use templates to achieve automatic deployment of these files.
+
+```yaml
+templates:
+  - source: templates/consts.tpl
+    destination: app/consts.php
+```
+
+This reads the contents of `templates/consts.tpl`, replaces placeholders with constants or variables from your configuration and writes the result to `app/consts.php`.
+
+#### Environments
+
+Environments are used to extend or overwrite your base configuration. You can add more scripts, redefine or add constants or variables. 
+A environemnt called `foo` may look like this:
+
+```yaml
+environments:
+    foo:
+        paths:
+            - foo/sh/scripts
+        const: 
+            TEST: 1
+        dynamic: 
+            ID: id
+```
+
+This environment loads all scripts from `foo/sh/scripts`, adds a constant `TEST` and a variable `ID`. 
+If you want to call a script in this environment you have to prefix the call with `foo:`.
+
+
+#### Headers
+
+Optionally - and just for fun - you can output a ASCII header in front of every PSH execution.
+
+```yaml
+header: |
+         _
+     ___| |__   ___  _ ____      ____ _ _ __ ___
+    / __| '_ \ / _ \| '_ \ \ /\ / / _` | '__/ _ \
+    \__ \ | | | (_) | |_) \ V  V / (_| | | |  __/
+    |___/_| |_|\___/| .__/ \_/\_/ \__,_|_|  \___|
+                    |_|
+```
+
+## SH-Scripts
+
+Although most of your existing sh scripts should work just fine, you may find some of the following additions useful or necessary.
+
+Keep in mind: **Commands will be validated for successful execution -> All failures will fail the script!**
+
+#### Defining placeholders
+
+In order to ensure that your scripts are reusable you can add placeholders that PSH will replace with configured values. All placeholders
+start and end with `__`, and contain only upper case letters, numbers, and single `_` characters.
+
+```sh
+__TEST_IT__
+```
+
+#### Including other scripts
+
+Prefixing a line with `INCLUDE: ` will treat the rest of the line as the path to another script to be included and executed here.
+
+```sh
+INCLUDE: my/sub/script.sh
+```
+
+If the path is relative. PSH will attempt to load the script relative to the location of the current script or relative to the configuration file.
+ 
+#### Open a ssh connection to another machine
+
+Many dev-ops script open a SSH channel to a locally running virtual machine / container or a remote staging / test system. If you do this 
+through PSH you have to prefix the line with `TTY:` 
+
+```sh
+TTY: vagrant ssh
+```
+
+#### Ignoring if a statement errored
+
+Contrary to your usual shell scripts, to PSH it matters if a sh statement fails or not. If you need it to ignore errors, you have to prefix the line with `I:`
+
+```sh
+I: rm -R sometimes/there
+```
+#### Breaking statements into multiple lines
+
+If a single shell statement is to long for a single line, you can break it in PSH and intend it with three spaces in the next line. 
+PSH will then concatenate it prior to execution and execute it all in one.
+
+```sh
 bin/phpunit
     --debug
     --verbose
 ```
- 
- 
 
+#### Downsides
 
-
+* `export` statements and internal variables do not work, since the statements do **no longer share a single environment**.
+* Statements that change the flow of a script do not work out of the box.
