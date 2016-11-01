@@ -69,7 +69,7 @@ class ClimateLogger implements Logger
     public function logCommandStart(string $shellCommand, int $line, bool $isIgnoreError, int $index, int $max)
     {
         $index++;
-        $this->cliMate->yellow("\n({$index}/{$max}) Starting\n<bold>> {$shellCommand}</bold>");
+        $this->cliMate->yellow()->inline("\n({$index}/{$max}) Starting\n<bold>> {$shellCommand}</bold>\n\t");
     }
 
     /**
@@ -77,11 +77,7 @@ class ClimateLogger implements Logger
      */
     public function err(string $response)
     {
-        $lines = explode("\n", $response);
-
-        foreach ($lines as $line) {
-            $this->cliMate->red("\t$line");
-        }
+        $this->cliMate->red()->inline($this->formatOutput($response));
     }
 
     /**
@@ -89,16 +85,15 @@ class ClimateLogger implements Logger
      */
     public function out(string $response)
     {
-        $lines = explode(PHP_EOL, $response);
+        $this->cliMate->green()->inline($this->formatOutput($response));
+    }
 
-        foreach ($lines as $rowRaw) {
-            $row = trim($rowRaw);
-
-            if (!$row) {
-                continue;
-            }
-
-            $this->cliMate->green("\t" . $row);
-        }
+    /**
+     * @param string $response
+     * @return string
+     */
+    private function formatOutput(string $response) :string
+    {
+        return str_replace(PHP_EOL, PHP_EOL . "\t", $response);
     }
 }
