@@ -225,3 +225,44 @@ bin/phpunit
 
 * `export` statements and internal variables do not work, since the statements do **no longer share a single environment**.
 * Statements that change the flow of a script do not work out of the box.
+
+## Executing it
+
+Executing the script will print a listing overview of all available commands
+
+```sh
+> ./psh.phar
+
+###################
+Available commands:
+
+	- build
+	- unit
+
+2 script(s) available
+```
+
+The first argument is always the script name. This for example will execute the unit script:
+
+```sh
+> ./psh.phar unit
+
+###################
+Starting Execution of 'unit' ('actions/unit.sh')
+
+
+(1/3) Starting
+> bin/php-cs-fixer fix
+	You are running php-cs-fixer with xdebug enabled. This has a major impact on runtime performance.
+	
+	Loaded config from "/var/www/swag/psh/.php_cs".
+	
+	[....]
+```
+
+You can add more commands to be executed in a chain, by comma separating the script names:
+
+```sh
+> ./psh.phar unit,build #executes both scripts in order
+```
+

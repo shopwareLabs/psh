@@ -70,4 +70,30 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
         $this->assertNotEquals(0, $exitCode);
     }
+
+    public function test_chain_two_commands_with_a_comma_executes_both()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'simple,test:env']);
+
+        $this->assertEquals(0, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "prod"'));
+        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
+        $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
+        $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
+        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
+    }
+
+    public function test_chain_two_commands_with_a_comma_executes_both_unless_an_error_occures()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'error,test:env']);
+
+        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
+        $this->assertFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
+        $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
+    }
 }

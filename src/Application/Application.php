@@ -58,10 +58,19 @@ class Application
             ->createScriptFinder($config);
 
         $this->printHeader($config);
+        $scriptNames = $this->extractScriptNames($inputArgs);
 
         try {
-            if (count($inputArgs) > 1) {
-                return $this->execute($scriptFinder->findScriptByName($inputArgs[1]), $config);
+            foreach ($scriptNames as $scriptName) {
+                $executionExitCode = $this->execute($scriptFinder->findScriptByName($scriptName), $config);
+
+                if ($executionExitCode !== self::RESULT_SUCCESS) {
+                    return $executionExitCode;
+                }
+            }
+
+            if (isset($executionExitCode)) {
+                return $executionExitCode;
             }
         } catch (ScriptNotFoundException $e) {
             $this->cliMate->red()->bold("Script with name {$inputArgs[1]} not found\n");
@@ -88,6 +97,19 @@ class Application
         }
 
         $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");
+    }
+
+    /**
+     * @param array $inputArgs
+     * @return array
+     */
+    protected function extractScriptNames(array $inputArgs): array
+    {
+        if (!isset($inputArgs[1])) {
+            return [];
+        }
+
+        return explode(',', $inputArgs[1]);
     }
 
     /**
