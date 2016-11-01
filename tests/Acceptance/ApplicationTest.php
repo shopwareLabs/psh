@@ -21,9 +21,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
 
-        $application->run([]);
+        $exitCode = $application->run([]);
 
-        $this->assertNotFalse(strpos(MockWriter::$content, '2 script(s) available'));
+        $this->assertEquals(0, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, '3 script(s) available'));
     }
 
     public function test_application_execution()
@@ -31,8 +32,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
 
-        $application->run(['', 'simple']);
+        $exitCode = $application->run(['', 'simple']);
 
+        $this->assertEquals(0, $exitCode);
         $this->assertNotFalse(strpos(MockWriter::$content, 'ls -al'));
         $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Starting'));
         $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'));
@@ -48,8 +50,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         MockWriter::addToApplication($application);
 
 
-        $application->run(['', 'test:env']);
+        $exitCode = $application->run(['', 'test:env']);
 
+        $this->assertEquals(0, $exitCode);
         $this->assertNotFalse(strpos(MockWriter::$content, 'ls -al'), 'ls -al');
         $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Starting'), '(1/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'), '(2/3) Starting');
@@ -57,5 +60,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
+    }
+
+    public function test_error_application_execution()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'error']);
+        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertNotEquals(0, $exitCode);
     }
 }
