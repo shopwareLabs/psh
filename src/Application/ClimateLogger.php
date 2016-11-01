@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\Application;
 
+use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\Logger;
@@ -18,19 +19,44 @@ class ClimateLogger implements Logger
     private $cliMate;
 
     /**
+     * @var \DateTime
+     */
+    private $scriptStartTime;
+    /**
+     * @var int
+     */
+    private $duration;
+
+    /**
      * @param CLImate $cliMate
      */
-    public function __construct(CLImate $cliMate)
+    public function __construct(CLImate $cliMate, Duration $duration)
     {
         $this->cliMate = $cliMate;
+        $this->duration = $duration;
     }
 
     /**
      * @param Script $script
      */
-    public function logScript(Script $script)
+    public function startScript(Script $script)
     {
+        $this->scriptStartTime = time();
         $this->cliMate->green()->out("<bold>Starting Execution of '" . $script->getName() . "'</bold> <dim>('" . $script->getPath() . "')</dim>\n");
+    }
+
+    /**
+     * @param Script $script
+     */
+    public function finishScript(Script $script)
+    {
+        $durationInSeconds = time() - $this->scriptStartTime;
+
+        if (!$durationInSeconds) {
+            $durationInSeconds = 1;
+        }
+
+        $this->cliMate->green()->out("\n<bold>Duration: " . $this->duration->humanize($durationInSeconds) . "</bold>");
     }
 
     /**
