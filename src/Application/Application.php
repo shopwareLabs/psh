@@ -14,6 +14,10 @@ use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
  */
 class Application
 {
+    const RESULT_SUCCESS = 0;
+
+    const RESULT_ERROR = 1;
+
     /**
      * @var CLImate
      */
@@ -43,8 +47,9 @@ class Application
      * Main entry point to execute the application.
      *
      * @param array $inputArgs
+     * @return int exit code
      */
-    public function run(array $inputArgs)
+    public function run(array $inputArgs): int
     {
         $config = $this->applicationFactory
             ->createConfig($this->rootDirectory);
@@ -56,14 +61,15 @@ class Application
 
         try {
             if (count($inputArgs) > 1) {
-                $this->execute($scriptFinder->findScriptByName($inputArgs[1]), $config);
-                return;
+                return $this->execute($scriptFinder->findScriptByName($inputArgs[1]), $config);
             }
         } catch (ScriptNotFoundException $e) {
             $this->cliMate->red()->bold("Script with name {$inputArgs[1]} not found\n");
         }
 
         $this->showListing($scriptFinder->getAllScripts());
+
+        return self::RESULT_SUCCESS;
     }
 
     /**
@@ -87,8 +93,9 @@ class Application
     /**
      * @param Script $script
      * @param Config $config
+     * @return int
      */
-    protected function execute(Script $script, Config $config)
+    protected function execute(Script $script, Config $config): int
     {
         $commands = $this->applicationFactory
             ->createCommands($script);
@@ -100,17 +107,19 @@ class Application
         try {
             $executor->execute($script, $commands);
         } catch (ExecutionErrorException $e) {
-            $this->exitWithError("\nExecution aborted, a subcommand failed!\n");
-            return;
+            $this->notifyError("\nExecution aborted, a subcommand failed!\n");
+            return self::RESULT_ERROR;
         }
 
-        $this->exitWithSuccess("\nAll commands successfully executed!\n");
+        $this->notifySuccess("\nAll commands successfully executed!\n");
+
+        return self::RESULT_SUCCESS;
     }
 
     /**
      * @param $string
      */
-    public function exitWithSuccess($string)
+    public function notifySuccess($string)
     {
         $this->cliMate->bold()->green($string);
     }
@@ -118,7 +127,7 @@ class Application
     /**
      * @param $string
      */
-    public function exitWithError($string)
+    public function notifyError($string)
     {
         $this->cliMate->bold()->red($string);
     }
