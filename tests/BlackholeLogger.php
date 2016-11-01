@@ -14,7 +14,7 @@ class BlackholeLogger implements Logger
     /**
      * @param Script $script
      */
-    public function logScript(Script $script)
+    public function startScript(Script $script)
     {
     }
 
@@ -27,7 +27,6 @@ class BlackholeLogger implements Logger
      */
     public function logCommandStart(string $shellCommand, int $line, bool $isIgnoreError, int $index, int $max)
     {
-        // TODO: Implement logCommandStart() method.
     }
 
     /**
@@ -44,5 +43,12 @@ class BlackholeLogger implements Logger
     public function out(string $response)
     {
         $this->output[] = $response;
+    }
+
+    /**
+     * @param Script $script
+     */
+    public function finishScript(Script $script)
+    {
     }
 }

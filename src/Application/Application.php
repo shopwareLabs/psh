@@ -3,6 +3,7 @@
 
 namespace Shopware\Psh\Application;
 
+use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Listing\Script;
@@ -34,6 +35,11 @@ class Application
     private $applicationFactory;
 
     /**
+     * @var Duration
+     */
+    private $duration;
+
+    /**
      * @param string $rootDirectory
      */
     public function __construct(string $rootDirectory)
@@ -41,6 +47,7 @@ class Application
         $this->rootDirectory = $rootDirectory;
         $this->applicationFactory = new ApplicationFactory();
         $this->cliMate = new CLImate();
+        $this->duration = new Duration();
     }
 
     /**
@@ -122,7 +129,7 @@ class Application
         $commands = $this->applicationFactory
             ->createCommands($script);
 
-        $logger = new ClimateLogger($this->cliMate);
+        $logger = new ClimateLogger($this->cliMate, $this->duration);
         $executor = $this->applicationFactory
             ->createProcessExecutor($script, $config, $logger, $this->rootDirectory);
 
@@ -133,7 +140,7 @@ class Application
             return self::RESULT_ERROR;
         }
 
-        $this->notifySuccess("\nAll commands successfully executed!\n");
+        $this->notifySuccess("All commands successfully executed!\n");
 
         return self::RESULT_SUCCESS;
     }

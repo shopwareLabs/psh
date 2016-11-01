@@ -13,7 +13,12 @@ interface Logger
     /**
      * @param Script $script
      */
-    public function logScript(Script $script);
+    public function startScript(Script $script);
+
+    /**
+     * @param Script $script
+     */
+    public function finishScript(Script $script);
 
     /**
      * @param string $shellCommand

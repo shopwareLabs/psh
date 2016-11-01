@@ -52,7 +52,7 @@ class ProcessExecutor
      */
     public function execute(Script $script, array $commands)
     {
-        $this->logger->logScript($script);
+        $this->logger->startScript($script);
 
         foreach ($this->environment->getTemplates() as $template) {
             $renderedTemplate = $this->templateEngine->render($template->getContent(), $this->environment->getAllValues());
@@ -70,6 +70,8 @@ class ProcessExecutor
             $this->runProcess($process);
             $this->testProcessResultValid($command, $process);
         }
+
+        $this->logger->finishScript($script);
     }
 
     /**
