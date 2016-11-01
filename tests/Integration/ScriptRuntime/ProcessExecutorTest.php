@@ -30,6 +30,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEmpty($logger->errors, count($logger->errors) . ' stderr: ' . implode("\n", $logger->errors));
         $this->assertEquals('', trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
+        $this->assertEquals('test', trim($logger->output[1]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
     }
 
     public function test_root_dir_is_application_directory()

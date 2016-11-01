@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 bin/php-cs-fixer fix
-bin/phpunit --debug --verbose
+bin/phpunit
 ./humbug.phar --no-interaction

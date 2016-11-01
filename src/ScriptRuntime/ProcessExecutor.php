@@ -59,15 +59,17 @@ class ProcessExecutor
             $template->setContents($renderedTemplate);
         }
 
+        $extraEnvironment = [];
         foreach ($commands as $index => $command) {
             $parsedCommand = $this->getParsedShellCommand($command);
 
             $this->logger->logCommandStart($parsedCommand, $command->getLineNumber(), $command->isIgnoreError(), $index, count($commands));
 
-            $process = $this->environment->createProcess($parsedCommand);
+            $process = $this->environment->createProcess($parsedCommand .  ' && echo "__PSH_ENV__" && printenv --null');
 
-            $this->setUpProcess($command, $process);
+            $this->setUpProcess($command, $process, $extraEnvironment);
             $this->runProcess($process);
+            $extraEnvironment = $this->extractEnvironmentData($process);
             $this->testProcessResultValid($command, $process);
         }
 
@@ -91,10 +93,16 @@ class ProcessExecutor
     }
 
     /**
+     * @param Command $command
      * @param Process $process
+     * @param array $shellEnvironment
      */
-    protected function setUpProcess(Command $command, Process $process)
+    protected function setUpProcess(Command $command, Process $process, array $shellEnvironment)
     {
+        if ($shellEnvironment) {
+            $process->setEnv($shellEnvironment);
+        }
+        
         $process->setWorkingDirectory($this->applicationDirectory);
         $process->setTimeout(0);
         $process->setTty($command->isTTy());
@@ -102,10 +110,24 @@ class ProcessExecutor
 
     /**
      * @param Process $process
+     * @return array the created environment
      */
     protected function runProcess(Process $process)
     {
-        $process->run(function ($type, $response) {
+        $pshEnvDetected = false;
+
+        $process->run(function ($type, $response) use (&$pshEnvDetected) {
+            if ($pshEnvDetected) {
+                return;
+            }
+
+            $pshEnvStartIndex = strpos($response, '__PSH_ENV__');
+
+            if (false !== $pshEnvStartIndex) {
+                $pshEnvDetected = true;
+                $response = substr($response, 0, $pshEnvStartIndex);
+            }
+
             if (Process::ERR === $type) {
                 $this->logger->err($response);
             } else {
@@ -123,5 +145,38 @@ class ProcessExecutor
         if (!$command->isIgnoreError() && !$process->isSuccessful()) {
             throw new ExecutionErrorException('Command exited with Error');
         }
+    }
+
+    /**
+     * @param Process $process
+     * @return array
+     */
+    private function extractEnvironmentData(Process $process): array
+    {
+        $pshEnvStartIndex = strpos($process->getOutput(), '__PSH_ENV__');
+
+        if (false === $pshEnvStartIndex) {
+            return [];
+        }
+
+        $plainEnvironmentData = substr($process->getOutput(), $pshEnvStartIndex + strlen('__PSH_ENV__') + strlen(PHP_EOL));
+        $rawKeyValuePairs = explode("\000", $plainEnvironmentData);
+
+        $environment = [];
+        foreach ($rawKeyValuePairs as $rawKeyValuePair) {
+            if (0 === strlen(trim($rawKeyValuePair))) {
+                continue;
+            }
+
+            $equalsSignPosition = strpos($rawKeyValuePair, '=');
+
+            $key = substr($rawKeyValuePair, 0, $equalsSignPosition);
+            $value = substr($rawKeyValuePair, $equalsSignPosition + 1);
+            $environment[$key] = $value;
+        }
+
+        unset($environment['PWD']);
+
+        return $environment;
     }
 }
