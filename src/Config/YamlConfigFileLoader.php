@@ -48,7 +48,22 @@ class YamlConfigFileLoader implements ConfigLoader
      */
     public function isSupported(string $file): bool
     {
+        $file = $this->removeDistExtension($file);
         return pathinfo($file, PATHINFO_EXTENSION) === 'yaml' || pathinfo($file, PATHINFO_EXTENSION) === 'yml';
+    }
+
+    /**
+     * @param string $file
+     * @return string
+     */
+    private function removeDistExtension(string $file): string
+    {
+        $fileInfo = pathinfo($file);
+        if ($fileInfo['extension'] === 'dist') {
+            $file = $fileInfo['filename'];
+        }
+
+        return $file;
     }
 
     /**
@@ -123,9 +138,7 @@ class YamlConfigFileLoader implements ConfigLoader
      */
     private function loadFileContents(string $file): string
     {
-        $contents = file_get_contents($file);
-
-        return $contents;
+        return file_get_contents($file);
     }
 
     /**

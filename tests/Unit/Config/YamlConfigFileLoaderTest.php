@@ -32,9 +32,12 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($loader->isSupported('fo.yaml'));
         $this->assertTrue($loader->isSupported('fo.yml'));
+        $this->assertTrue($loader->isSupported('fo.yml.dist'));
+        $this->assertTrue($loader->isSupported('fo.yaml.dist'));
 
         $this->assertFalse($loader->isSupported('fo.txt'));
-        $this->assertFalse($loader->isSupported('fo.yaml.dist'));
+        $this->assertFalse($loader->isSupported('fo.txt.dist'));
+        $this->assertFalse($loader->isSupported('fo.yaml.bar'));
     }
 
     public function test_it_works_if_no_paths_are_present()
