@@ -11,7 +11,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = new ConfigFileFinder();
 
-        $this->setExpectedException(\RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $loader->discoverFile(sys_get_temp_dir());
     }
 
