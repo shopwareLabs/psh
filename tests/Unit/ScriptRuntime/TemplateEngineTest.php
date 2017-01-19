@@ -38,6 +38,10 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('baz foo', $engine->render('__BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('foo baz foo', $engine->render('foo __BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
+
+        $this->assertEquals('foo __BAR__', $engine->render('foo __BAR__(sic!)', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('__BAR__ foo', $engine->render('__BAR__(sic!) foo', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo __BAR__ foo', $engine->render('foo __BAR__(sic!) foo', ['BAR' => new SimpleValueProvider('baz')]));
     }
 
     public function test_values_can_be_set_case_insensitive()
