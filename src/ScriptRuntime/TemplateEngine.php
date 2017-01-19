@@ -8,7 +8,9 @@ namespace Shopware\Psh\ScriptRuntime;
  */
 class TemplateEngine
 {
-    const REGEX = '/__[A-Z,_]+__/';
+    const REGEX = '/__[A-Z,_]+__(?!\(sic\!\))/';
+
+    const REGEX_SIC = '/__[A-Z,_]+__(\(sic\!\))/';
 
     /**
      * @param string $shellCommand
@@ -19,9 +21,16 @@ class TemplateEngine
     {
         preg_match_all(self::REGEX, $shellCommand, $matches);
         $placeholders = $matches[0];
-        
+
         foreach ($placeholders as $match) {
             $shellCommand = str_replace($match, $this->getValue($match, $allValues), $shellCommand);
+        }
+
+        preg_match_all(self::REGEX_SIC, $shellCommand, $matches);
+        $escapedPlaceholders = $matches[0];
+
+        foreach ($escapedPlaceholders as $match) {
+            $shellCommand = str_replace($match, str_replace('(sic!)', '', $match), $shellCommand);
         }
 
         return $shellCommand;
@@ -31,6 +40,7 @@ class TemplateEngine
      * @param string $placeholder
      * @param array $allValues
      * @return mixed
+     * @throws \RuntimeException
      */
     private function getValue(string $placeholder, array $allValues)
     {
