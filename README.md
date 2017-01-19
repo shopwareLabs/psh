@@ -90,7 +90,7 @@ ln -s __PATH__
 
 The placeholder `__PATH__` now needs to be part of your configuration file as either a constant or a variable.
 
-> Notice: All placeholders must be written in uppercase in scripts. Even if defined otherwise in configuration, replacement only works uppercase.
+> Notice: All placeholders must be written in uppercase in scripts. Even if defined otherwise in configuration, replacement only works uppercase. With (sic!) add the end of a placeholder it will be escaped. As an example `__DIR__(sic!)`.  
 
 #### Constants
 
