@@ -30,11 +30,12 @@ class Template
 
     /**
      * @return string
+     * @throws TemplateNotValidException
      */
     public function getContent(): string
     {
         if (!file_exists($this->source)) {
-            throw new \InvalidArgumentException('File source not found in "' . $this->source . '"');
+            throw new TemplateNotValidException('File source not found in "' . $this->source . '"');
         }
 
         return file_get_contents($this->source);

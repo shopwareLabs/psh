@@ -10,6 +10,7 @@ use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptNotFoundException;
 use Shopware\Psh\Listing\ScriptPathNotValidException;
 use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
+use Shopware\Psh\ScriptRuntime\TemplateNotValidException;
 
 /**
  * Main application entry point. moves the requested data around and outputs user information.
@@ -81,13 +82,15 @@ class Application
                 return $executionExitCode;
             }
         } catch (ScriptNotFoundException $e) {
-            $this->cliMate->red()->bold("Script with name {$inputArgs[1]} not found\n");
+            $this->notifyError("Script with name {$inputArgs[1]} not found\n");
+            return self::RESULT_ERROR;
         }
 
         try {
             $this->showListing($scriptFinder->getAllScripts());
         } catch (ScriptPathNotValidException $e) {
-            $this->cliMate->red()->bold($e->getMessage() . "\n");
+            $this->notifyError($e->getMessage() . "\n");
+            return self::RESULT_ERROR;
         }
 
         return self::RESULT_SUCCESS;
@@ -142,6 +145,9 @@ class Application
             $executor->execute($script, $commands);
         } catch (ExecutionErrorException $e) {
             $this->notifyError("\nExecution aborted, a subcommand failed!\n");
+            return self::RESULT_ERROR;
+        } catch (TemplateNotValidException $e) {
+            $this->notifyError("\n" . $e->getMessage() . "\n");
             return self::RESULT_ERROR;
         }
 
