@@ -12,14 +12,17 @@ class Command
      * @var string
      */
     private $shellCommand;
+
     /**
      * @var bool
      */
     private $ignoreError;
+
     /**
      * @var int
      */
     private $lineNumber;
+
     /**
      * @var bool
      */

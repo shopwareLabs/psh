@@ -12,17 +12,25 @@ class Template
      * @var string
      */
     private $source;
+
     /**
      * @var string
      */
     private $destination;
 
+    /**
+     * @param string $source
+     * @param string $destination
+     */
     public function __construct(string $source, string $destination)
     {
         $this->source = $source;
         $this->destination = $destination;
     }
 
+    /**
+     * @return string
+     */
     public function getContent(): string
     {
         if (!file_exists($this->source)) {
@@ -32,6 +40,9 @@ class Template
         return file_get_contents($this->source);
     }
 
+    /**
+     * @param string $contents
+     */
     public function setContents(string $contents)
     {
         file_put_contents($this->destination, $contents);

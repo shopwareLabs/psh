@@ -96,11 +96,11 @@ class Application
         $this->cliMate->green()->bold("Available commands:\n");
 
         if (!count($scripts)) {
-            $this->cliMate->yellow()->bold("-> Currently no scripts available");
+            $this->cliMate->yellow()->bold('-> Currently no scripts available');
         }
 
         foreach ($scripts as $script) {
-            $this->cliMate->tab()->out("- " . $script->getName());
+            $this->cliMate->tab()->out('- ' . $script->getName());
         }
 
         $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");

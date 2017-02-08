@@ -12,10 +12,12 @@ class Script
      * @var string
      */
     private $directory;
+
     /**
      * @var string
      */
     private $scriptName;
+
     /**
      * @var string
      */

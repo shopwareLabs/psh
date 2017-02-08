@@ -26,6 +26,7 @@ class ApplicationFactory
     /**
      * @param string $rootDirectory
      * @return Config
+     * @throws \RuntimeException
      */
     public function createConfig(string $rootDirectory): Config
     {

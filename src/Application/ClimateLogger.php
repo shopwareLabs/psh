@@ -12,7 +12,6 @@ use Shopware\Psh\ScriptRuntime\Logger;
  */
 class ClimateLogger implements Logger
 {
-
     /**
      * @var CLImate
      */
@@ -22,6 +21,7 @@ class ClimateLogger implements Logger
      * @var \DateTime
      */
     private $scriptStartTime;
+
     /**
      * @var int
      */
@@ -29,6 +29,7 @@ class ClimateLogger implements Logger
 
     /**
      * @param CLImate $cliMate
+     * @param Duration $duration
      */
     public function __construct(CLImate $cliMate, Duration $duration)
     {

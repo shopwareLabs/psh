@@ -23,6 +23,7 @@ class ConfigEnvironment
      * @var array
      */
     private $constants;
+
     /**
      * @var array
      */
@@ -70,6 +71,9 @@ class ConfigEnvironment
         return $this->constants;
     }
 
+    /**
+     * @return array
+     */
     public function getTemplates(): array
     {
         return $this->templates;
