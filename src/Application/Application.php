@@ -8,6 +8,7 @@ use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptNotFoundException;
+use Shopware\Psh\Listing\ScriptPathNotValidException;
 use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
 
 /**
@@ -83,7 +84,11 @@ class Application
             $this->cliMate->red()->bold("Script with name {$inputArgs[1]} not found\n");
         }
 
-        $this->showListing($scriptFinder->getAllScripts());
+        try {
+            $this->showListing($scriptFinder->getAllScripts());
+        } catch (ScriptPathNotValidException $e) {
+            $this->cliMate->red()->bold($e->getMessage() . "\n");
+        }
 
         return self::RESULT_SUCCESS;
     }
