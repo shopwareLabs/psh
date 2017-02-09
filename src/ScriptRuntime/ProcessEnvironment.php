@@ -13,10 +13,12 @@ class ProcessEnvironment
      * @var ValueProvider[]
      */
     private $constants;
+
     /**
      * @var ValueProvider[]
      */
     private $variables;
+
     /**
      * @var Template[]
      */
@@ -75,7 +77,6 @@ class ProcessEnvironment
 
         return $resolvedVariables;
     }
-
 
     /**
      * @return ValueProvider[]

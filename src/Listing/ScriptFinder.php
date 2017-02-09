@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+
 namespace Shopware\Psh\Listing;
 
 /**
@@ -27,12 +28,17 @@ class ScriptFinder
 
     /**
      * @return Script[]
+     * @throws ScriptPathNotValidException
      */
     public function getAllScripts(): array
     {
         $scripts = [];
 
         foreach ($this->scriptPaths as $pathNamespace => $path) {
+            if (!is_dir($path)) {
+                throw new ScriptPathNotValidException("The given script path: '{$path}' is not a valid directory");
+            }
+
             foreach (scandir($path) as $fileName) {
                 $scriptNamespace = null;
 
@@ -60,6 +66,7 @@ class ScriptFinder
     /**
      * @param string $scriptName
      * @return Script
+     * @throws ScriptNotFoundException
      */
     public function findScriptByName(string $scriptName): Script
     {

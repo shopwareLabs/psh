@@ -5,6 +5,7 @@ namespace Shopware\Psh\Test\Unit\Integration\Listing;
 
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
+use Shopware\Psh\Listing\ScriptPathNotValidException;
 
 class ScriptFinderTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,5 +49,12 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         $script = $finder->findScriptByName('biz:test');
         $this->assertInstanceOf(Script::class, $script);
         $this->assertEquals('biz:test', $script->getName());
+    }
+
+    public function test_script_finder_throws_exception_if_path_is_not_valid()
+    {
+        $finder = new ScriptFinder([__DIR__ . '/_scripts_not_valid_directory']);
+        $this->expectException(ScriptPathNotValidException::class);
+        $finder->getAllScripts();
     }
 }

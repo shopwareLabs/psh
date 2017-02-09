@@ -9,7 +9,7 @@ if (file_exists($a = __DIR__.'/../../autoload.php')) {
 
 $rootDir = Phar::running(false);
 
-if(!$rootDir) {
+if (!$rootDir) {
     $rootDir = __DIR__;
 }
 

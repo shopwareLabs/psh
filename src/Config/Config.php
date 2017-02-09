@@ -11,10 +11,12 @@ class Config
      * @var string
      */
     private $header;
+
     /**
      * @var string
      */
     private $defaultEnvironment;
+
     /**
      * @var ConfigEnvironment[]
      */

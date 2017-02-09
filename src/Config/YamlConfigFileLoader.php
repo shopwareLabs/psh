@@ -42,7 +42,6 @@ class YamlConfigFileLoader implements ConfigLoader
         $this->configBuilder = $configBuilder;
     }
 
-
     /**
      * @inheritdoc
      */
@@ -78,8 +77,8 @@ class YamlConfigFileLoader implements ConfigLoader
 
         $this->configBuilder
             ->setHeader(
-            $this->extractData(self::KEY_HEADER, $rawConfigData, '')
-        );
+                $this->extractData(self::KEY_HEADER, $rawConfigData, '')
+            );
 
         $this->setConfigData($file, $rawConfigData);
 
@@ -93,6 +92,10 @@ class YamlConfigFileLoader implements ConfigLoader
             ->create();
     }
 
+    /**
+     * @param string $file
+     * @param array $rawConfigData
+     */
     private function setConfigData(string $file, array $rawConfigData)
     {
         $this->configBuilder->setCommandPaths(

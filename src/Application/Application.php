@@ -8,7 +8,9 @@ use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptNotFoundException;
+use Shopware\Psh\Listing\ScriptPathNotValidException;
 use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
+use Shopware\Psh\ScriptRuntime\TemplateNotValidException;
 
 /**
  * Main application entry point. moves the requested data around and outputs user information.
@@ -80,10 +82,16 @@ class Application
                 return $executionExitCode;
             }
         } catch (ScriptNotFoundException $e) {
-            $this->cliMate->red()->bold("Script with name {$inputArgs[1]} not found\n");
+            $this->notifyError("Script with name {$inputArgs[1]} not found\n");
+            return self::RESULT_ERROR;
         }
 
-        $this->showListing($scriptFinder->getAllScripts());
+        try {
+            $this->showListing($scriptFinder->getAllScripts());
+        } catch (ScriptPathNotValidException $e) {
+            $this->notifyError($e->getMessage() . "\n");
+            return self::RESULT_ERROR;
+        }
 
         return self::RESULT_SUCCESS;
     }
@@ -96,11 +104,11 @@ class Application
         $this->cliMate->green()->bold("Available commands:\n");
 
         if (!count($scripts)) {
-            $this->cliMate->yellow()->bold("-> Currently no scripts available");
+            $this->cliMate->yellow()->bold('-> Currently no scripts available');
         }
 
         foreach ($scripts as $script) {
-            $this->cliMate->tab()->out("- " . $script->getName());
+            $this->cliMate->tab()->out('- ' . $script->getName());
         }
 
         $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");
@@ -137,6 +145,9 @@ class Application
             $executor->execute($script, $commands);
         } catch (ExecutionErrorException $e) {
             $this->notifyError("\nExecution aborted, a subcommand failed!\n");
+            return self::RESULT_ERROR;
+        } catch (TemplateNotValidException $e) {
+            $this->notifyError("\n" . $e->getMessage() . "\n");
             return self::RESULT_ERROR;
         }
 
