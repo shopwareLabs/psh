@@ -14,6 +14,7 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
         'nope __not__ _matching_ anything' => 0,
         'nope __NOT MATCHING ANYTHING__' => 0,
         'juos __NOT_MATCHING_ANYTHING__' => 1,
+        'curl http://__APP_HOST____APP_PATH__' => 2,
     ];
 
     public function test_regex_matches_fixtures()
@@ -74,6 +75,22 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
                     'user' => new SimpleValueProvider('foo'),
                     'password' => new SimpleValueProvider('foo'),
                     'database' => new SimpleValueProvider('th_db')
+                ]
+            )
+        );
+    }
+
+    public function test_values_can_be_concatenated()
+    {
+        $engine = new TemplateEngine();
+
+        $this->assertEquals(
+            'curl http://shopware.com/shopware/__MYKEY__',
+            $engine->render(
+                'curl http://__APP_HOST____APP_PATH____MYKEY__(sic!)',
+                [
+                    'app_host' => new SimpleValueProvider('shopware.com'),
+                    'app_path' => new SimpleValueProvider('/shopware/'),
                 ]
             )
         );
