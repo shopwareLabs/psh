@@ -266,3 +266,8 @@ You can add more commands to be executed in a chain, by comma separating the scr
 > ./psh.phar unit,build #executes both scripts in order
 ```
 
+### Bash Autocompletion
+
+```sh
+source bash_autocompletion.sh
+```

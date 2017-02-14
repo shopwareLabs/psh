@@ -66,8 +66,19 @@ class Application
         $scriptFinder = $this->applicationFactory
             ->createScriptFinder($config);
 
-        $this->printHeader($config);
         $scriptNames = $this->extractScriptNames($inputArgs);
+        if (count($scriptNames) > 0 && $scriptNames[0] === 'dump') {
+            $scripts = $scriptFinder->getAllScripts();
+            $commands = array_map(function(Script $script) {
+                return $script->getName();
+            }, $scripts);
+
+            echo implode(' ', $commands);
+
+            return self::RESULT_SUCCESS;
+        }
+
+        $this->printHeader($config);
 
         try {
             foreach ($scriptNames as $scriptName) {
