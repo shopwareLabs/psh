@@ -65,13 +65,13 @@ class ProcessEnvironment
     }
 
     /**
-     * @param array $variables
+     * @param array $templates
      * @return ValueProvider[]
      */
-    private function initializeTemplates(array $variables): array
+    private function initializeTemplates(array $templates): array
     {
         $resolvedVariables = [];
-        foreach ($variables as $template) {
+        foreach ($templates as $template) {
             $resolvedVariables[] = new Template($template['source'], $template['destination']);
         }
 

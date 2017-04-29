@@ -38,8 +38,12 @@ class ProcessExecutor
      * @param Logger $logger
      * @param string $applicationDirectory
      */
-    public function __construct(ProcessEnvironment $environment, TemplateEngine $templateEngine, Logger $logger, string $applicationDirectory)
-    {
+    public function __construct(
+        ProcessEnvironment $environment,
+        TemplateEngine $templateEngine,
+        Logger $logger,
+        string $applicationDirectory
+    ) {
         $this->environment = $environment;
         $this->templateEngine = $templateEngine;
         $this->logger = $logger;
@@ -54,15 +58,18 @@ class ProcessExecutor
     {
         $this->logger->startScript($script);
 
-        foreach ($this->environment->getTemplates() as $template) {
-            $renderedTemplate = $this->templateEngine->render($template->getContent(), $this->environment->getAllValues());
-            $template->setContents($renderedTemplate);
-        }
+        $this->executeTemplateRendering();
 
         foreach ($commands as $index => $command) {
             $parsedCommand = $this->getParsedShellCommand($command);
 
-            $this->logger->logCommandStart($parsedCommand, $command->getLineNumber(), $command->isIgnoreError(), $index, count($commands));
+            $this->logger->logCommandStart(
+                $parsedCommand,
+                $command->getLineNumber(),
+                $command->isIgnoreError(),
+                $index,
+                count($commands)
+            );
 
             $process = $this->environment->createProcess($parsedCommand);
 
@@ -122,6 +129,21 @@ class ProcessExecutor
     {
         if (!$command->isIgnoreError() && !$process->isSuccessful()) {
             throw new ExecutionErrorException('Command exited with Error');
+        }
+    }
+
+    private function executeTemplateRendering()
+    {
+        foreach ($this->environment->getTemplates() as $template) {
+            $renderedTemplateDestination = $this->templateEngine
+                ->render($template->getDestination(), $this->environment->getAllValues());
+
+            $template->setDestination($renderedTemplateDestination);
+
+            $renderedTemplateContent = $this->templateEngine
+                ->render($template->getContent(), $this->environment->getAllValues());
+
+            $template->setContents($renderedTemplateContent);
         }
     }
 }

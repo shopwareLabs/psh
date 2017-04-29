@@ -51,4 +51,38 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($logger->errors, count($logger->errors) . ' stderr: ' . implode("\n", $logger->errors));
         $this->assertEquals(__DIR__, trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
     }
+
+    public function test_template_engine_works_with_template_destinations()
+    {
+        $script = new Script(__DIR__ . '/_scripts', 'root-dir.sh');
+        $loader = new ScriptLoader(new CommandBuilder());
+        $commands = $loader->loadScript($script);
+        $logger = new BlackholeLogger();
+
+        $executor = new ProcessExecutor(
+            new ProcessEnvironment([
+                'VAR' => 'value',
+            ], [], [ [
+                'source' => __DIR__ . '/_test_read.tpl',
+                'destination' => __DIR__ . '/_test__VAR__.tpl'
+            ]
+            ]),
+            new TemplateEngine(),
+            $logger,
+            __DIR__
+        );
+
+        $executor->execute($script, $commands);
+
+        $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
+    }
+
+    /**
+     * @before
+     * @after
+     */
+    public function removeState()
+    {
+        @unlink(__DIR__ . '/_testvalue.tpl');
+    }
 }
