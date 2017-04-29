@@ -30,6 +30,22 @@ class Template
 
     /**
      * @return string
+     */
+    public function getDestination(): string
+    {
+        return $this->destination;
+    }
+
+    /**
+     * @param string $destination
+     */
+    public function setDestination(string $destination)
+    {
+        $this->destination = $destination;
+    }
+
+    /**
+     * @return string
      * @throws TemplateNotValidException
      */
     public function getContent(): string

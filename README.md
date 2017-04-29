@@ -135,6 +135,14 @@ templates:
 
 This reads the contents of `templates/consts.tpl`, replaces placeholders with constants or variables from your configuration and writes the result to `app/consts.php`.
 
+It is even possible to use placeholders in template destinations:
+
+```yaml
+templates:
+  - source: templates/consts.tpl
+    destination: app/consts-__ENVIRONMENT__.php
+```
+
 #### Environments
 
 Environments are used to extend or overwrite your base configuration. You can add more scripts, redefine or add constants or variables. 
