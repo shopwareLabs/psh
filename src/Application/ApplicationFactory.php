@@ -9,7 +9,7 @@ use Shopware\Psh\Config\ConfigFileFinder;
 use Shopware\Psh\Config\YamlConfigFileLoader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
-use Shopware\Psh\ScriptRuntime\Command;
+use Shopware\Psh\ScriptRuntime\ProcessCommand;
 use Shopware\Psh\ScriptRuntime\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\Logger;
 use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
@@ -74,7 +74,7 @@ class ApplicationFactory
 
     /**
      * @param Script $script
-     * @return Command[]
+     * @return ProcessCommand[]
      */
     public function createCommands(Script $script): array
     {

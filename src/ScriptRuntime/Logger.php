@@ -30,6 +30,14 @@ interface Logger
     public function logCommandStart(string $shellCommand, int $line, bool $isIgnoreError, int $index, int $max);
 
     /**
+     * @param string $destination
+     * @param int $line
+     * @param int $index
+     * @param int $max
+     */
+    public function logTemplate(string $destination, int $line, int $index, int $max);
+
+    /**
      * @param string $response
      */
     public function err(string $response);

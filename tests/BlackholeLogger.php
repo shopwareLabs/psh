@@ -29,6 +29,17 @@ class BlackholeLogger implements Logger
     {
     }
 
+
+    /**
+     * @param string $destination
+     * @param int $line
+     * @param int $index
+     * @param int $max
+     */
+    public function logTemplate(string $destination, int $line, int $index, int $max)
+    {
+    }
+
     /**
      * @param string $response
      */

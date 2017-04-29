@@ -77,6 +77,25 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
     }
 
+    public function test_executor_recognises_template_commands()
+    {
+        $script = new Script(__DIR__ . '/_scripts', 'template.sh');
+        $loader = new ScriptLoader(new CommandBuilder());
+        $commands = $loader->loadScript($script);
+        $logger = new BlackholeLogger();
+
+        $executor = new ProcessExecutor(
+            new ProcessEnvironment([], [], []),
+            new TemplateEngine(),
+            $logger,
+            __DIR__
+        );
+
+        $executor->execute($script, $commands);
+
+        $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
+    }
+
     /**
      * @before
      * @after
