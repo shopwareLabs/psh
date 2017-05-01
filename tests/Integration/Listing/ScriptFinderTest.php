@@ -3,6 +3,7 @@
 
 namespace Shopware\Psh\Test\Unit\Integration\Listing;
 
+use Shopware\Psh\Config\ScriptPath;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\Listing\ScriptPathNotValidException;
@@ -18,22 +19,22 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
 
     public function test_script_finder_finds_scripts_if_one_directory_is_passed()
     {
-        $finder = new ScriptFinder([__DIR__ . '/_scripts']);
+        $finder = new ScriptFinder([new ScriptPath(__DIR__ . '/_scripts')]);
         $this->assertInstanceOf(ScriptFinder::class, $finder);
         $this->assertCount(3, $finder->getAllScripts());
     }
 
     public function test_script_finder_finds_scripts_if_two_directories_are_passed_and_filters_noise()
     {
-        $finder = new ScriptFinder([__DIR__ . '/_scripts', __DIR__ . '/_scripts_with_misc_stuff']);
+        $finder = new ScriptFinder([new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')]);
         $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertCount(5, $finder->getAllScripts());
+        $this->assertCount(3, $finder->getAllScripts());
         $this->assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
     }
 
     public function test_script_finder_finds_script_by_name_if_two_directories_are_passed_and_filters_noise()
     {
-        $finder = new ScriptFinder([__DIR__ . '/_scripts', __DIR__ . '/_scripts_with_misc_stuff']);
+        $finder = new ScriptFinder([new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')]);
         $this->assertInstanceOf(ScriptFinder::class, $finder);
 
         $script = $finder->findScriptByName('foo');
@@ -43,7 +44,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
 
     public function test_script_finder_prefixes_script_names_with_namespace_if_present()
     {
-        $finder = new ScriptFinder([__DIR__ . '/_scripts', 'biz' => __DIR__ . '/_scripts_with_misc_stuff']);
+        $finder = new ScriptFinder([new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff', 'biz')]);
         $this->assertInstanceOf(ScriptFinder::class, $finder);
 
         $script = $finder->findScriptByName('biz:test');
@@ -53,7 +54,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
 
     public function test_script_finder_throws_exception_if_path_is_not_valid()
     {
-        $finder = new ScriptFinder([__DIR__ . '/_scripts_not_valid_directory']);
+        $finder = new ScriptFinder([new ScriptPath(__DIR__ . '/_scripts_not_valid_directory')]);
         $this->expectException(ScriptPathNotValidException::class);
         $finder->getAllScripts();
     }

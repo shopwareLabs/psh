@@ -21,5 +21,6 @@ environments:
   test:
     paths:
       - "envpath/"
+      - "envpath2/"
     const:
       ENV: "test"

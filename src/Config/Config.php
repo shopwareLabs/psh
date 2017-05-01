@@ -38,7 +38,7 @@ class Config
     }
 
     /**
-     * @return array
+     * @return ScriptPath[]
      */
     public function getAllScriptPaths(): array
     {
@@ -47,9 +47,9 @@ class Config
         foreach ($this->environments as $name => $environmentConfig) {
             foreach ($environmentConfig->getAllScriptPaths() as $path) {
                 if ($name !== $this->defaultEnvironment) {
-                    $paths[$name] = $path;
+                    $paths[] = new ScriptPath($path, $name);
                 } else {
-                    $paths[] = $path;
+                    $paths[] = new ScriptPath($path);
                 }
             }
         }

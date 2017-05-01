@@ -24,7 +24,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run([]);
 
         $this->assertEquals(0, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, '3 script(s) available'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'test:env'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'test:env2'));
+        $this->assertNotFalse(strpos(MockWriter::$content, '4 script(s) available'));
         $this->assertFalse(strpos(MockWriter::$content, 'Duration:'));
     }
 
