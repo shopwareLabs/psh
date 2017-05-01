@@ -73,6 +73,19 @@ class ClimateLogger implements Logger
         $this->cliMate->yellow()->inline("\n({$index}/{$max}) Starting\n<bold>> {$shellCommand}</bold>\n\t");
     }
 
+
+    /**
+     * @param string $destination
+     * @param int $line
+     * @param int $index
+     * @param int $max
+     */
+    public function logTemplate(string $destination, int $line, int $index, int $max)
+    {
+        $index++;
+        $this->cliMate->yellow()->inline("\n({$index}/{$max}) Rendering\n<bold>> {$destination}</bold>\n\t");
+    }
+
     /**
      * @param string $response
      */

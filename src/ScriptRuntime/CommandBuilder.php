@@ -9,7 +9,7 @@ namespace Shopware\Psh\ScriptRuntime;
 class CommandBuilder
 {
     /**
-     * @var Command[]
+     * @var ProcessCommand[]
      */
     private $allCommands = [];
 
@@ -33,14 +33,20 @@ class CommandBuilder
      */
     private $tty;
 
+    /**
+     * @var bool
+     */
+    private $template;
+
     private function reset()
     {
         if ($this->currentShellCommand) {
-            $this->allCommands[] = new Command(
+            $this->allCommands[] = new ProcessCommand(
                 $this->currentShellCommand,
                 $this->startLine,
                 $this->ignoreError,
-                $this->tty
+                $this->tty,
+                $this->template
             );
         }
 
@@ -48,6 +54,7 @@ class CommandBuilder
         $this->startLine = null;
         $this->ignoreError = false;
         $this->tty = false;
+        $this->template = false;
     }
 
     /**
@@ -64,6 +71,20 @@ class CommandBuilder
         $this->startLine = $startLine;
         $this->ignoreError = $ignoreError;
         $this->tty = $tty;
+
+        return $this;
+    }
+
+
+    public function addTemplateCommand(string $source, string $destination, int $lineNumber)
+    {
+        $this->reset();
+
+        $this->allCommands[] = new TemplateCommand(
+            $source,
+            $destination,
+            $lineNumber
+        );
 
         return $this;
     }
@@ -102,7 +123,7 @@ class CommandBuilder
     }
 
     /**
-     * @return Command[]
+     * @return ProcessCommand[]
      */
     public function getAll(): array
     {

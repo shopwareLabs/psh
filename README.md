@@ -201,7 +201,17 @@ INCLUDE: my/sub/script.sh
 ```
 
 If the path is relative, PSH will attempt to load the script relative to the location of the current script or relative to the configuration file.
- 
+
+#### On demand templates
+
+Prefixing a line with `TEMPLATE: ` will trigger an on demand template creation. The remaining part of the line then must look like this: `SOURCE_PATH:DESTINATION_PATH`
+
+```sh
+TEMPLATE: ../templates/template.ini.tpl:../destination/template.ini
+```
+
+Notice that all paths here must be **relative** to the script location.
+
 #### Open a ssh connection to another machine
 
 Many dev-ops script open a SSH channel to a locally running virtual machine / container or a remote staging / test system. If you do this 

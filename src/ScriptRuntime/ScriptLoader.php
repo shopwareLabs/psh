@@ -16,6 +16,8 @@ class ScriptLoader
 
     const INCLUDE_STATEMENT_PREFIX = 'INCLUDE: ';
 
+    const TEMPLATE_STATEMENT_PREFIX = 'TEMPLATE: ';
+
     const CONCATENATE_PREFIX = '   ';
 
     /**
@@ -59,6 +61,19 @@ class ScriptLoader
 
                 $commands = $this->loadScript($includeScript);
                 $this->commandBuilder->setCommands($commands);
+
+                continue;
+            }
+
+            if ($this->startsWith(self::TEMPLATE_STATEMENT_PREFIX, $currentLine)) {
+                $definition = $this->removeFromStart(self::TEMPLATE_STATEMENT_PREFIX, $currentLine);
+                list($rawSource, $rawDestination) = explode(':', $definition);
+
+                $source = $script->getDirectory() . '/' . $rawSource;
+                $destination = $script->getDirectory() . '/' . $rawDestination;
+
+                $this->commandBuilder
+                    ->addTemplateCommand($source, $destination, $lineNumber);
 
                 continue;
             }
