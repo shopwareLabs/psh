@@ -3,6 +3,8 @@
 
 namespace Shopware\Psh\Listing;
 
+use Shopware\Psh\Config\ScriptPath;
+
 /**
  * Load all scripts from all the supplied paths and create an array of scripts
  */
@@ -14,12 +16,12 @@ class ScriptFinder
     ];
 
     /**
-     * @var string[]
+     * @var ScriptPath[]
      */
     private $scriptPaths;
 
     /**
-     * @param string[] $scriptPaths
+     * @param ScriptPath[] $scriptPaths
      */
     public function __construct(array $scriptPaths)
     {
@@ -34,14 +36,12 @@ class ScriptFinder
     {
         $scripts = [];
 
-        foreach ($this->scriptPaths as $pathNamespace => $path) {
-            if (!is_dir($path)) {
-                throw new ScriptPathNotValidException("The given script path: '{$path}' is not a valid directory");
+        foreach ($this->scriptPaths as $path) {
+            if (!is_dir($path->getPath())) {
+                throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
             }
 
-            foreach (scandir($path) as $fileName) {
-                $scriptNamespace = null;
-
+            foreach (scandir($path->getPath()) as $fileName) {
                 if (strpos($fileName, '.') === 0) {
                     continue;
                 }
@@ -52,11 +52,9 @@ class ScriptFinder
                     continue;
                 }
 
-                if (!is_numeric($pathNamespace)) {
-                    $scriptNamespace = $pathNamespace;
-                }
+                $newScript = new Script($path->getPath(), $fileName, $path->getNamespace());
 
-                $scripts[] = new Script($path, $fileName, $scriptNamespace);
+                $scripts[$newScript->getName()] = $newScript;
             }
         }
 

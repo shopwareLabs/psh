@@ -5,6 +5,7 @@ namespace Shopware\Psh\Test\Unit\Config;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigLoader;
+use Shopware\Psh\Config\ScriptPath;
 use Shopware\Psh\Config\YamlConfigFileLoader;
 use Symfony\Component\Yaml\Parser;
 
@@ -92,7 +93,12 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = $this->createConfigLoader($yamlMock->reveal());
 
         $config = $loader->load(__DIR__ . '/_test.txt');
-        $this->assertEquals([__DIR__ . '/_foo', __DIR__ . '/_bar'], $config->getAllScriptPaths());
+
+        $scripts = $config->getAllScriptPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $this->assertCount(2, $scripts);
+        $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
+        $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
     }
 
     public function test_it_creates_a_valid_config_file_if_all_required_params_are_present()
@@ -177,10 +183,12 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             'FOO' => 'bar',
         ], $config->getConstants());
 
-        $this->assertEquals([
-            __DIR__ . '/_foo',
-            'namespace' => __DIR__ . '/_bar',
-        ], $config->getAllScriptPaths());
+        $scripts = $config->getAllScriptPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $this->assertCount(2, $scripts);
+        $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
+        $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
+        $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
     public function test_it_loads_environment_paths()
@@ -218,10 +226,12 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             'FOO' => 'bar',
         ], $config->getConstants('namespace'));
 
-        $this->assertEquals([
-            __DIR__ . '/_foo',
-            'namespace' => __DIR__ . '/_bar',
-        ], $config->getAllScriptPaths());
+        $scripts = $config->getAllScriptPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $this->assertCount(2, $scripts);
+        $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
+        $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
+        $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
     public function test_it_loads_environments_with_vars()
@@ -267,10 +277,12 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             'booh' => 'hah'
         ], $config->getConstants('namespace'));
 
-        $this->assertEquals([
-            __DIR__ . '/_foo',
-            'namespace' => __DIR__ . '/_bar',
-        ], $config->getAllScriptPaths());
+        $scripts = $config->getAllScriptPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $this->assertCount(2, $scripts);
+        $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
+        $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
+        $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
     public function test_it_loads_templates()
