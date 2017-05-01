@@ -18,12 +18,12 @@ class ClimateLogger implements Logger
     private $cliMate;
 
     /**
-     * @var \DateTime
+     * @var int
      */
     private $scriptStartTime;
 
     /**
-     * @var int
+     * @var Duration
      */
     private $duration;
 

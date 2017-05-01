@@ -26,8 +26,16 @@ the shell with your application and therefore does not need any influence on you
 
 ### Through composer
 
+Locally:
+
 ```sh
 composer require shopware/psh --dev
+```
+
+Globally:
+
+```sh
+composer global require shopware/psh
 ```
 
 ### As a PHAR archive (preferred)
