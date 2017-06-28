@@ -9,14 +9,12 @@ namespace Shopware\Psh\Config;
 interface ConfigLoader
 {
     /**
-     * @param string $file
      * @return bool
      */
-    public function isSupported(string $file): bool;
+    public function isSupported(): bool;
 
     /**
-     * @param string $file
      * @return Config
      */
-    public function load(string $file): Config;
+    public function load(): Config;
 }

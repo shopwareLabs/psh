@@ -32,22 +32,27 @@ class YamlConfigFileLoader implements ConfigLoader
      */
     private $configBuilder;
 
+    /** @var string */
+    private $file;
+
     /**
      * @param Parser $yamlReader
      * @param ConfigBuilder $configBuilder
+     * @param string $file
      */
-    public function __construct(Parser $yamlReader, ConfigBuilder $configBuilder)
+    public function __construct(Parser $yamlReader, ConfigBuilder $configBuilder, string $file)
     {
         $this->yamlReader = $yamlReader;
         $this->configBuilder = $configBuilder;
+        $this->file = $file;
     }
 
     /**
      * @inheritdoc
      */
-    public function isSupported(string $file): bool
+    public function isSupported(): bool
     {
-        $file = $this->removeDistExtension($file);
+        $file = $this->removeDistExtension($this->file);
         return pathinfo($file, PATHINFO_EXTENSION) === 'yaml' || pathinfo($file, PATHINFO_EXTENSION) === 'yml';
     }
 
@@ -68,8 +73,9 @@ class YamlConfigFileLoader implements ConfigLoader
     /**
      * @inheritdoc
      */
-    public function load(string $file): Config
+    public function load(): Config
     {
+        $file = $this->file;
         $contents = $this->loadFileContents($file);
         $rawConfigData = $this->parseFileContents($contents);
 

@@ -3,6 +3,8 @@
 
 namespace Shopware\Psh\Application;
 
+use Shopware\Psh\Config\CliParameterConfigLoader;
+use Shopware\Psh\Config\CompositeConfigLoader;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileFinder;
@@ -25,21 +27,27 @@ class ApplicationFactory
 {
     /**
      * @param string $rootDirectory
+     * @param array  $inputArguments
+     *
      * @return Config
      * @throws \RuntimeException
      */
-    public function createConfig(string $rootDirectory): Config
+    public function createConfig(string $rootDirectory, array $inputArguments = []): Config
     {
         $configFinder = new ConfigFileFinder();
         $configFile = $configFinder->discoverFile($rootDirectory);
 
-        $configLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder());
+        $yamlConfigLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder(), $configFile);
 
-        if (!$configLoader->isSupported($configFile)) {
+        if (!$yamlConfigLoader->isSupported()) {
             throw new \RuntimeException('Unable to read configuration from "' . $configFile . '"');
         }
 
-        return $configLoader->load($configFile);
+        $cliInputConfigLoader = new CliParameterConfigLoader(new ConfigBuilder(), $inputArguments);
+
+        $compositeConfigLoader = new CompositeConfigLoader(new ConfigBuilder(), $yamlConfigLoader, $cliInputConfigLoader);
+
+        return $compositeConfigLoader->load();
     }
 
     /**
