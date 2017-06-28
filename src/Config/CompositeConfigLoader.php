@@ -21,8 +21,6 @@ class CompositeConfigLoader implements ConfigLoader
 
     public function load(): Config
     {
-        $this->configBuilder->start();
-
         $header = null;
         $commandPaths = [];
         $dynamicVariables = [];
@@ -34,9 +32,11 @@ class CompositeConfigLoader implements ConfigLoader
             $config = $configLoader->load();
 
             $header = $config->getHeader();
+
             $commandPaths[] = array_map(function(ScriptPath $scriptPath) {
                 return $scriptPath->getPath();
             }, $config->getAllScriptPaths());
+
             $dynamicVariables[] = $config->getDynamicVariables();
             $constants[] = $config->getConstants();
             $templates[] = $config->getTemplates();
@@ -53,6 +53,7 @@ class CompositeConfigLoader implements ConfigLoader
         $constants = array_merge(...$constants);
         $templates = array_merge(...$templates);
 
+        $this->configBuilder->start();
         $this->configBuilder->setHeader($header);
         $this->configBuilder->setCommandPaths($commandPaths);
         $this->configBuilder->setDynamicVariables($dynamicVariables);

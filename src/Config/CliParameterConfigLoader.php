@@ -21,6 +21,7 @@ class CliParameterConfigLoader implements ConfigLoader
 
     public function load(): Config
     {
+        $this->configBuilder->start();
         $constants = [];
         foreach($this->inputArguments as $argument) {
             $argument = explode('=', $argument);
