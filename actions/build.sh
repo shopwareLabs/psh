@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# DESCRIPTION: Builds phar packages
 
 I: rm -R build/php56
 mkdir build/php56

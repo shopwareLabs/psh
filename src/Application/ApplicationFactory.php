@@ -7,6 +7,7 @@ use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileFinder;
 use Shopware\Psh\Config\YamlConfigFileLoader;
+use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\ProcessCommand;
@@ -48,7 +49,7 @@ class ApplicationFactory
      */
     public function createScriptFinder(Config $config): ScriptFinder
     {
-        return new ScriptFinder($config->getAllScriptPaths());
+        return new ScriptFinder($config->getAllScriptPaths(), new DescriptionReader());
     }
 
     /**
