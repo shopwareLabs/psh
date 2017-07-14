@@ -12,7 +12,7 @@ use Shopware\Psh\Listing\ScriptPathNotValidException;
 class ScriptFinderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DescriptionReader|
+     * @var DescriptionReader|\PHPUnit_Framework_MockObject_MockObject
      */
     private $descriptionReaderMock;
 
@@ -31,7 +31,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertCount(3, $finder->getAllScripts());
+        $this->assertCount(4, $finder->getAllScripts());
     }
 
     public function test_script_finder_finds_scripts_if_two_directories_are_passed_and_filters_noise()
@@ -42,7 +42,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertCount(3, $finder->getAllScripts());
+        $this->assertCount(4, $finder->getAllScripts());
         $this->assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
     }
 
@@ -81,6 +81,17 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         
         $this->expectException(ScriptPathNotValidException::class);
         $finder->getAllScripts();
+    }
+
+    public function test_script_finder_adds_description_to_script()
+    {
+        $finder = new ScriptFinder(
+            [new ScriptPath(__DIR__ . '/_scripts')],
+            new DescriptionReader()
+        );
+
+        $script = $finder->findScriptByName('description');
+        $this->assertSame('My description', $script->getDescription());
     }
 
     /**
