@@ -8,12 +8,12 @@ class DescriptionReader
     const KEY_WORD = 'DESCRIPTION:';
 
     /**
-     * @param array $lines
+     * @param String $filePath
      * @return string
      */
-    public function read(array $lines)
+    public function read(String $filePath): String
     {
-        foreach ($lines as $line) {
+        foreach (file($filePath) as $line) {
             if (
                 strpos($line, self::KEY_WORD) !== false &&
                 strpos($line, '#') !== false

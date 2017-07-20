@@ -27,6 +27,7 @@ class ScriptFinder
 
     /**
      * @param ScriptPath[] $scriptPaths
+     * @param DescriptionReader $scriptDescriptionReader
      */
     public function __construct(array $scriptPaths, DescriptionReader $scriptDescriptionReader)
     {
@@ -58,7 +59,7 @@ class ScriptFinder
                     continue;
                 }
 
-                $description = $this->scriptDescriptionReader->read(file($path->getPath() . '/' . $fileName));
+                $description = $this->scriptDescriptionReader->read($path->getPath() . '/' . $fileName);
 
                 $newScript = new Script($path->getPath(), $fileName, $path->getNamespace(), $description);
 
