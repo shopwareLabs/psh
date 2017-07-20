@@ -21,6 +21,8 @@ class Application
 
     const RESULT_ERROR = 1;
 
+    const MIN_PADDING_SIZE = 30;
+
     /**
      * @var CLImate
      */
@@ -193,10 +195,12 @@ class Application
      */
     private function getPaddingSize(array $scripts): Int
     {
-        $paddingSize = 0;
+        $maxScriptNameLength = 0;
         foreach ($scripts as $script) {
-            $paddingSize = strlen($script->getName()) > $paddingSize ? strlen($script->getName()): $paddingSize;
+            if (strlen($script->getName()) > $maxScriptNameLength) {
+                $maxScriptNameLength = strlen($script->getName());
+            }
         }
-        return $paddingSize + 8;
+        return $maxScriptNameLength + self::MIN_PADDING_SIZE;
     }
 }
