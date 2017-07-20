@@ -11,14 +11,9 @@ use Shopware\Psh\Listing\ScriptPathNotValidException;
 
 class ScriptFinderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var DescriptionReader|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $descriptionReaderMock;
-
     public function test_script_finder_holds_contract_if_no_paths_present()
     {
-        $finder = new ScriptFinder([], $this->createMock(DescriptionReader::class));
+        $finder = new ScriptFinder([], new DescriptionReader());
         $this->assertInstanceOf(ScriptFinder::class, $finder);
         $this->assertInternalType('array', $finder->getAllScripts());
     }
@@ -27,7 +22,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ScriptFinder(
             [new ScriptPath(__DIR__ . '/_scripts')],
-            $this->descriptionReaderMock
+            new DescriptionReader()
         );
 
         $this->assertInstanceOf(ScriptFinder::class, $finder);
@@ -38,7 +33,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ScriptFinder(
             [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')],
-            $this->descriptionReaderMock
+            new DescriptionReader()
         );
 
         $this->assertInstanceOf(ScriptFinder::class, $finder);
@@ -50,7 +45,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ScriptFinder(
             [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')],
-            $this->descriptionReaderMock
+            new DescriptionReader()
         );
         $this->assertInstanceOf(ScriptFinder::class, $finder);
 
@@ -63,7 +58,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ScriptFinder(
             [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff', 'biz')],
-            $this->descriptionReaderMock
+            new DescriptionReader()
         );
         $this->assertInstanceOf(ScriptFinder::class, $finder);
 
@@ -76,7 +71,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ScriptFinder(
             [new ScriptPath(__DIR__ . '/_scripts_not_valid_directory')],
-            $this->descriptionReaderMock
+            new DescriptionReader()
         );
         
         $this->expectException(ScriptPathNotValidException::class);
@@ -92,13 +87,5 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
 
         $script = $finder->findScriptByName('description');
         $this->assertSame('My description', $script->getDescription());
-    }
-
-    /**
-     * @before
-     */
-    public function createEmptyDescriptionReaderMock()
-    {
-        $this->descriptionReaderMock = $this->createMock(DescriptionReader::class);
     }
 }

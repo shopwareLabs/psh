@@ -191,7 +191,7 @@ You can add a description to a script which will be printed when the command lis
 
 ```sh
 #!/usr/bin/env bash
-#DESCRIPTION: My usefull comment.
+#DESCRIPTION: My useful comment.
 ```
 
 ## SH-Scripts
