@@ -107,7 +107,9 @@ class Application
             $this->cliMate->yellow()->bold('-> Currently no scripts available');
         }
 
-        $padding = $this->cliMate->padding(12)->char(' ');
+        $paddingSize = $this->getPaddingSize($scripts);
+        $padding = $this->cliMate->padding($paddingSize)->char(' ');
+
         foreach ($scripts as $script) {
             $padding->label('<bold> - ' . $script->getName() . '</bold>')->result('<dim>' . $script->getDescription() . '</dim>');
         }
@@ -183,5 +185,18 @@ class Application
         if ($config->getHeader()) {
             $this->cliMate->out("\n" . $config->getHeader());
         }
+    }
+
+    /**
+     * @param Script[] $scripts
+     * @return Int
+     */
+    private function getPaddingSize(array $scripts): Int
+    {
+        $paddingSize = 0;
+        foreach ($scripts as $script) {
+            $paddingSize = strlen($script->getName()) > $paddingSize ? strlen($script->getName()): $paddingSize;
+        }
+        return $paddingSize + 8;
     }
 }
