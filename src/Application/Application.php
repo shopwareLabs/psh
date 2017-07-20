@@ -97,7 +97,7 @@ class Application
     }
 
     /**
-     * @param array $scripts
+     * @param Script[] $scripts
      */
     public function showListing(array $scripts)
     {
@@ -107,8 +107,9 @@ class Application
             $this->cliMate->yellow()->bold('-> Currently no scripts available');
         }
 
+        $padding = $this->cliMate->padding(12)->char(' ');
         foreach ($scripts as $script) {
-            $this->cliMate->tab()->out('- ' . $script->getName());
+            $padding->label('<bold> - ' . $script->getName() . '</bold>')->result('<dim>' . $script->getDescription() . '</dim>');
         }
 
         $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");

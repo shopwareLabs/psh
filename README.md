@@ -185,6 +185,15 @@ header: |
                     |_|
 ```
 
+#### DESCRIPTION
+
+You can add a description to a script which will be printed when the command list will be displayed.
+
+```sh
+#!/usr/bin/env bash
+#DESCRIPTION: My useful comment.
+```
+
 ## SH-Scripts
 
 Although most of your existing sh scripts should work just fine, you may find some of the following additions useful or necessary.

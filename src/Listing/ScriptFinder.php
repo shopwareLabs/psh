@@ -21,11 +21,18 @@ class ScriptFinder
     private $scriptPaths;
 
     /**
-     * @param ScriptPath[] $scriptPaths
+     * @var DescriptionReader
      */
-    public function __construct(array $scriptPaths)
+    private $scriptDescriptionReader;
+
+    /**
+     * @param ScriptPath[] $scriptPaths
+     * @param DescriptionReader $scriptDescriptionReader
+     */
+    public function __construct(array $scriptPaths, DescriptionReader $scriptDescriptionReader)
     {
         $this->scriptPaths = $scriptPaths;
+        $this->scriptDescriptionReader = $scriptDescriptionReader;
     }
 
     /**
@@ -52,7 +59,9 @@ class ScriptFinder
                     continue;
                 }
 
-                $newScript = new Script($path->getPath(), $fileName, $path->getNamespace());
+                $description = $this->scriptDescriptionReader->read($path->getPath() . '/' . $fileName);
+
+                $newScript = new Script($path->getPath(), $fileName, $path->getNamespace(), $description);
 
                 $scripts[$newScript->getName()] = $newScript;
             }

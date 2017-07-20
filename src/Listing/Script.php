@@ -24,15 +24,22 @@ class Script
     private $environment;
 
     /**
+     * @var string
+     */
+    public $description;
+
+    /**
      * @param string $directory
      * @param string $scriptName
      * @param string $environment
+     * @param string $description
      */
-    public function __construct(string $directory, string $scriptName, string $environment = null)
+    public function __construct(string $directory, string $scriptName, string $environment = null, $description = '')
     {
         $this->directory = $directory;
         $this->scriptName = $scriptName;
         $this->environment = $environment;
+        $this->description = $description;
     }
 
     /**
@@ -71,5 +78,13 @@ class Script
     public function getEnvironment()
     {
         return $this->environment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 }
