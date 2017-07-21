@@ -185,7 +185,7 @@ header: |
                     |_|
 ```
 
-#### DESCRIPTION
+#### Description
 
 You can add a description to a script which will be printed when the command list will be displayed.
 
