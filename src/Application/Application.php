@@ -85,6 +85,17 @@ class Application
             }
         } catch (ScriptNotFoundException $e) {
             $this->notifyError("Script with name {$inputArgs[1]} not found\n");
+
+            $scripts = [];
+            foreach ($scriptNames as $scriptName) {
+                $newScripts = $scriptFinder->findScriptsByName($scriptName);
+                $scripts = array_merge($scripts, $newScripts);
+            }
+
+            if (count($scripts) > 0) {
+                $this->cliMate->yellow()->bold('Have you been looking for this?');
+                $this->showListing($scripts);
+            }
             return self::RESULT_ERROR;
         }
 

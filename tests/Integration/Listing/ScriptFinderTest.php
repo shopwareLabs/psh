@@ -88,4 +88,16 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
         $script = $finder->findScriptByName('description');
         $this->assertSame('My description', $script->getDescription());
     }
+
+    public function test_script_finder_finds_partial_name()
+    {
+        $finder = new ScriptFinder(
+            [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')],
+            new DescriptionReader()
+        );
+
+        $this->assertInstanceOf(ScriptFinder::class, $finder);
+        $this->assertCount(1, $finder->findScriptsByName('test'));
+        $this->assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
+    }
 }
