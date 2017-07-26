@@ -71,6 +71,19 @@ class ScriptFinder
     }
 
     /**
+     * @param string $query
+     * @return array
+     */
+    public function findScriptsByPartialName(string $query): array
+    {
+        $scripts = $this->getAllScripts();
+
+        return array_filter($scripts, function ($key) use ($query) {
+            return strpos($key, $query) > -1 || levenshtein($key, $query) < 3;
+        }, ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
      * @param string $scriptName
      * @return Script
      * @throws ScriptNotFoundException
