@@ -74,7 +74,7 @@ class ScriptFinder
      * @param string $query
      * @return array
      */
-    public function findScriptsByName(string $query): array
+    public function findScriptsByPartialName(string $query): array
     {
         $scripts = $this->getAllScripts();
 

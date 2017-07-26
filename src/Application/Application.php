@@ -88,7 +88,7 @@ class Application
 
             $scripts = [];
             foreach ($scriptNames as $scriptName) {
-                $newScripts = $scriptFinder->findScriptsByName($scriptName);
+                $newScripts = $scriptFinder->findScriptsByPartialName($scriptName);
                 $scripts = array_merge($scripts, $newScripts);
             }
 
