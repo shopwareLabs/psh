@@ -58,7 +58,10 @@ class YamlConfigFileLoader implements ConfigLoader
     private function removeDistExtension(string $file): string
     {
         $fileInfo = pathinfo($file);
-        if ($fileInfo['extension'] === 'dist') {
+        if (
+            $fileInfo['extension'] === 'dist' ||
+            $fileInfo['extension'] === 'override'
+        ) {
             $file = $fileInfo['filename'];
         }
 
