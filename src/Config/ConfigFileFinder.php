@@ -40,7 +40,8 @@ class ConfigFileFinder
     private function preferNonDistributionFiles(array $configFiles): string
     {
         foreach ($configFiles as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) !== 'dist') {
+            $fileExtension = pathinfo($file, PATHINFO_EXTENSION);
+            if ($fileExtension !== 'yaml' || $fileExtension !== 'yml') {
                 return $file;
             }
         }
