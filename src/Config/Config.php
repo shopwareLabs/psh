@@ -103,6 +103,14 @@ class Config
     }
 
     /**
+     * @return ConfigEnvironment[]
+     */
+    public function getEnvironments(): array
+    {
+        return $this->environments;
+    }
+
+    /**
      * @return string
      */
     public function getDefaultEnvironment(): string
