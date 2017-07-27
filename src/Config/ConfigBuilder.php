@@ -110,9 +110,9 @@ class ConfigBuilder
             );
         }
 
-        $this->currentCommandPaths = null;
-        $this->currentDynamicVariables = null;
-        $this->currentConstants = null;
-        $this->templates = null;
+        $this->currentCommandPaths = [];
+        $this->currentDynamicVariables = [];
+        $this->currentConstants = [];
+        $this->templates = [];
     }
 }

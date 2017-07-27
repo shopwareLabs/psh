@@ -8,7 +8,7 @@ use Shopware\Psh\Application\Application;
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @befoe
+     * @before
      * @after
      */
     public function clearCreatedResults()
@@ -110,7 +110,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run(['', 'test']);
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
-        $this->assertFalse(strpos(MockWriter::$content), 'override');
-        $this->assertFalse(strpos(MockWriter::$content), 'test');
+        $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'test'));
     }
 }

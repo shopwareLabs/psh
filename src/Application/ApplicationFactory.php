@@ -6,6 +6,7 @@ namespace Shopware\Psh\Application;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileFinder;
+use Shopware\Psh\Config\ConfigMerger;
 use Shopware\Psh\Config\YamlConfigFileLoader;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
@@ -45,7 +46,8 @@ class ApplicationFactory
             $configs[] = $configLoader->load($configFile);
         }
 
-        return $configs[0];
+        $merger = new ConfigMerger();
+        return $merger->merge(...$configs);
     }
 
     /**
