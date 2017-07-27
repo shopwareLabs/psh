@@ -32,7 +32,7 @@ class ApplicationFactory
     public function createConfig(string $rootDirectory): Config
     {
         $configFinder = new ConfigFileFinder();
-        $configFiles = $configFinder->discoverFile($rootDirectory);
+        $configFiles = $configFinder->discoverFiles($rootDirectory);
 
         $configLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder());
 

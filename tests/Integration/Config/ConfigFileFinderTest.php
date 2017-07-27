@@ -12,14 +12,14 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $loader = new ConfigFileFinder();
 
         $this->expectException(\RuntimeException::class);
-        $loader->discoverFile(sys_get_temp_dir());
+        $loader->discoverFiles(sys_get_temp_dir());
     }
 
     public function test_config_loader_returns_file_if_found()
     {
         $loader = new ConfigFileFinder();
 
-        $file = $loader->discoverFile(__DIR__ . '/_configFileFinderFixtures/sub/sub2/sub3');
+        $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/sub/sub2/sub3');
         $this->assertEquals([ __DIR__ . '/_configFileFinderFixtures/.psh.yaml' ], $file);
     }
 
@@ -27,7 +27,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = new ConfigFileFinder();
 
-        $file = $loader->discoverFile(__DIR__ . '/_configFileFinderFixtures');
+        $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures');
         $this->assertEquals([ __DIR__ . '/_configFileFinderFixtures/.psh.yaml' ], $file);
     }
 
@@ -35,7 +35,19 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = new ConfigFileFinder();
 
-        $file = $loader->discoverFile(__DIR__ . '/_configFileFinderFixtures/dist');
+        $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/dist');
         $this->assertEquals([ __DIR__ . '/_configFileFinderFixtures/.psh.yaml' ], $file);
+    }
+
+    public function test_config_loader_returns_multiple_files()
+    {
+        $loader = new ConfigFileFinder();
+
+        $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderOverrideFixtures');
+
+        $this->assertEquals([
+            __DIR__ . '/_configFileFinderOverrideFixtures/.psh.yaml',
+            __DIR__ . '/_configFileFinderOverrideFixtures/.psh.yaml.override'
+        ], $files);
     }
 }

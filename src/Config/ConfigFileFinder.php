@@ -10,14 +10,21 @@ class ConfigFileFinder
 {
     const VALID_FILE_NAME_GLOB = '.psh.*';
 
-    public function discoverFile(string $fromDirectory): array
+    public function discoverFiles(string $fromDirectory): array
     {
+        $configFiles = [];
         $currentDirectory = $fromDirectory;
+
         do {
             $globResult = glob($currentDirectory . '/' . self::VALID_FILE_NAME_GLOB);
 
             if (count($globResult)) {
-                return [ $this->preferNonDistributionFiles($globResult) ];
+                $configFiles[] = $this->preferNonDistributionFiles($globResult);
+                if ($overrideFile = $this->getOverrideFile($globResult)) {
+                    $configFiles[] = $overrideFile ;
+                }
+
+                return $configFiles;
             }
 
             $currentDirectory = dirname($currentDirectory);
@@ -39,5 +46,20 @@ class ConfigFileFinder
         }
 
         return $configFiles[0];
+    }
+
+    /**
+     * @param array $configFiles
+     * @return string
+     */
+    private function getOverrideFile(array $configFiles): string
+    {
+        foreach ($configFiles as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'override') {
+                return $file;
+            }
+        }
+
+        return '';
     }
 }
