@@ -102,4 +102,15 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
         $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
     }
+
+    public function test_psh_config_override_should_override_existing_psh_configuration()
+    {
+        $application = new Application(__DIR__ . '/_override_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'test']);
+
+        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertFalse(strpos(MockWriter::$content), 'override');
+        $this->assertFalse(strpos(MockWriter::$content), 'test');
+    }
 }
