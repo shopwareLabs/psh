@@ -102,6 +102,19 @@ class Config
         return $this->header;
     }
 
+    /**
+     * @return string
+     */
+    public function getDefaultEnvironment(): string
+    {
+        return $this->defaultEnvironment;
+    }
+
+    /**
+     * @param callable $defaultValues
+     * @param callable $specificValues
+     * @return array
+     */
     private function createResult(callable $defaultValues, callable $specificValues): array
     {
         $mergedKeyValues = [];
