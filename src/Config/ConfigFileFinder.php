@@ -10,14 +10,14 @@ class ConfigFileFinder
 {
     const VALID_FILE_NAME_GLOB = '.psh.*';
 
-    public function discoverFile(string $fromDirectory): string
+    public function discoverFile(string $fromDirectory): array
     {
         $currentDirectory = $fromDirectory;
         do {
             $globResult = glob($currentDirectory . '/' . self::VALID_FILE_NAME_GLOB);
 
             if (count($globResult)) {
-                return $this->preferNonDistributionFiles($globResult);
+                return [ $this->preferNonDistributionFiles($globResult) ];
             }
 
             $currentDirectory = dirname($currentDirectory);

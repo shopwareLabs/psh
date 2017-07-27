@@ -20,7 +20,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFile(__DIR__ . '/_configFileFinderFixtures/sub/sub2/sub3');
-        $this->assertEquals(__DIR__ . '/_configFileFinderFixtures/.psh.yaml', $file);
+        $this->assertEquals([ __DIR__ . '/_configFileFinderFixtures/.psh.yaml' ], $file);
     }
 
     public function test_config_loader_returns_file_in_same_directory_if_found()
@@ -28,7 +28,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFile(__DIR__ . '/_configFileFinderFixtures');
-        $this->assertEquals(__DIR__ . '/_configFileFinderFixtures/.psh.yaml', $file);
+        $this->assertEquals([ __DIR__ . '/_configFileFinderFixtures/.psh.yaml' ], $file);
     }
 
     public function test_config_loader_prefers_original_over_dist_file()
@@ -36,6 +36,6 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFile(__DIR__ . '/_configFileFinderFixtures/dist');
-        $this->assertEquals(__DIR__ . '/_configFileFinderFixtures/.psh.yaml', $file);
+        $this->assertEquals([ __DIR__ . '/_configFileFinderFixtures/.psh.yaml' ], $file);
     }
 }

@@ -32,15 +32,20 @@ class ApplicationFactory
     public function createConfig(string $rootDirectory): Config
     {
         $configFinder = new ConfigFileFinder();
-        $configFile = $configFinder->discoverFile($rootDirectory);
+        $configFiles = $configFinder->discoverFile($rootDirectory);
 
         $configLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder());
 
-        if (!$configLoader->isSupported($configFile)) {
-            throw new \RuntimeException('Unable to read configuration from "' . $configFile . '"');
+        $configs = [];
+        foreach ($configFiles as $configFile) {
+            if (!$configLoader->isSupported($configFile)) {
+                throw new \RuntimeException('Unable to read configuration from "' . $configFile . '"');
+            }
+
+            $configs[] = $configLoader->load($configFile);
         }
 
-        return $configLoader->load($configFile);
+        return $configs[0];
     }
 
     /**
