@@ -303,6 +303,5 @@ You can add more commands to be executed in a chain, by comma separating the scr
 
 ### Bash Autocompletion
 
-```sh
-source bash_autocompletion.sh
-```
+Bash autocompletion is only provided by [PSH-Global](https://github.com/shopwareLabs/psh-global). This will install a global script that fetches 
+the psh.phar file in your project and that will install the autocompletion for you. 
