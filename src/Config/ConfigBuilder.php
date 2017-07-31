@@ -17,13 +17,13 @@ class ConfigBuilder
 
     private $currentEnvironment;
 
-    private $currentCommandPaths;
+    private $currentCommandPaths = [];
 
-    private $currentDynamicVariables;
+    private $currentDynamicVariables = [];
 
-    private $templates;
+    private $templates = [];
 
-    private $currentConstants;
+    private $currentConstants = [];
 
     /**
      * @param string|null $header
@@ -41,7 +41,6 @@ class ConfigBuilder
      */
     public function start(string $environment = null): ConfigBuilder
     {
-        $this->reset();
         if (!$environment) {
             $environment = self::DEFAULT_ENV;
         }
@@ -110,9 +109,9 @@ class ConfigBuilder
             );
         }
 
-        $this->currentCommandPaths = null;
-        $this->currentDynamicVariables = null;
-        $this->currentConstants = null;
-        $this->templates = null;
+        $this->currentCommandPaths = [];
+        $this->currentDynamicVariables = [];
+        $this->currentConstants = [];
+        $this->templates = [];
     }
 }

@@ -129,4 +129,9 @@ class Config
 
         return $this->environments[$name];
     }
+
+    public function getEnvironments(): array
+    {
+        return array_keys($this->environments);
+    }
 }

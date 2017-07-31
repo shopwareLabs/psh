@@ -63,7 +63,7 @@ class Application
     public function run(array $inputArgs): int
     {
         $config = $this->applicationFactory
-            ->createConfig($this->rootDirectory);
+            ->createConfig($this->rootDirectory, $inputArgs);
 
         $scriptFinder = $this->applicationFactory
             ->createScriptFinder($config);
