@@ -301,3 +301,7 @@ You can add more commands to be executed in a chain, by comma separating the scr
 > ./psh.phar unit,build #executes both scripts in order
 ```
 
+### Bash Autocompletion
+
+Bash autocompletion is only provided by [PSH-Global](https://github.com/shopwareLabs/psh-global). This will install a global script that fetches 
+the psh.phar file in your project and that will install the autocompletion for you. 
