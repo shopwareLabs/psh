@@ -6,6 +6,7 @@ namespace Shopware\Psh\Application;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileFinder;
+use Shopware\Psh\Config\ConfigMerger;
 use Shopware\Psh\Config\YamlConfigFileLoader;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
@@ -32,15 +33,21 @@ class ApplicationFactory
     public function createConfig(string $rootDirectory): Config
     {
         $configFinder = new ConfigFileFinder();
-        $configFile = $configFinder->discoverFile($rootDirectory);
+        $configFiles = $configFinder->discoverFiles($rootDirectory);
 
         $configLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder());
 
-        if (!$configLoader->isSupported($configFile)) {
-            throw new \RuntimeException('Unable to read configuration from "' . $configFile . '"');
+        $configs = [];
+        foreach ($configFiles as $configFile) {
+            if (!$configLoader->isSupported($configFile)) {
+                throw new \RuntimeException('Unable to read configuration from "' . $configFile . '"');
+            }
+
+            $configs[] = $configLoader->load($configFile);
         }
 
-        return $configLoader->load($configFile);
+        $merger = new ConfigMerger();
+        return $merger->merge(...$configs);
     }
 
     /**

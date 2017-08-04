@@ -8,7 +8,7 @@ use Shopware\Psh\Application\Application;
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @befoe
+     * @before
      * @after
      */
     public function clearCreatedResults()
@@ -101,5 +101,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
         $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
+    }
+
+    public function test_psh_config_override_should_override_existing_psh_configuration()
+    {
+        $application = new Application(__DIR__ . '/_override_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['test']);
+
+        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'test'));
     }
 }
