@@ -47,25 +47,7 @@ class YamlConfigFileLoader implements ConfigLoader
      */
     public function isSupported(string $file): bool
     {
-        $file = $this->removeDistExtension($file);
-        return pathinfo($file, PATHINFO_EXTENSION) === 'yaml' || pathinfo($file, PATHINFO_EXTENSION) === 'yml';
-    }
-
-    /**
-     * @param string $file
-     * @return string
-     */
-    private function removeDistExtension(string $file): string
-    {
-        $fileInfo = pathinfo($file);
-        if (
-            $fileInfo['extension'] === 'dist' ||
-            $fileInfo['extension'] === 'override'
-        ) {
-            $file = $fileInfo['filename'];
-        }
-
-        return $file;
+        return in_array(pathinfo($file, PATHINFO_EXTENSION), ['yaml', 'yml', 'dist', 'override'], true);
     }
 
     /**
