@@ -7,7 +7,7 @@ PSH is intended to be a **simple** and **easy** alternative to other build scrip
 
 
 Table of contents
-=================
+------------
 
 * [Introduction](#introduction)
 * [Installation](#installation)
@@ -23,7 +23,6 @@ Table of contents
     * [Environments](#environments)
     * [Headers](#headers)
     * [Overriding configuration file](#overriding-configuration-file)
-    * [Description](#description)
 * [SH-Scripts](#sh-scripts)
     * [Defining placeholders](#defining-placeholders)
     * [Including other scripts](#including-other-scripts)
@@ -31,6 +30,7 @@ Table of contents
     * [Open a ssh connection to another machine](#open-a-ssh-connection-to-another-machine)
     * [Ignoring if a statement errored](#ignoring-if-a-statement-errored)
     * [Breaking statements into multiple lines](#breaking-statements-into-multiple-lines)
+    * [Description](#description)
     * [Downsides](#downsides)
 * [Executing it](#executing-it)
 
@@ -218,15 +218,6 @@ header: |
 
 You can place a `.psh.yaml.override` inside your directory where the `.psh.yaml` is located to override the specific configurations.
 
-#### Description
-
-You can add a description to a script which will be printed when the command list will be displayed.
-
-```sh
-#!/usr/bin/env bash
-#DESCRIPTION: My useful comment.
-```
-
 ## SH-Scripts
 
 Although most of your existing sh scripts should work just fine, you may find some of the following additions useful or necessary.
@@ -287,6 +278,15 @@ PSH will then concatenate it prior to execution and execute it all in one.
 bin/phpunit
     --debug
     --verbose
+```
+
+#### Description
+
+You can add a description to a script which will be printed when the command list will be displayed.
+
+```sh
+#!/usr/bin/env bash
+#DESCRIPTION: My useful comment.
 ```
 
 #### Downsides
