@@ -185,6 +185,10 @@ header: |
                     |_|
 ```
 
+#### Overriding configuration file
+
+You can place a `.psh.yaml.override` inside your directory where the `.psh.yaml` is located to override the specific configurations.
+
 #### Description
 
 You can add a description to a script which will be printed when the command list will be displayed.
