@@ -5,6 +5,35 @@ PSH - PHP shell helper
 
 PSH is intended to be a **simple** and **easy** alternative to other build script solutions.
 
+
+Table of contents
+=================
+
+* [Introduction](#introduction)
+* [Installation](#installation)
+ * [Through composer](#through-composer)
+ * [As a PHAR archive (preferred)](#as-a-phar-archive-preferred)
+ * [Build it yourself](#build-it-yourself)
+* [Usage](#usage)
+* [Configuration](#configuration)
+    * [Placeholders](#placeholders)
+    * [Constants](#constants)
+    * [Variables](#variables)
+    * [Templates](#templates)
+    * [Environments](#environments)
+    * [Headers](#headers)
+    * [Overriding configuration file](#overriding-configuration-file)
+    * [Description](#description)
+* [SH-Scripts](#sh-scripts)
+    * [Defining placeholders](#defining-placeholders)
+    * [Including other scripts](#including-other-scripts)
+    * [On demand templates](#on-demand-templates)
+    * [Open a ssh connection to another machine](#open-a-ssh-connection-to-another-machine)
+    * [Ignoring if a statement errored](#ignoring-if-a-statement-errored)
+    * [Breaking statements into multiple lines](#breaking-statements-into-multiple-lines)
+    * [Downsides](#downsides)
+* [Executing it](#executing-it)
+
 Introduction
 ------------
 
