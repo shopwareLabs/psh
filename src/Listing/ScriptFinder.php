@@ -48,7 +48,7 @@ class ScriptFinder
                 throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
             }
 
-            foreach (scandir($path->getPath()) as $fileName) {
+            foreach (scandir($path->getPath(), SCANDIR_SORT_ASCENDING) as $fileName) {
                 if (strpos($fileName, '.') === 0) {
                     continue;
                 }
