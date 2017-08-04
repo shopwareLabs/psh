@@ -55,7 +55,7 @@ class ScriptFinder
 
                 $extension = pathinfo($fileName, PATHINFO_EXTENSION);
 
-                if (!in_array($extension, self::VALID_EXTENSIONS)) {
+                if (!in_array($extension, self::VALID_EXTENSIONS, true)) {
                     continue;
                 }
 

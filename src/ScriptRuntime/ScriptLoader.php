@@ -119,11 +119,13 @@ class ScriptLoader
      */
     private function isExecutableLine(string $command): bool
     {
-        if (!strlen(trim($command))) {
+        $command = trim($command);
+
+        if (!$command) {
             return false;
         }
 
-        if ($this->startsWith('#', trim($command))) {
+        if ($this->startsWith('#', $command)) {
             return false;
         }
 

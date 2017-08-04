@@ -8,10 +8,12 @@ class TemplateCommand implements Command
      * @var string
      */
     private $source;
+
     /**
      * @var string
      */
     private $destination;
+
     /**
      * @var int
      */

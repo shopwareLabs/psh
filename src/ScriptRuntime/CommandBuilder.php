@@ -74,7 +74,12 @@ class CommandBuilder
         return $this;
     }
 
-
+    /**
+     * @param string $source
+     * @param string $destination
+     * @param int $lineNumber
+     * @return $this
+     */
     public function addTemplateCommand(string $source, string $destination, int $lineNumber)
     {
         $this->reset();

@@ -9,7 +9,6 @@ use Symfony\Component\Process\Process;
  */
 class ProcessValueProvider implements ValueProvider
 {
-
     /**
      * @var Process
      */
