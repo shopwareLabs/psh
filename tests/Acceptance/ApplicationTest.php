@@ -107,7 +107,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $application = new Application(__DIR__ . '/_override_app');
         MockWriter::addToApplication($application);
-        $exitCode = $application->run(['', 'test']);
+        $exitCode = $application->run(['test']);
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
         $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
