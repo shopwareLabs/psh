@@ -122,7 +122,7 @@ class Application
      */
     public function showListing(array $scripts)
     {
-        $this->cliMate->green()->bold("Available commands:\n");
+        $this->cliMate->green()->bold('Available commands:')->br(1);
 
         if (!count($scripts)) {
             $this->cliMate->yellow()->bold('-> Currently no scripts available');
@@ -131,8 +131,17 @@ class Application
         $paddingSize = $this->getPaddingSize($scripts);
         $padding = $this->cliMate->padding($paddingSize)->char(' ');
 
+        $scriptEnvironment = false;
+
         foreach ($scripts as $script) {
-            $padding->label('<bold> - ' . $script->getName() . '</bold>')->result('<dim>' . $script->getDescription() . '</dim>');
+            if ($scriptEnvironment !== $script->getEnvironment()) {
+                $scriptEnvironment = $script->getEnvironment();
+                $this->cliMate->green()->br(1)->bold($scriptEnvironment ?? 'default' . ':');
+            }
+
+            $padding
+                ->label('<bold> - ' . $script->getName() . '</bold>')
+                ->result('<dim>' . $script->getDescription() . '</dim>');
         }
 
         $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");
