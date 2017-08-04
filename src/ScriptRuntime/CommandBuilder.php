@@ -45,8 +45,7 @@ class CommandBuilder
                 $this->currentShellCommand,
                 $this->startLine,
                 $this->ignoreError,
-                $this->tty,
-                $this->template
+                $this->tty
             );
         }
 
