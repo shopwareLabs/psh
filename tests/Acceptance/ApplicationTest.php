@@ -113,4 +113,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'test'));
     }
+
+    public function test_psh_groups_commands_by_environment()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['']);
+
+        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+
+        $this->assertNotFalse(strstr(MockWriter::$content, "default:"));
+        $this->assertNotFalse(strstr(MockWriter::$content, "test:"));
+    }
 }
