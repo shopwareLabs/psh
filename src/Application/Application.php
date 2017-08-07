@@ -122,7 +122,7 @@ class Application
      */
     public function showListing(array $scripts)
     {
-        $this->cliMate->green()->bold('Available commands:')->br(1);
+        $this->cliMate->green()->bold('Available commands:')->br();
 
         if (!count($scripts)) {
             $this->cliMate->yellow()->bold('-> Currently no scripts available');
@@ -136,7 +136,7 @@ class Application
         foreach ($scripts as $script) {
             if ($scriptEnvironment !== $script->getEnvironment()) {
                 $scriptEnvironment = $script->getEnvironment();
-                $this->cliMate->green()->br(1)->bold($scriptEnvironment ?? 'default' . ':');
+                $this->cliMate->green()->br()->bold(($scriptEnvironment ?? 'default'). ':');
             }
 
             $padding
