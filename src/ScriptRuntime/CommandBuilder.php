@@ -45,8 +45,7 @@ class CommandBuilder
                 $this->currentShellCommand,
                 $this->startLine,
                 $this->ignoreError,
-                $this->tty,
-                $this->template
+                $this->tty
             );
         }
 
@@ -75,7 +74,12 @@ class CommandBuilder
         return $this;
     }
 
-
+    /**
+     * @param string $source
+     * @param string $destination
+     * @param int $lineNumber
+     * @return $this
+     */
     public function addTemplateCommand(string $source, string $destination, int $lineNumber)
     {
         $this->reset();

@@ -27,6 +27,7 @@ class ProcessEnvironment
     /**
      * @param array $constants
      * @param array $variables
+     * @param array $templates
      */
     public function __construct(array $constants, array $variables, array $templates)
     {

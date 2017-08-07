@@ -8,7 +8,6 @@ namespace Shopware\Psh\Config;
  */
 class ConfigEnvironment
 {
-
     /**
      * @var array
      */

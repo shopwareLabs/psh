@@ -71,7 +71,7 @@ class ConfigMerger
      * @param ConfigEnvironment $overrideConfigEnv
      * @return array|ScriptPath[]
      */
-    private function overridePaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv)
+    private function overridePaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
         if ($overrideConfigEnv->getAllScriptPaths()) {
             return $overrideConfigEnv->getAllScriptPaths();

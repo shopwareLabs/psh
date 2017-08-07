@@ -90,7 +90,7 @@ class ProcessExecutor
                     );
 
                     $this->renderTemplate($template);
-                break;
+                    break;
             }
         }
 

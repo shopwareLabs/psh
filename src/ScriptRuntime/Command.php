@@ -4,7 +4,6 @@ namespace Shopware\Psh\ScriptRuntime;
 
 interface Command
 {
-
     /**
      * @return int
      */

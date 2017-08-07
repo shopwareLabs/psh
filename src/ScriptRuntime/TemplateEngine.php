@@ -46,8 +46,8 @@ class TemplateEngine
     {
         $valueName = substr($placeholder, 2, -2);
 
-        foreach ($allValues as $key => $value) {
-            if (strtoupper($key) == $valueName) {
+        foreach (array_keys($allValues) as $key) {
+            if (strtoupper($key) === $valueName) {
                 return $allValues[$key]->getValue();
             }
         }
