@@ -33,7 +33,7 @@ Table of contents
     * [Description](#description)
     * [Downsides](#downsides)
 * [Executing it](#executing-it)
-* [Bash Autocompletion](#Bash Autocompletion)
+* [Bash Autocompletion](#bash-autocompletion)
 
 Introduction
 ------------
