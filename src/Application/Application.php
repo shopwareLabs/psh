@@ -68,7 +68,6 @@ class Application
         $scriptFinder = $this->applicationFactory
             ->createScriptFinder($config);
 
-        $this->printHeader($config);
         $scriptNames = $this->extractScriptNames($inputArgs);
         if (count($scriptNames) > 0 && $scriptNames[0] === 'bash_autocompletion_dump') {
             $scripts = $scriptFinder->getAllScripts();
@@ -78,6 +77,8 @@ class Application
             echo implode(' ', $commands);
             return self::RESULT_SUCCESS;
         }
+
+        $this->printHeader($config);
 
         try {
             foreach ($scriptNames as $scriptName) {
