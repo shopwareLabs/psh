@@ -23,18 +23,26 @@ class Config
     private $environments;
 
     /**
+     * @var array
+     */
+    private $params;
+
+    /**
      * @param string|null $header
      * @param string $defaultEnvironment
      * @param ConfigEnvironment[] $environments
+     * @param array $params
      */
     public function __construct(
         string $header = null,
         string $defaultEnvironment,
-        array $environments
+        array $environments,
+        array $params
     ) {
         $this->header = $header;
         $this->defaultEnvironment = $defaultEnvironment;
         $this->environments = $environments;
+        $this->params = $params;
     }
 
     /**
@@ -81,7 +89,6 @@ class Config
         );
     }
 
-
     /**
      * @param string|null $environment
      * @return array
@@ -90,7 +97,8 @@ class Config
     {
         return $this->createResult(
             [$this->getEnvironment(), 'getConstants'],
-            [$this->getEnvironment($environment), 'getConstants']
+            [$this->getEnvironment($environment), 'getConstants'],
+            [$this, 'getParams']
         );
     }
 
@@ -119,20 +127,25 @@ class Config
     }
 
     /**
-     * @param callable $defaultValues
-     * @param callable $specificValues
      * @return array
      */
-    private function createResult(callable $defaultValues, callable $specificValues): array
+    private function getParams() : array
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param callable[] ...$valueProviders
+     * @return array
+     */
+    private function createResult(callable ...$valueProviders): array
     {
         $mergedKeyValues = [];
 
-        foreach ($defaultValues() as $key => $value) {
-            $mergedKeyValues[$key] = $value;
-        }
-
-        foreach ($specificValues() as $key => $value) {
-            $mergedKeyValues[$key] = $value;
+        foreach ($valueProviders as $valueProvider) {
+            foreach ($valueProvider() as $key => $value) {
+                $mergedKeyValues[$key] = $value;
+            }
         }
 
         return $mergedKeyValues;

@@ -62,11 +62,14 @@ class Application
      */
     public function run(array $inputArgs): int
     {
-        $config = $this->applicationFactory
-            ->createConfig($this->rootDirectory);
+        try {
+            $config = $this->applicationFactory->createConfig($this->rootDirectory, $inputArgs);
+        } catch (InvalidParameterException $e) {
+            $this->notifyError($e->getMessage() . "\n");
+            return self::RESULT_ERROR;
+        }
 
-        $scriptFinder = $this->applicationFactory
-            ->createScriptFinder($config);
+        $scriptFinder = $this->applicationFactory->createScriptFinder($config);
 
         $scriptNames = $this->extractScriptNames($inputArgs);
         if (count($scriptNames) > 0 && $scriptNames[0] === 'bash_autocompletion_dump') {
@@ -137,7 +140,7 @@ class Application
         foreach ($scripts as $script) {
             if ($scriptEnvironment !== $script->getEnvironment()) {
                 $scriptEnvironment = $script->getEnvironment();
-                $this->cliMate->green()->br()->bold(($scriptEnvironment ?? 'default'). ':');
+                $this->cliMate->green()->br()->bold(($scriptEnvironment ?? 'default') . ':');
             }
 
             $padding

@@ -16,7 +16,8 @@ interface ConfigLoader
 
     /**
      * @param string $file
+     * @param array $params
      * @return Config
      */
-    public function load(string $file): Config;
+    public function load(string $file, array $params): Config;
 }

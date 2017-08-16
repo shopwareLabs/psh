@@ -335,6 +335,24 @@ You can add more commands to be executed in a chain, by comma separating the scr
 > ./psh.phar unit,build #executes both scripts in order
 ```
 
+You can add parameter for replace placeholder in your .sh files like the following examples:
+
+```sh 
+    ./ps.phar unit --param someValue  #or
+    ./ps.phar unit --param=someValue --otherParam value --onMoreParam=value ...
+    ./ps.phar list --add -l
+```
+
+in your .sh files write.
+```sh 
+    ls _ADD_
+```
+
+executes:
+```sh
+    ls -l
+``` 
+
 ### Bash Autocompletion
 
 Bash autocompletion is only provided by [PSH-Global](https://github.com/shopwareLabs/psh-global). This will install a global script that fetches 

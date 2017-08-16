@@ -53,7 +53,7 @@ class YamlConfigFileLoader implements ConfigLoader
     /**
      * @inheritdoc
      */
-    public function load(string $file): Config
+    public function load(string $file, array $params): Config
     {
         $contents = $this->loadFileContents($file);
         $rawConfigData = $this->parseFileContents($contents);
@@ -68,13 +68,14 @@ class YamlConfigFileLoader implements ConfigLoader
         $this->setConfigData($file, $rawConfigData);
 
         $environments = $this->extractData(self::KEY_ENVIRONMENTS, $rawConfigData, []);
+
         foreach ($environments as $name => $data) {
             $this->configBuilder->start($name);
             $this->setConfigData($file, $data);
         }
 
         return $this->configBuilder
-            ->create();
+            ->create($params);
     }
 
     /**

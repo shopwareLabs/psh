@@ -93,10 +93,11 @@ class ConfigBuilder
     /**
      * @return Config
      */
-    public function create(): Config
+    public function create(array $params): Config
     {
         $this->reset();
-        return new Config($this->header, self::DEFAULT_ENV, $this->environments);
+
+        return new Config($this->header, self::DEFAULT_ENV, $this->environments, $params);
     }
 
     private function reset()

@@ -3,7 +3,6 @@
 namespace Shopware\Psh\Test\Unit\Config;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Psh\Application\ApplicationFactory;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigEnvironment;
 use Shopware\Psh\Config\ConfigMerger;
@@ -19,7 +18,7 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_return_config()
     {
-        $config = new Config('my header', '', []);
+        $config = new Config('my header', '', [], []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config);
@@ -30,8 +29,8 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_override_header()
     {
-        $config = new Config('my header', '', []);
-        $override = new Config('override', '', []);
+        $config = new Config('my header', '', [], []);
+        $override = new Config('override', '', [], []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -42,8 +41,8 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_override_default_environment()
     {
-        $config = new Config('', 'default env', []);
-        $override = new Config('', 'default env override', []);
+        $config = new Config('', 'default env', [], []);
+        $override = new Config('', 'default env override', [], []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -54,8 +53,8 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_use_original_config_if_override_is_empty()
     {
-        $config = new Config('my header', 'default env', [self::DEFAULT_ENV => new ConfigEnvironment()]);
-        $override = new Config('', '', []);
+        $config = new Config('my header', 'default env', [self::DEFAULT_ENV => new ConfigEnvironment()], []);
+        $override = new Config('', '', [], []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -69,8 +68,8 @@ class ConfigMergerTest extends TestCase
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(['actions'])];
 
-        $config = new Config('', '', $envs);
-        $override = new Config('', '', []);
+        $config = new Config('', '', $envs, []);
+        $override = new Config('', '', [], []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -85,8 +84,8 @@ class ConfigMergerTest extends TestCase
 
         $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment(['override/actions'])];
 
-        $config = new Config('', self::DEFAULT_ENV, $envs);
-        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs);
+        $config = new Config('', self::DEFAULT_ENV, $envs, []);
+        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs, []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -101,8 +100,8 @@ class ConfigMergerTest extends TestCase
 
         $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment([], ['DYNAMIC_VAR' => 'dynamic value override'])];
 
-        $config = new Config('', self::DEFAULT_ENV, $envs);
-        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs);
+        $config = new Config('', self::DEFAULT_ENV, $envs, []);
+        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs, []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -118,8 +117,8 @@ class ConfigMergerTest extends TestCase
 
         $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment([], ['DYNAMIC_VAR' => 'dynamic value override', 'DYNAMIC_OVERRIDE_VAR' => 'dynamic override value'])];
 
-        $config = new Config('', self::DEFAULT_ENV, $envs);
-        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs);
+        $config = new Config('', self::DEFAULT_ENV, $envs, []);
+        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs, []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -147,8 +146,8 @@ class ConfigMergerTest extends TestCase
             ])
         ];
 
-        $config = new Config('', self::DEFAULT_ENV, $envs);
-        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs);
+        $config = new Config('', self::DEFAULT_ENV, $envs, []);
+        $override = new Config('', self::DEFAULT_ENV, $overrideEnvs, []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
@@ -174,8 +173,8 @@ class ConfigMergerTest extends TestCase
             ])
         ];
 
-        $config = new Config('', self::DEFAULT_ENV, $envs);
-        $overrideConfig = new Config('', self::DEFAULT_ENV, $overrideEnvs);
+        $config = new Config('', self::DEFAULT_ENV, $envs, []);
+        $overrideConfig = new Config('', self::DEFAULT_ENV, $overrideEnvs, []);
 
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $overrideConfig);
