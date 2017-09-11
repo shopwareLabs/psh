@@ -6,7 +6,7 @@ namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 use Shopware\Psh\ScriptRuntime\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
 
-class TemplateEngineTest extends \PHPUnit_Framework_TestCase
+class TemplateEngineTest extends \PHPUnit\Framework\TestCase
 {
     private $fixtures = [
         'mysql -u __USER__ -p__PASSWORD__ __DATABASE__' => 3,

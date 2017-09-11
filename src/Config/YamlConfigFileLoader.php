@@ -111,7 +111,7 @@ class YamlConfigFileLoader implements ConfigLoader
     /**
      * @param string $key
      * @param array $rawConfig
-     * @param mixed $default
+     * @param string|array $default
      * @return mixed|null
      */
     private function extractData(string $key, array $rawConfig, $default = false)
@@ -143,7 +143,7 @@ class YamlConfigFileLoader implements ConfigLoader
 
     /**
      * @param string $file
-     * @param $rawConfigData
+     * @param array $rawConfigData
      * @return array
      */
     private function extractCommandPaths(string $file, array $rawConfigData): array

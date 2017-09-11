@@ -28,13 +28,13 @@ class Config
     private $params;
 
     /**
-     * @param string|null $header
+     * @param string $header
      * @param string $defaultEnvironment
      * @param ConfigEnvironment[] $environments
      * @param array $params
      */
     public function __construct(
-        string $header = null,
+        string $header,
         string $defaultEnvironment,
         array $environments,
         array $params
@@ -105,7 +105,7 @@ class Config
     /**
      * @return string
      */
-    public function getHeader()
+    public function getHeader(): string
     {
         return $this->header;
     }

@@ -2,6 +2,9 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\ScriptRuntime\Template;
+use Shopware\Psh\ScriptRuntime\ValueProvider;
+
 class ConfigMerger
 {
     /**
@@ -59,7 +62,7 @@ class ConfigMerger
     /**
      * @param ConfigEnvironment $configEnvironment
      * @param ConfigEnvironment $overrideEnv
-     * @return array
+     * @return ValueProvider[]
      */
     private function mergeDynamicVariables(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideEnv): array
     {
@@ -69,7 +72,7 @@ class ConfigMerger
     /**
      * @param ConfigEnvironment $configEnvironment
      * @param ConfigEnvironment $overrideConfigEnv
-     * @return array|ScriptPath[]
+     * @return ScriptPath[]
      */
     private function overridePaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
@@ -83,7 +86,7 @@ class ConfigMerger
     /**
      * @param ConfigEnvironment $configEnvironment
      * @param ConfigEnvironment $overrideConfigEnv
-     * @return array
+     * @return ValueProvider[]
      */
     private function mergeConstants(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
@@ -92,8 +95,8 @@ class ConfigMerger
 
     /**
      * @param ConfigEnvironment $configEnvironment
-     * @param $overrideConfigEnv
-     * @return array
+     * @param ConfigEnvironment $overrideConfigEnv
+     * @return Template[]
      */
     private function overrideTemplates(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {

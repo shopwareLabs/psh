@@ -19,7 +19,7 @@ class Script
     private $scriptName;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $environment;
 

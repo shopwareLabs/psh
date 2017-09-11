@@ -3,6 +3,7 @@ language: php
 php:
     - 7.0
     - 7.1
+    - 7.2
 
 sudo: false
 
@@ -13,6 +14,7 @@ cache:
 before_script:
     - if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]]; then openssl aes-256-cbc -K $encrypted_d4931f6d241c_key -iv $encrypted_d4931f6d241c_iv -in .travis/github_deploy_key.enc -out .travis/github_deploy_key -d; fi
     - composer self-update
+    - composer update
     - composer install
 
 script:

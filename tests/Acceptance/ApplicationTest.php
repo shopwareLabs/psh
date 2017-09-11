@@ -5,7 +5,7 @@ namespace Shopware\Psh\Test\Acceptance;
 
 use Shopware\Psh\Application\Application;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @before
@@ -65,7 +65,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'), '(3/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertNotFalse(
-            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
+            strpos(MockWriter::$content, 'All commands successfully executed!'),
+            'All commands successfully executed!'
         );
         $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
@@ -91,7 +92,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "prod"'));
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertNotFalse(
-            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
+            strpos(MockWriter::$content, 'All commands successfully executed!'),
+            'All commands successfully executed!'
         );
         $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
@@ -108,7 +110,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
         $this->assertFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertFalse(
-            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
+            strpos(MockWriter::$content, 'All commands successfully executed!'),
+            'All commands successfully executed!'
         );
         $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
     }

@@ -23,9 +23,9 @@
         "khill/php-duration": "^1.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^1.11",
-        "phpunit/phpunit": "^5.4",
-        "janpiet/php-version-transpiler": "dev-master"
+        "phpunit/phpunit": "^6",
+        "janpiet/php-version-transpiler": "dev-master",
+        "tm/tooly-composer-script": "^1.2"
     },
     "license": "MIT",
     "authors": [
@@ -36,6 +36,20 @@
     ],
     "config": {
         "bin-dir": "bin"
+    },
+    "scripts": {
+        "post-install-cmd": "Tooly\\ScriptHandler::installPharTools",
+        "post-update-cmd": "Tooly\\ScriptHandler::installPharTools"
+    },
+    "extra": {
+        "tools": {
+            "phpstan": {
+                "url": "https://github.com/phpstan/phpstan/releases/download/0.9.2/phpstan.phar"
+            },
+            "php-cs-fixer": {
+                "url": "https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar"
+            }
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

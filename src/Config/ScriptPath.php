@@ -5,9 +5,10 @@ namespace Shopware\Psh\Config;
 class ScriptPath
 {
     /**
-     * @var string
+     * @var null|string
      */
     private $namespace;
+
     /**
      * @var string
      */

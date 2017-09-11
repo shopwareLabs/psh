@@ -5,7 +5,7 @@ namespace Shopware\Psh\Test\Integration\Config;
 
 use Shopware\Psh\Config\ConfigFileFinder;
 
-class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
+class ConfigFileFinderTest extends \PHPUnit\Framework\TestCase
 {
     public function test_config_loader_throw_when_it_cant_find_a_psh_file()
     {

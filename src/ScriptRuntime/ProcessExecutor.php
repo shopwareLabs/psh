@@ -63,33 +63,10 @@ class ProcessExecutor
         foreach ($commands as $index => $command) {
             switch ($command) {
                 case $command instanceof ProcessCommand:
-                    $parsedCommand = $this->getParsedShellCommand($command);
-
-                    $this->logger->logCommandStart(
-                        $parsedCommand,
-                        $command->getLineNumber(),
-                        $command->isIgnoreError(),
-                        $index,
-                        count($commands)
-                    );
-
-                    $process = $this->environment->createProcess($parsedCommand);
-
-                    $this->setUpProcess($command, $process);
-                    $this->runProcess($process);
-                    $this->testProcessResultValid($command, $process);
+                    $this->executeProcessCommand($command, $index, count($commands));
                     break;
                 case $command instanceof TemplateCommand:
-                    $template = $command->getTemplate();
-
-                    $this->logger->logTemplate(
-                        $template->getDestination(),
-                        $command->getLineNumber(),
-                        $index,
-                        count($commands)
-                    );
-
-                    $this->renderTemplate($template);
+                    $this->executeTemplateCommand($command, $index, count($commands));
                     break;
             }
         }
@@ -156,7 +133,7 @@ class ProcessExecutor
     }
 
     /**
-     * @param $template
+     * @param Template $template
      */
     private function renderTemplate(Template $template)
     {
@@ -169,5 +146,48 @@ class ProcessExecutor
             ->render($template->getContent(), $this->environment->getAllValues());
 
         $template->setContents($renderedTemplateContent);
+    }
+
+    /**
+     * @param ProcessCommand $command
+     * @param int $index
+     * @param int $maxCommands
+     */
+    private function executeProcessCommand(ProcessCommand $command, int $index, int $maxCommands)
+    {
+        $parsedCommand = $this->getParsedShellCommand($command);
+
+        $this->logger->logCommandStart(
+            $parsedCommand,
+            $command->getLineNumber(),
+            $command->isIgnoreError(),
+            $index,
+            $maxCommands
+        );
+
+        $process = $this->environment->createProcess($parsedCommand);
+
+        $this->setUpProcess($command, $process);
+        $this->runProcess($process);
+        $this->testProcessResultValid($command, $process);
+    }
+
+    /**
+     * @param TemplateCommand $command
+     * @param int $index
+     * @param int $maxCommands
+     */
+    private function executeTemplateCommand(TemplateCommand $command, int $index, int $maxCommands)
+    {
+        $template = $command->getTemplate();
+
+        $this->logger->logTemplate(
+            $template->getDestination(),
+            $command->getLineNumber(),
+            $index,
+            $maxCommands
+        );
+
+        $this->renderTemplate($template);
     }
 }

@@ -5,10 +5,8 @@
 # build
 build/*
 !build/.gitkeep
+.php_cs.cache
 
 # composer
 vendor
 bin
-
-#externals
-humbuglog.txt

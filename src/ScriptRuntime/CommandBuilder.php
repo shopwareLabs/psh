@@ -9,7 +9,7 @@ namespace Shopware\Psh\ScriptRuntime;
 class CommandBuilder
 {
     /**
-     * @var ProcessCommand[]
+     * @var Command[]
      */
     private $allCommands = [];
 
@@ -49,8 +49,8 @@ class CommandBuilder
             );
         }
 
-        $this->currentShellCommand = null;
-        $this->startLine = null;
+        $this->currentShellCommand = '';
+        $this->startLine = 0;
         $this->ignoreError = false;
         $this->tty = false;
         $this->template = false;
@@ -127,7 +127,7 @@ class CommandBuilder
     }
 
     /**
-     * @return ProcessCommand[]
+     * @return Command[]
      */
     public function getAll(): array
     {

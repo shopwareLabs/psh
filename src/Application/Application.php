@@ -179,23 +179,23 @@ class Application
     }
 
     /**
-     * @param $string
+     * @param string $message
      */
-    public function notifySuccess($string)
+    public function notifySuccess(string $message)
     {
-        $this->cliMate->bold()->green($string);
+        $this->cliMate->bold()->green($message);
     }
 
     /**
-     * @param $string
+     * @param string $message
      */
-    public function notifyError($string)
+    public function notifyError(string $message)
     {
-        $this->cliMate->bold()->red($string);
+        $this->cliMate->bold()->red($message);
     }
 
     /**
-     * @param $config
+     * @param Config $config
      */
     protected function printHeader(Config $config)
     {
@@ -228,11 +228,13 @@ class Application
     private function getPaddingSize(array $scripts): Int
     {
         $maxScriptNameLength = 0;
+
         foreach ($scripts as $script) {
             if (strlen($script->getName()) > $maxScriptNameLength) {
                 $maxScriptNameLength = strlen($script->getName());
             }
         }
+
         return $maxScriptNameLength + self::MIN_PADDING_SIZE;
     }
 

@@ -9,7 +9,7 @@ use Shopware\Psh\Config\ScriptPath;
 use Shopware\Psh\Config\YamlConfigFileLoader;
 use Symfony\Component\Yaml\Parser;
 
-class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
+class YamlConfigFileLoaderTest extends \PHPUnit\Framework\TestCase
 {
     private function createConfigLoader(Parser $parser = null)
     {

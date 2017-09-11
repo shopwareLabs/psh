@@ -9,7 +9,7 @@ use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\Listing\ScriptPathNotValidException;
 
-class ScriptFinderTest extends \PHPUnit_Framework_TestCase
+class ScriptFinderTest extends \PHPUnit\Framework\TestCase
 {
     public function test_script_finder_holds_contract_if_no_paths_present()
     {

@@ -20,7 +20,7 @@ class ProcessValueProvider implements ValueProvider
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getValue(): string
     {

@@ -25,15 +25,15 @@ class ProcessEnvironment
     private $templates;
 
     /**
-     * @param array $constants
-     * @param array $variables
-     * @param array $templates
+     * @param array $constantDefinitions
+     * @param array $variableDefinitions
+     * @param array $templateDefinitions
      */
-    public function __construct(array $constants, array $variables, array $templates)
+    public function __construct(array $constantDefinitions, array $variableDefinitions, array $templateDefinitions)
     {
-        $this->constants = $this->initializeConstants($constants);
-        $this->variables = $this->initializeVariables($variables);
-        $this->templates = $this->initializeTemplates($templates);
+        $this->constants = $this->initializeConstants($constantDefinitions);
+        $this->variables = $this->initializeVariables($variableDefinitions);
+        $this->templates = $this->initializeTemplates($templateDefinitions);
     }
 
     /**
@@ -67,7 +67,7 @@ class ProcessEnvironment
 
     /**
      * @param array $templates
-     * @return ValueProvider[]
+     * @return Template[]
      */
     private function initializeTemplates(array $templates): array
     {
