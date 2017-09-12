@@ -8,9 +8,9 @@ namespace Shopware\Psh\ScriptRuntime;
  */
 class TemplateEngine
 {
-    const REGEX = '/__[A-Z,_]+?__(?!\(sic\!\))/';
+    const REGEX = '/__[A-Z,_,-]+?__(?!\(sic\!\))/';
 
-    const REGEX_SIC = '/__[A-Z,_]+?__(\(sic\!\))/';
+    const REGEX_SIC = '/__[A-Z,_,-]+?__(\(sic\!\))/';
 
     /**
      * @param string $shellCommand

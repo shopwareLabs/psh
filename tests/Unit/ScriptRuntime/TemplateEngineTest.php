@@ -39,10 +39,12 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('baz foo', $engine->render('__BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('foo baz foo', $engine->render('foo __BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo baz foo', $engine->render('foo __FO-BAR__ foo', ['FO-BAR' => new SimpleValueProvider('baz')]));
 
         $this->assertEquals('foo __BAR__', $engine->render('foo __BAR__(sic!)', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('__BAR__ foo', $engine->render('__BAR__(sic!) foo', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('foo __BAR__ foo', $engine->render('foo __BAR__(sic!) foo', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo __FO-BAR__ foo', $engine->render('foo __FO-BAR__(sic!) foo', ['FO-BAR' => new SimpleValueProvider('baz')]));
     }
 
     public function test_values_can_be_set_case_insensitive()
@@ -59,7 +61,7 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
     {
         $engine = new TemplateEngine();
 
-        $this->setExpectedException(\RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $engine->render('foo __BAR__, __BUZ__', ['BAR' => new SimpleValueProvider('baz')]);
     }
 
@@ -91,6 +93,17 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
                 [
                     'app_host' => new SimpleValueProvider('shopware.com'),
                     'app_path' => new SimpleValueProvider('/shopware/'),
+                ]
+            )
+        );
+
+        $this->assertEquals(
+            'curl http://shopware.com/shopware/__MYKEY__',
+            $engine->render(
+                'curl http://__APP-HOST____APP-PATH____MYKEY__(sic!)',
+                [
+                    'app-host' => new SimpleValueProvider('shopware.com'),
+                    'app-path' => new SimpleValueProvider('/shopware/'),
                 ]
             )
         );
