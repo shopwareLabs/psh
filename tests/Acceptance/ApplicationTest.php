@@ -24,6 +24,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run([]);
 
         $this->assertEquals(0, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'test:env'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'test:env2'));
         $this->assertNotFalse(strpos(MockWriter::$content, '4 script(s) available'));
@@ -39,6 +40,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, $exitCode);
         $this->assertNotFalse(strpos(MockWriter::$content, 'ls -al'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
         $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Starting'));
         $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'));
         $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'));
@@ -58,6 +60,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(0, $exitCode);
         $this->assertNotFalse(strpos(MockWriter::$content, 'ls -al'), 'ls -al');
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
         $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Starting'), '(1/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'), '(2/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'), '(3/3) Starting');
@@ -83,6 +86,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run(['', 'simple,test:env']);
 
         $this->assertEquals(0, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "prod"'));
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
@@ -98,6 +102,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run(['', 'error,test:env']);
 
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
         $this->assertFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
         $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
@@ -110,6 +115,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run(['test']);
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yaml extended by .psh.yaml.override'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'test'));
     }
@@ -122,6 +128,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
 
+        $this->assertNotFalse(strstr(MockWriter::$content, "Using .psh.yml"));
         $this->assertNotFalse(strstr(MockWriter::$content, "default:"));
         $this->assertNotFalse(strstr(MockWriter::$content, "test:"));
     }
