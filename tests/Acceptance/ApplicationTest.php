@@ -110,7 +110,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function test_psh_config_override_should_override_existing_psh_configuration()
     {
-        $application = new Application(__DIR__ . '/_overrde_app');
+        $application = new Application(__DIR__ . '/_override_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['test']);
 
