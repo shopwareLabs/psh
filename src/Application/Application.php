@@ -6,6 +6,7 @@ namespace Shopware\Psh\Application;
 use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
+use Shopware\Psh\Config\ConfigFileFinder;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptNotFoundException;
 use Shopware\Psh\Listing\ScriptPathNotValidException;
@@ -82,6 +83,9 @@ class Application
         }
 
         $this->printHeader($config);
+
+        $configFiles = $this->applicationFactory->getConfigFiles($this->rootDirectory);
+        $this->printConfigFiles($configFiles);
 
         try {
             foreach ($scriptNames as $scriptName) {
@@ -218,6 +222,19 @@ class Application
 
         if ($config->getHeader()) {
             $this->cliMate->out("\n" . $config->getHeader());
+        }
+    }
+
+    protected function printConfigFiles(array $configFiles)
+    {
+        for ($i = 0; $i < count($configFiles); $i++) {
+            $configFiles[$i] = str_replace($this->rootDirectory."/", "", $configFiles[$i]);
+        }
+
+        if (count($configFiles) == 1) {
+            $this->cliMate->yellow()->out(sprintf("Using %s \n", $configFiles[0]));
+        } else {
+            $this->cliMate->yellow()->out(sprintf("Using %s extended by %s \n", $configFiles[0], $configFiles[1]));
         }
     }
 
