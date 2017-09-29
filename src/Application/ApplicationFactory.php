@@ -132,4 +132,9 @@ class ApplicationFactory
 
         return $reformattedParams;
     }
+
+    public function getConfigFiles($directory)
+    {
+        return  (new ConfigFileFinder())->discoverFiles($directory);
+    }
 }
