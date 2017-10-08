@@ -103,6 +103,41 @@ class Config
     }
 
     /**
+     * @param string|null $environment
+     * @return LocalConfigPlaceholder[]
+     */
+    public function getLocals(string $environment = null): array
+    {
+        return $this->createResult(
+            [$this->getEnvironment(), 'getLocals'],
+            [$this->getEnvironment($environment), 'getLocals']
+        );
+    }
+
+    /**
+     * @param string $environment
+     * @return LocalConfigPlaceholder[]
+     */
+    public function getUnresolvedLocalPlaceholders(PlaceholderResolver $placeholderResolver, string $environment = null): array
+    {
+        $definedKeys = array_merge(
+            array_keys($this->getConstants($environment)),
+            array_keys($this->getDynamicVariables($environment))
+        );
+
+        $definedKeys = array_map('strtolower', $definedKeys);
+
+        $missingPlaceholders =  array_filter($this->getLocals($environment), function (LocalConfigPlaceholder $placeholder) use ($definedKeys) {
+            return !in_array(strtolower($placeholder->getName()), $definedKeys, true);
+        });
+
+        foreach ($missingPlaceholders as $placeholder) {
+            $value = $placeholderResolver->resolve($placeholder);
+
+        }
+    }
+
+    /**
      * @return string
      */
     public function getHeader()

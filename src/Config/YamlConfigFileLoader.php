@@ -16,6 +16,8 @@ class YamlConfigFileLoader implements ConfigLoader
 
     const KEY_CONST_VARIABLES = 'const';
 
+    const KEY_LOCAL_VARIABLES = 'local';
+
     const KEY_COMMAND_PATHS = 'paths';
 
     const KEY_ENVIRONMENTS = 'environments';
@@ -96,7 +98,25 @@ class YamlConfigFileLoader implements ConfigLoader
             $this->extractData(self::KEY_CONST_VARIABLES, $rawConfigData, [])
         );
 
-        $this->configBuilder->setTemplates(
+        $rawLocalPlaceholders = $this->extractData(self::KEY_LOCAL_VARIABLES, $rawConfigData, []);
+        $this->configBuilder->setLocalPlaceholders(
+            array_map(function (array $data, string $name) {
+                $localPlaceholder = new LocalConfigPlaceholder(
+                    $name,
+                    (string) $this->extractData('description', $data, ''),
+                    (string) $this->extractData('default', $data, ''),
+                    (bool) $this->extractData('storable', $data, true)
+                );
+
+                if (!$localPlaceholder->isValid()) {
+                    throw new \InvalidArgumentException(sprintf('Configuration error, invalid value configuration of local placeholder %s found.', $name));
+                }
+
+                return $localPlaceholder;
+            }, $rawLocalPlaceholders, array_keys($rawLocalPlaceholders))
+        );
+
+        $this->configBuilder->setCurrentTemplates(
             array_map(function ($template) use ($file) {
                 $template['source'] = $this->fixPath($template['source'], $file);
                 $template['destination'] = $this->fixPath($template['destination'], $file);

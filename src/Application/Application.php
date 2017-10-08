@@ -7,6 +7,7 @@ use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigFileFinder;
+use Shopware\Psh\Config\LocalConfigPlaceholder;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptNotFoundException;
 use Shopware\Psh\Listing\ScriptPathNotValidException;
@@ -175,6 +176,13 @@ class Application
      */
     protected function execute(Script $script, Config $config): int
     {
+        $missingPlaceholders = $config
+            ->getUnresolvedLocalPlaceholders($script->getEnvironment());
+
+        if ($missingPlaceholders) {
+            $values = $this->resolveMissingPlaceholders($missingPlaceholders);
+        }
+
         $commands = $this->applicationFactory
             ->createCommands($script);
 
@@ -251,5 +259,60 @@ class Application
             }
         }
         return $maxScriptNameLength + self::MIN_PADDING_SIZE;
+    }
+
+    /**
+     * @param Script[] $collection
+     * @return Int
+     */
+    private function getMaxLength(callable $lengthExtractor, array $collection): Int
+    {
+        $maxScriptNameLength = 0;
+        foreach ($collection as $script) {
+            $currentLength = $lengthExtractor($script);
+
+            if ($currentLength > $maxScriptNameLength) {
+                $maxScriptNameLength = $currentLength;
+            }
+        }
+        return $maxScriptNameLength;
+    }
+
+
+
+    /**
+     * @param LocalConfigPlaceholder[] $missingPlaceholders
+     */
+    private function resolveMissingPlaceholders(array $missingPlaceholders): array
+    {
+        $names = array_map(function (LocalConfigPlaceholder $placeholder) {
+            return $placeholder->getName();
+        }, $missingPlaceholders);
+
+//        $maxNameLength = $this->getMaxLength($missingPlaceholders, function(LocalConfigPlaceholder $placeholder) {
+//            return strlen($placeholder->getNam e());
+//        });
+
+        $this->cliMate
+            ->out("<bold>Some local parameters are missing.</bold>")
+            ->out(sprintf("\tPlease get ready to provide values for the following placeholders: \"%s\"\n", implode(', ', $names)));
+
+        $values = [];
+
+        foreach ($missingPlaceholders as $placeholder) {
+            $input = $this->cliMate->input(sprintf("<bold>%s</bold>\t<info>%s</info>\t[<green>%s</green>]:",
+                $placeholder->getName(),
+                $placeholder->getDescription(),
+                $placeholder->getDefault()
+            ));
+
+            $value = $input->prompt();
+
+            $values[$placeholder->getName()] = $value;
+
+            echo "GOT: $value";
+        }
+
+        return $values;
     }
 }

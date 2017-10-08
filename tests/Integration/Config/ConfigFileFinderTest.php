@@ -62,4 +62,16 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
             __DIR__ .'/_configFileFinderFixtures/override_and_dist/.psh.yaml.override',
         ], $files);
     }
+
+    public function test_config_loader_returns_dist_and_override_file_even_if_extension_is_yml()
+    {
+        $loader = new ConfigFileFinder();
+
+        $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override_and_dist_with_yml');
+
+        $this->assertEquals([
+            __DIR__ .'/_configFileFinderFixtures/override_and_dist_with_yml/.psh.yml.dist',
+            __DIR__ .'/_configFileFinderFixtures/override_and_dist_with_yml/.psh.yml.override',
+        ], $files);
+    }
 }

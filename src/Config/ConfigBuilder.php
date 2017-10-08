@@ -21,9 +21,11 @@ class ConfigBuilder
 
     private $currentDynamicVariables;
 
-    private $templates;
+    private $currentTemplates;
 
     private $currentConstants;
+
+    private $currentLocalVariables;
 
     /**
      * @param string|null $header
@@ -81,12 +83,22 @@ class ConfigBuilder
     }
 
     /**
-     * @param array $templates
+     * @param array $localPlaceholders
      * @return ConfigBuilder
      */
-    public function setTemplates(array $templates): ConfigBuilder
+    public function setLocalPlaceholders(array $localPlaceholders): ConfigBuilder
     {
-        $this->templates = $templates;
+        $this->currentLocalVariables= $localPlaceholders;
+        return $this;
+    }
+
+    /**
+     * @param array $currentTemplates
+     * @return ConfigBuilder
+     */
+    public function setCurrentTemplates(array $currentTemplates): ConfigBuilder
+    {
+        $this->currentTemplates = $currentTemplates;
         return $this;
     }
 
@@ -107,13 +119,14 @@ class ConfigBuilder
                 $this->currentCommandPaths,
                 $this->currentDynamicVariables,
                 $this->currentConstants,
-                $this->templates
+                $this->currentTemplates,
+                $this->currentLocalVariables
             );
         }
 
         $this->currentCommandPaths = [];
         $this->currentDynamicVariables = [];
         $this->currentConstants = [];
-        $this->templates = [];
+        $this->currentTemplates = [];
     }
 }
