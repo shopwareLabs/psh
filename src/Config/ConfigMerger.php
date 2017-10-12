@@ -31,7 +31,7 @@ class ConfigMerger
             $defaultEnvironment = $override->getDefaultEnvironment();
         }
 
-        return new Config($header, $defaultEnvironment, $environments, []);
+        return new Config($header, $defaultEnvironment, $environments, $config->getParams());
     }
 
     /**
