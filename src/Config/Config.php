@@ -129,7 +129,7 @@ class Config
     /**
      * @return array
      */
-    private function getParams() : array
+    public function getParams() : array
     {
         return $this->params;
     }
