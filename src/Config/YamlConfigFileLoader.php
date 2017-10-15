@@ -33,13 +33,20 @@ class YamlConfigFileLoader implements ConfigLoader
     private $configBuilder;
 
     /**
+     * @var string
+     */
+    private $applicationRootDirectory;
+
+    /**
      * @param Parser $yamlReader
      * @param ConfigBuilder $configBuilder
+     * @param string $applicationRootDirectory
      */
-    public function __construct(Parser $yamlReader, ConfigBuilder $configBuilder)
+    public function __construct(Parser $yamlReader, ConfigBuilder $configBuilder, string $applicationRootDirectory)
     {
         $this->yamlReader = $yamlReader;
         $this->configBuilder = $configBuilder;
+        $this->applicationRootDirectory = $applicationRootDirectory;
     }
 
     /**
@@ -97,12 +104,7 @@ class YamlConfigFileLoader implements ConfigLoader
         );
 
         $this->configBuilder->setTemplates(
-            array_map(function ($template) use ($file) {
-                $template['source'] = $this->fixPath($template['source'], $file);
-                $template['destination'] = $this->fixPath($template['destination'], $file);
-
-                return $template;
-            }, $this->extractData(self::KEY_TEMPLATES, $rawConfigData, []))
+            $this->extractTemplates($file, $rawConfigData)
         );
     }
 
@@ -154,16 +156,56 @@ class YamlConfigFileLoader implements ConfigLoader
     }
 
     /**
+     * @param string $file
+     * @param array $rawConfigData
+     * @return array
+     */
+    private function extractTemplates(string $file, array $rawConfigData): array
+    {
+        $templates = $this->extractData(self::KEY_TEMPLATES, $rawConfigData, []);
+
+        return array_map(function ($template) use ($file) {
+            $template['source'] = $this->fixPath($template['source'], $file);
+            $template['destination'] = $this->makeAbsolutePath($file, $template['destination']);
+
+            return $template;
+        }, $templates);
+    }
+
+    /**
      * @param string $absoluteOrRelativePath
      * @param string $baseFile
      * @return string
+     * @throws \InvalidArgumentException
      */
     private function fixPath(string $absoluteOrRelativePath, string $baseFile): string
     {
-        if (file_exists($absoluteOrRelativePath)) {
-            return $absoluteOrRelativePath;
+        $possiblyValidFiles = [
+            $this->applicationRootDirectory . '/' . $absoluteOrRelativePath,
+            $this->makeAbsolutePath($baseFile, $absoluteOrRelativePath),
+            $absoluteOrRelativePath,
+        ];
+
+        foreach ($possiblyValidFiles as $file) {
+            if (file_exists($file)) {
+                return $file;
+            }
         }
 
-        return pathinfo($baseFile, PATHINFO_DIRNAME) . '/' . $absoluteOrRelativePath;
+        throw new \InvalidArgumentException(sprintf(
+            'Unable to find a file referenced by "%s", tried: %s',
+            $absoluteOrRelativePath,
+            print_r($possiblyValidFiles, true)
+        ));
+    }
+
+    /**
+     * @param string $baseFile
+     * @param string $path
+     * @return string
+     */
+    private function makeAbsolutePath(string $baseFile, string $path): string
+    {
+        return pathinfo($baseFile, PATHINFO_DIRNAME) . '/' . $path;
     }
 }

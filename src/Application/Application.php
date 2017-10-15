@@ -64,7 +64,8 @@ class Application
     public function run(array $inputArgs): int
     {
         try {
-            $config = $this->applicationFactory->createConfig($this->rootDirectory, $inputArgs);
+            $config = $this->applicationFactory
+                ->createConfig($this->rootDirectory, $inputArgs);
         } catch (InvalidParameterException $e) {
             $this->notifyError($e->getMessage() . "\n");
             return self::RESULT_ERROR;
@@ -233,9 +234,10 @@ class Application
 
         if (count($configFiles) == 1) {
             $this->cliMate->yellow()->out(sprintf("Using %s \n", $configFiles[0]));
-        } else {
-            $this->cliMate->yellow()->out(sprintf("Using %s extended by %s \n", $configFiles[0], $configFiles[1]));
+            return;
         }
+
+        $this->cliMate->yellow()->out(sprintf("Using %s extended by %s \n", $configFiles[0], $configFiles[1]));
     }
 
     /**

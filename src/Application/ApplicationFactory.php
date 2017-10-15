@@ -35,7 +35,7 @@ class ApplicationFactory
         $configFinder = new ConfigFileFinder();
         $configFiles = $configFinder->discoverFiles($rootDirectory);
 
-        $configLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder());
+        $configLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder(), $rootDirectory);
 
         $configs = [];
         foreach ($configFiles as $configFile) {

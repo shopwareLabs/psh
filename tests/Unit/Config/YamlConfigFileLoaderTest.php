@@ -17,7 +17,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             $parser = new Parser();
         }
 
-        return new YamlConfigFileLoader($parser, new ConfigBuilder());
+        return new YamlConfigFileLoader($parser, new ConfigBuilder(), __DIR__);
     }
 
     public function test_it_can_be_instantiated()
