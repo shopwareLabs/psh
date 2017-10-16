@@ -55,7 +55,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
 
-
         $exitCode = $application->run(['', 'test:env']);
 
         $this->assertEquals(0, $exitCode);
@@ -112,12 +111,26 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $application = new Application(__DIR__ . '/_override_app');
         MockWriter::addToApplication($application);
-        $exitCode = $application->run(['test']);
+        $exitCode = $application->run([]);
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
         $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yaml extended by .psh.yaml.override'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'test'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'override-app'));
+    }
+
+    public function test_psh_config_override_should_override_existing_psh_configuration_executes_with_override_params()
+    {
+        $application = new Application(__DIR__ . '/_override_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'override-app', '--external_param', 'foo-content']);
+
+        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yaml extended by .psh.yaml.override'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'override-app'));
+        $this->assertFalse(strpos(MockWriter::$content, '_EXTERNAL_PARAM_'));
+        $this->assertNotFalse(strpos(MockWriter::$content, 'foo-content'));
     }
 
     public function test_psh_groups_commands_by_environment()
