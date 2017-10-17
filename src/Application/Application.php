@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Application;
 
 use Khill\Duration\Duration;
@@ -63,6 +62,9 @@ class Application
      */
     public function run(array $inputArgs): int
     {
+        if (isset($inputArgs[1]) && $inputArgs[1] === 'selfupdate') {
+        }
+
         try {
             $config = $this->applicationFactory
                 ->createConfig($this->rootDirectory, $inputArgs);
