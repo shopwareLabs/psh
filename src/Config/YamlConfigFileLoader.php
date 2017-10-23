@@ -111,7 +111,7 @@ class YamlConfigFileLoader implements ConfigLoader
     /**
      * @param string $key
      * @param array $rawConfig
-     * @param bool $default
+     * @param mixed $default
      * @return mixed|null
      */
     private function extractData(string $key, array $rawConfig, $default = false)
