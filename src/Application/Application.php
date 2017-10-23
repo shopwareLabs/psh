@@ -213,7 +213,8 @@ class Application
 
     protected function printConfigFiles(array $configFiles)
     {
-        for ($i = 0; $i < count($configFiles); $i++) {
+        $countConfigFiles = count($configFiles);
+        for ($i = 0; $i < $countConfigFiles; $i++) {
             $configFiles[$i] = str_replace($this->rootDirectory."/", "", $configFiles[$i]);
         }
 
