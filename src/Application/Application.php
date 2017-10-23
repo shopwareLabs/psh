@@ -6,8 +6,8 @@ namespace Shopware\Psh\Application;
 use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
-use Shopware\Psh\Config\ConfigFileFinder;
 use Shopware\Psh\Listing\Script;
+use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\Listing\ScriptNotFoundException;
 use Shopware\Psh\Listing\ScriptPathNotValidException;
 use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
@@ -71,15 +71,8 @@ class Application
             return self::RESULT_ERROR;
         }
 
-        $scriptFinder = $this->applicationFactory->createScriptFinder($config);
-
-        $scriptNames = $this->extractScriptNames($inputArgs);
-        if (count($scriptNames) > 0 && $scriptNames[0] === 'bash_autocompletion_dump') {
-            $scripts = $scriptFinder->getAllScripts();
-            $commands = array_map(function (Script $script) {
-                return $script->getName();
-            }, $scripts);
-            echo implode(' ', $commands);
+        if (count($inputArgs) > 1 && $inputArgs[1] === 'bash_autocompletion_dump') {
+            $this->showAutocompleteListing($config);
             return self::RESULT_SUCCESS;
         }
 
@@ -87,6 +80,9 @@ class Application
 
         $configFiles = $this->applicationFactory->getConfigFiles($this->rootDirectory);
         $this->printConfigFiles($configFiles);
+
+        $scriptNames = $this->extractScriptNames($inputArgs);
+        $scriptFinder = $this->applicationFactory->createScriptFinder($config);
 
         try {
             foreach ($scriptNames as $scriptName) {
@@ -97,22 +93,11 @@ class Application
                 }
             }
 
-            if (isset($executionExitCode)) {
-                return $executionExitCode;
+            if (count($scriptNames)) {
+                return self::RESULT_SUCCESS;
             }
         } catch (ScriptNotFoundException $e) {
-            $this->notifyError("Script with name {$inputArgs[1]} not found\n");
-
-            $scripts = [];
-            foreach ($scriptNames as $scriptName) {
-                $newScripts = $scriptFinder->findScriptsByPartialName($scriptName);
-                $scripts = array_merge($scripts, $newScripts);
-            }
-
-            if (count($scripts) > 0) {
-                $this->cliMate->yellow()->bold('Have you been looking for this?');
-                $this->showListing($scripts);
-            }
+            $this->showScriptNotFoundListing($inputArgs, $scriptNames, $scriptFinder);
             return self::RESULT_ERROR;
         }
 
@@ -253,5 +238,43 @@ class Application
             }
         }
         return $maxScriptNameLength + self::MIN_PADDING_SIZE;
+    }
+
+    /**
+     * @param $config
+     */
+    private function showAutocompleteListing(Config $config)
+    {
+        $scriptFinder = $this->applicationFactory
+            ->createScriptFinder($config);
+
+        $scripts = $scriptFinder->getAllScripts();
+
+        $commands = array_map(function (Script $script) {
+            return $script->getName();
+        }, $scripts);
+
+        $this->cliMate->out(implode(' ', $commands));
+    }
+
+    /**
+     * @param array $inputArgs
+     * @param array $scriptNames
+     * @param ScriptFinder $scriptFinder
+     */
+    private function showScriptNotFoundListing(array $inputArgs, array $scriptNames, ScriptFinder $scriptFinder)
+    {
+        $this->notifyError("Script with name {$inputArgs[1]} not found\n");
+
+        $scripts = [];
+        foreach ($scriptNames as $scriptName) {
+            $newScripts = $scriptFinder->findScriptsByPartialName($scriptName);
+            $scripts = array_merge($scripts, $newScripts);
+        }
+
+        if (count($scripts) > 0) {
+            $this->cliMate->yellow()->bold('Have you been looking for this?');
+            $this->showListing($scripts);
+        }
     }
 }

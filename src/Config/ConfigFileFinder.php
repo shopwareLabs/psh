@@ -12,34 +12,54 @@ class ConfigFileFinder
 
     public function discoverFiles(string $fromDirectory): array
     {
-        $configFiles = [];
+        $files = $this->findFirstDirectoryWithConfigFile($fromDirectory);
+
+        return $this->determineResultInDirectory($files);
+    }
+
+    /**
+     * @param string $fromDirectory
+     * @return array
+     */
+    public function findFirstDirectoryWithConfigFile(string $fromDirectory): array
+    {
         $currentDirectory = $fromDirectory;
 
         do {
             $globResult = glob($currentDirectory . '/' . self::VALID_FILE_NAME_GLOB);
 
-            if (count($globResult) === 1) {
+            if ($globResult) {
                 return $globResult;
-            }
-
-            if (count($globResult) > 1) {
-                foreach ($globResult as $configFile) {
-                    $extension = pathinfo($configFile, PATHINFO_EXTENSION);
-                    if (!in_array($extension, ['dist', 'override'], true)) {
-                        $configFiles[0] = $configFile;
-                    } elseif ($extension === 'dist' && !isset($configFiles[0])) {
-                        $configFiles[0] = $configFile;
-                    } elseif ($extension === 'override') {
-                        $configFiles[1] = $configFile;
-                    }
-                }
-
-                return $configFiles;
             }
 
             $currentDirectory = dirname($currentDirectory);
         } while ($currentDirectory !== '/');
 
         throw new \RuntimeException('No config file found, make sure you have created a .psh file');
+    }
+
+    /**
+     * @param array $globResult
+     * @return array
+     */
+    public function determineResultInDirectory(array $globResult): array
+    {
+        if (count($globResult) === 1) {
+            return $globResult;
+        }
+
+        $overrideFile = array_filter($globResult, function (string $file) {
+            $extension = pathinfo($file, PATHINFO_EXTENSION);
+
+            return $extension === 'override';
+        });
+
+        $configFile = array_filter($globResult, function (string $file) {
+            $extension = pathinfo($file, PATHINFO_EXTENSION);
+
+            return $extension !== 'override';
+        });
+                
+        return array_merge([$configFile[0]], $overrideFile);
     }
 }

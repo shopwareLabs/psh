@@ -145,4 +145,42 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strstr(MockWriter::$content, "default:"));
         $this->assertNotFalse(strstr(MockWriter::$content, "test:"));
     }
+
+    public function test_bash_autocomplete_listing()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'bash_autocompletion_dump']);
+
+        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+
+        $this->assertFalse(strstr(MockWriter::$content, "Using .psh.yml"));
+        $this->assertNotFalse(strstr(MockWriter::$content, "error simple test:env test:env2"));
+    }
+
+    public function test_script_not_found_listing_with_guess()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'sümple']);
+
+        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+
+        $this->assertNotFalse(strstr(MockWriter::$content, "Using .psh.yml"));
+        $this->assertNotFalse(strstr(MockWriter::$content, "Have you been looking for this?"));
+        $this->assertNotFalse(strstr(MockWriter::$content, "- simple"));
+        $this->assertNotFalse(strstr(MockWriter::$content, "1 script(s) available"));
+    }
+
+    public function test_script_not_found_listing_without_guess()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+        $exitCode = $application->run(['', 'pkdi']);
+
+        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+
+        $this->assertNotFalse(strstr(MockWriter::$content, "Using .psh.yml"));
+        $this->assertNotFalse(strstr(MockWriter::$content, "Script with name pkdi not found"));
+    }
 }
