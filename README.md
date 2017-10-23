@@ -1,3 +1,5 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shopwareLabs/psh/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shopwareLabs/psh/?branch=master)[![Build Status](https://scrutinizer-ci.com/g/shopwareLabs/psh/badges/build.png?b=master)](https://scrutinizer-ci.com/g/shopwareLabs/psh/build-status/master)
+
 PSH - PHP shell helper
 ====================
 
