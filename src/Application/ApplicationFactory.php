@@ -106,7 +106,8 @@ class ApplicationFactory
         }
 
         $reformattedParams = [];
-        for ($i = 2; $i < count($params); $i++) {
+        $paramsCount = count($params);
+        for ($i = 2; $i < $paramsCount; $i++) {
             $key = $params[$i];
 
             if (strpos($key, '--') !== 0) {
