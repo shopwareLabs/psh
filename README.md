@@ -1,4 +1,4 @@
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shopwareLabs/psh/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shopwareLabs/psh/?branch=master)[![Build Status](https://scrutinizer-ci.com/g/shopwareLabs/psh/badges/build.png?b=master)](https://scrutinizer-ci.com/g/shopwareLabs/psh/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shopwareLabs/psh/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shopwareLabs/psh/?branch=master)[![Build Status](https://scrutinizer-ci.com/g/shopwareLabs/psh/badges/build.png?b=master)](https://scrutinizer-ci.com/g/shopwareLabs/psh/build-status/master)[![codecov](https://codecov.io/gh/shopwareLabs/psh/branch/master/graph/badge.svg)](https://codecov.io/gh/shopwareLabs/psh)
 
 PSH - PHP shell helper
 ====================
