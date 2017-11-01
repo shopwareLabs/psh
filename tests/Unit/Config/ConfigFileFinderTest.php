@@ -3,7 +3,7 @@
 
 namespace Shopware\Psh\Test\Unit\Config;
 
-use Shopware\Psh\Config\ConfigFileFinder;
+use Shopware\Psh\ConfigLoad\ConfigFileFinder;
 
 class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
 {

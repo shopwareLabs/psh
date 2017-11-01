@@ -3,10 +3,10 @@
 namespace Shopware\Psh\Test\Unit\Config;
 
 use Shopware\Psh\Config\Config;
-use Shopware\Psh\Config\ConfigBuilder;
-use Shopware\Psh\Config\ConfigLoader;
+use Shopware\Psh\ConfigLoad\ConfigBuilder;
+use Shopware\Psh\ConfigLoad\ConfigLoader;
+use Shopware\Psh\ConfigLoad\YamlConfigFileLoader;
 use Shopware\Psh\Config\ScriptPath;
-use Shopware\Psh\Config\YamlConfigFileLoader;
 use Symfony\Component\Yaml\Parser;
 
 class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase

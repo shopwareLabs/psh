@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\Config;
+namespace Shopware\Psh\ConfigLoad;
 
+use Shopware\Psh\Config\Config;
 use Symfony\Component\Yaml\Parser;
 
 /**

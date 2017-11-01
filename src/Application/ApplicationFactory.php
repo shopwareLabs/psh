@@ -4,10 +4,10 @@
 namespace Shopware\Psh\Application;
 
 use Shopware\Psh\Config\Config;
-use Shopware\Psh\Config\ConfigBuilder;
-use Shopware\Psh\Config\ConfigFileFinder;
 use Shopware\Psh\Config\ConfigMerger;
-use Shopware\Psh\Config\YamlConfigFileLoader;
+use Shopware\Psh\ConfigLoad\ConfigBuilder;
+use Shopware\Psh\ConfigLoad\ConfigFileFinder;
+use Shopware\Psh\ConfigLoad\YamlConfigFileLoader;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
