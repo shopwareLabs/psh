@@ -53,16 +53,10 @@ class YamlConfigFileLoader implements ConfigLoader
     /**
      * @inheritdoc
      */
-    public function isSupported(string $file): bool
+    public function load(ConfigFileDiscovery $fileDiscovery, array $params): Config
     {
-        return in_array(pathinfo($file, PATHINFO_EXTENSION), ['yaml', 'yml', 'dist', 'override'], true);
-    }
+        $file = $fileDiscovery->getPrimaryFile();
 
-    /**
-     * @inheritdoc
-     */
-    public function load(string $file, array $params): Config
-    {
         $contents = $this->loadFileContents($file);
         $rawConfigData = $this->parseFileContents($contents);
 

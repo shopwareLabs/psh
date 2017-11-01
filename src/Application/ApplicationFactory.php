@@ -37,18 +37,9 @@ class ApplicationFactory
 
         $configLoader = new YamlConfigFileLoader(new Parser(), new ConfigBuilder(), $rootDirectory);
 
-        $configs = [];
-        foreach ($configFiles as $configFile) {
-            if (!$configLoader->isSupported($configFile)) {
-                throw new \RuntimeException('Unable to read configuration from "' . $configFile . '"');
-            }
+        $config = $configLoader->load($configFiles, $this->reformatParams($params));
 
-            $configs[] = $configLoader->load($configFile, $this->reformatParams($params));
-        }
-
-        $merger = new ConfigMerger();
-        
-        return $merger->merge(...$configs);
+        return $config;
     }
 
     /**

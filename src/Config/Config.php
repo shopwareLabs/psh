@@ -18,7 +18,7 @@ class Config
     private $defaultEnvironment;
 
     /**
-     * @var ConfigEnvironment[]
+     * @var EnvironmentBag[]
      */
     private $environments;
 
@@ -30,7 +30,7 @@ class Config
     /**
      * @param string|null $header
      * @param string $defaultEnvironment
-     * @param ConfigEnvironment[] $environments
+     * @param EnvironmentBag[] $environments
      * @param array $params
      */
     public function __construct(
@@ -111,7 +111,7 @@ class Config
     }
 
     /**
-     * @return ConfigEnvironment[]
+     * @return EnvironmentBag[]
      */
     public function getEnvironments(): array
     {
@@ -153,9 +153,9 @@ class Config
 
     /**
      * @param string|null $name
-     * @return ConfigEnvironment
+     * @return EnvironmentBag
      */
-    private function getEnvironment(string $name = null): ConfigEnvironment
+    private function getEnvironment(string $name = null): EnvironmentBag
     {
         if (!$name) {
             return $this->environments[$this->defaultEnvironment];

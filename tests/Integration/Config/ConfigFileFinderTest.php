@@ -3,6 +3,7 @@
 
 namespace Shopware\Psh\Test\Integration\Config;
 
+use Shopware\Psh\ConfigLoad\ConfigFileDiscovery;
 use Shopware\Psh\ConfigLoad\ConfigFileFinder;
 
 class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
@@ -20,7 +21,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/dist/sub/sub2/sub3');
-        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.yaml'], $file);
+        $this->assertEquals(new ConfigFileDiscovery(__DIR__ . '/_configFileFinderFixtures/dist/.psh.yaml', ''), $file);
     }
 
     public function test_config_loader_returns_file_in_same_directory_if_found()
@@ -28,7 +29,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/dist');
-        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.yaml'], $file);
+        $this->assertEquals(new ConfigFileDiscovery(__DIR__ . '/_configFileFinderFixtures/dist/.psh.yaml', ''), $file);
     }
 
     public function test_config_loader_prefers_original_over_dist_file()
@@ -36,7 +37,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/dist');
-        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.yaml'], $file);
+        $this->assertEquals(new ConfigFileDiscovery(__DIR__ . '/_configFileFinderFixtures/dist/.psh.yaml', ''), $file);
     }
 
     public function test_config_loader_returns_override_file()
@@ -45,10 +46,10 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
 
         $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override');
 
-        $this->assertEquals([
+        $this->assertEquals(new ConfigFileDiscovery(
             __DIR__ . '/_configFileFinderFixtures/override/.psh.yaml',
             __DIR__ . '/_configFileFinderFixtures/override/.psh.yaml.override'
-        ], $files);
+        ), $files);
     }
 
     public function test_config_loader_returns_dist_and_override_file()
@@ -57,9 +58,9 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
 
         $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override_and_dist');
 
-        $this->assertEquals([
+        $this->assertEquals(new ConfigFileDiscovery(
             __DIR__ .'/_configFileFinderFixtures/override_and_dist/.psh.yaml.dist',
-            __DIR__ .'/_configFileFinderFixtures/override_and_dist/.psh.yaml.override',
-        ], $files);
+            __DIR__ .'/_configFileFinderFixtures/override_and_dist/.psh.yaml.override'
+        ), $files);
     }
 }

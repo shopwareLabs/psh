@@ -3,7 +3,7 @@
 namespace Shopware\Psh\ConfigLoad;
 
 use Shopware\Psh\Config\Config;
-use Shopware\Psh\Config\ConfigEnvironment;
+use Shopware\Psh\Config\EnvironmentBag;
 
 /**
  * Builder pattern
@@ -106,7 +106,7 @@ class ConfigBuilder
     private function reset()
     {
         if ($this->currentEnvironment) {
-            $this->environments[$this->currentEnvironment] = new ConfigEnvironment(
+            $this->environments[$this->currentEnvironment] = new EnvironmentBag(
                 $this->currentCommandPaths,
                 $this->currentDynamicVariables,
                 $this->currentConstants,

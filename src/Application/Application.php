@@ -6,6 +6,7 @@ namespace Shopware\Psh\Application;
 use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
+use Shopware\Psh\ConfigLoad\ConfigFileDiscovery;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\Listing\ScriptNotFoundException;
@@ -211,19 +212,19 @@ class Application
         }
     }
 
-    protected function printConfigFiles(array $configFiles)
+    protected function printConfigFiles(ConfigFileDiscovery $configFiles)
     {
-        $countConfigFiles = count($configFiles);
-        for ($i = 0; $i < $countConfigFiles; $i++) {
-            $configFiles[$i] = str_replace($this->rootDirectory."/", "", $configFiles[$i]);
+        $template = 'Using %s ';
+        $params[] = str_replace($this->rootDirectory . '/', '', $configFiles->getPrimaryFile());
+
+        if ($configFiles->getOverrideFile()) {
+            $template .= 'extended by %s ';
+            $params[] = str_replace($this->rootDirectory . '/', '', $configFiles->getOverrideFile());
         }
 
-        if (count($configFiles) == 1) {
-            $this->cliMate->yellow()->out(sprintf("Using %s \n", $configFiles[0]));
-            return;
-        }
+        $template .= "\n";
 
-        $this->cliMate->yellow()->out(sprintf("Using %s extended by %s \n", $configFiles[0], $configFiles[1]));
+        $this->cliMate->yellow()->out(vsprintf($template, $params));
     }
 
     /**

@@ -6,7 +6,7 @@ namespace Shopware\Psh\Config;
 /**
  * A single configuration environment
  */
-class ConfigEnvironment
+class EnvironmentBag implements EnvironmentBagInterface
 {
     /**
      * @var array

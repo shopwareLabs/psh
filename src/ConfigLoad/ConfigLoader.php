@@ -11,15 +11,9 @@ use Shopware\Psh\Config\Config;
 interface ConfigLoader
 {
     /**
-     * @param string $file
-     * @return bool
-     */
-    public function isSupported(string $file): bool;
-
-    /**
-     * @param string $file
+     * @param ConfigFileDiscovery $file
      * @param array $params
      * @return Config
      */
-    public function load(string $file, array $params): Config;
+    public function load(ConfigFileDiscovery $file, array $params): Config;
 }

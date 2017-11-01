@@ -4,6 +4,7 @@ namespace Shopware\Psh\Test\Unit\Config;
 
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\ConfigLoad\ConfigBuilder;
+use Shopware\Psh\ConfigLoad\ConfigFileDiscovery;
 use Shopware\Psh\ConfigLoad\ConfigLoader;
 use Shopware\Psh\ConfigLoad\YamlConfigFileLoader;
 use Shopware\Psh\Config\ScriptPath;
@@ -27,21 +28,6 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ConfigLoader::class, $loader);
     }
 
-    public function test_it_supports_yaml_files()
-    {
-        $loader = $this->createConfigLoader();
-
-        $this->assertTrue($loader->isSupported('fo.yaml'));
-        $this->assertTrue($loader->isSupported('fo.yml'));
-        $this->assertTrue($loader->isSupported('fo.yml.dist'));
-        $this->assertTrue($loader->isSupported('fo.yaml.dist'));
-        $this->assertTrue($loader->isSupported('fo.yml.override'));
-        $this->assertTrue($loader->isSupported('fo.yaml.override'));
-
-        $this->assertFalse($loader->isSupported('fo.txt'));
-        $this->assertFalse($loader->isSupported('fo.yaml.bar'));
-    }
-
     public function test_it_works_if_no_paths_are_present()
     {
         $yamlMock = $this->prophesize(Parser::class);
@@ -55,7 +41,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
         $this->assertEquals(['filesystem' => 'ls -al'], $config->getDynamicVariables());
     }
 
@@ -74,7 +60,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
 
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
         $this->assertEquals([ 'FOO' => 'bar'], $config->getConstants());
     }
 
@@ -93,7 +79,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
 
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
 
         $scripts = $config->getAllScriptPaths();
         $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
@@ -120,7 +106,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
 
         $this->assertInstanceOf(Config::class, $config);
     }
@@ -143,7 +129,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
 
         $this->assertInstanceOf(Config::class, $config);
     }
@@ -172,7 +158,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $loader =$this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
 
         $this->assertInstanceOf(Config::class, $config);
 
@@ -215,7 +201,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $loader =$this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
 
         $this->assertInstanceOf(Config::class, $config);
 
@@ -264,7 +250,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $loader =$this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
 
         $this->assertInstanceOf(Config::class, $config);
 
@@ -298,7 +284,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $loader =$this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(new ConfigFileDiscovery(__DIR__ . '/_test.txt', ''), []);
 
         $this->assertInstanceOf(Config::class, $config);
 

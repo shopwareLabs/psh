@@ -45,7 +45,7 @@ class ConfigMerger
         foreach ($override->getEnvironments() as $name => $overrideEnv) {
             $originalConfigEnv = $config->getEnvironments()[$name];
 
-            $environments[$name] = new ConfigEnvironment(
+            $environments[$name] = new EnvironmentBag(
                 $this->overridePaths($originalConfigEnv, $overrideEnv),
                 $this->mergeDynamicVariables($config->getEnvironments()[$name], $overrideEnv),
                 $this->mergeConstants($config->getEnvironments()[$name], $overrideEnv),
@@ -57,21 +57,21 @@ class ConfigMerger
     }
 
     /**
-     * @param ConfigEnvironment $configEnvironment
-     * @param ConfigEnvironment $overrideEnv
+     * @param EnvironmentBag $configEnvironment
+     * @param EnvironmentBag $overrideEnv
      * @return array
      */
-    private function mergeDynamicVariables(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideEnv): array
+    private function mergeDynamicVariables(EnvironmentBag $configEnvironment, EnvironmentBag $overrideEnv): array
     {
         return array_merge($configEnvironment->getDynamicVariables(), $overrideEnv->getDynamicVariables());
     }
 
     /**
-     * @param ConfigEnvironment $configEnvironment
-     * @param ConfigEnvironment $overrideConfigEnv
+     * @param EnvironmentBag $configEnvironment
+     * @param EnvironmentBag $overrideConfigEnv
      * @return array|ScriptPath[]
      */
-    private function overridePaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    private function overridePaths(EnvironmentBag $configEnvironment, EnvironmentBag $overrideConfigEnv): array
     {
         if ($overrideConfigEnv->getAllScriptPaths()) {
             return $overrideConfigEnv->getAllScriptPaths();
@@ -81,21 +81,21 @@ class ConfigMerger
     }
 
     /**
-     * @param ConfigEnvironment $configEnvironment
-     * @param ConfigEnvironment $overrideConfigEnv
+     * @param EnvironmentBag $configEnvironment
+     * @param EnvironmentBag $overrideConfigEnv
      * @return array
      */
-    private function mergeConstants(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    private function mergeConstants(EnvironmentBag $configEnvironment, EnvironmentBag $overrideConfigEnv): array
     {
         return array_merge($configEnvironment->getConstants(), $overrideConfigEnv->getConstants());
     }
 
     /**
-     * @param ConfigEnvironment $configEnvironment
+     * @param EnvironmentBag $configEnvironment
      * @param $overrideConfigEnv
      * @return array
      */
-    private function overrideTemplates(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    private function overrideTemplates(EnvironmentBag $configEnvironment, EnvironmentBag $overrideConfigEnv): array
     {
         if ($overrideConfigEnv->getTemplates()) {
             return $overrideConfigEnv->getTemplates();

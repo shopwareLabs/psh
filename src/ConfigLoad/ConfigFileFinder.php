@@ -10,11 +10,14 @@ class ConfigFileFinder
 {
     const VALID_FILE_NAME_GLOB = '.psh.*';
 
-    public function discoverFiles(string $fromDirectory): array
+    public function discoverFiles(string $fromDirectory): ConfigFileDiscovery
     {
         $files = $this->findFirstDirectoryWithConfigFile($fromDirectory);
 
-        return $this->determineResultInDirectory($files);
+        return new ConfigFileDiscovery(
+            $this->determinePrimaryFile($files),
+            $this->determineOverrideFile($files)
+        );
     }
 
     /**
@@ -40,26 +43,31 @@ class ConfigFileFinder
 
     /**
      * @param array $globResult
-     * @return array
+     * @return string
      */
-    public function determineResultInDirectory(array $globResult): array
+    private function determineOverrideFile(array $globResult): string
     {
-        if (count($globResult) === 1) {
-            return $globResult;
-        }
-
-        $overrideFile = array_filter($globResult, function (string $file) {
+        $filterResult = array_filter($globResult, function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'override';
         });
 
-        $configFile = array_filter($globResult, function (string $file) {
+        return (string) array_shift($filterResult);
+    }
+
+    /**
+     * @param array $globResult
+     * @return string
+     */
+    private function determinePrimaryFile(array $globResult): string
+    {
+        $filterResult = array_filter($globResult, function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension !== 'override';
         });
-                
-        return array_merge([$configFile[0]], $overrideFile);
+
+        return array_shift($filterResult);
     }
 }
