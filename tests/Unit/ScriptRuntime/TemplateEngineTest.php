@@ -37,12 +37,14 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
     {
         $engine = new TemplateEngine();
         $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('foo baz', $engine->render('foo __BAR_1__', ['BAR_1' => new SimpleValueProvider('baz')]));
         $this->assertEquals('baz foo', $engine->render('__BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('foo baz foo', $engine->render('foo __BAR__ foo', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('foo baz foo', $engine->render('foo __FO-BAR__ foo', ['FO-BAR' => new SimpleValueProvider('baz')]));
 
         $this->assertEquals('foo __BAR__', $engine->render('foo __BAR__(sic!)', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('__BAR__ foo', $engine->render('__BAR__(sic!) foo', ['BAR' => new SimpleValueProvider('baz')]));
+        $this->assertEquals('__BAR_1__ foo', $engine->render('__BAR_1__(sic!) foo', ['BAR_1' => new SimpleValueProvider('baz')]));
         $this->assertEquals('foo __BAR__ foo', $engine->render('foo __BAR__(sic!) foo', ['BAR' => new SimpleValueProvider('baz')]));
         $this->assertEquals('foo __FO-BAR__ foo', $engine->render('foo __FO-BAR__(sic!) foo', ['FO-BAR' => new SimpleValueProvider('baz')]));
     }
