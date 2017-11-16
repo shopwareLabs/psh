@@ -12,6 +12,7 @@ const:
   ENV: prod
   TEST: prod
   HOST: http://www.selfish.de
+  NUMBER: 1701
 
 dynamic:
   ID: id

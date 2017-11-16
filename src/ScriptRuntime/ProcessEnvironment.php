@@ -44,7 +44,7 @@ class ProcessEnvironment
     {
         $resolvedValues = [];
         foreach ($constants as $name => $value) {
-            $resolvedValues[$name] = new SimpleValueProvider($value);
+            $resolvedValues[$name] = new SimpleValueProvider((string) $value);
         }
 
         return $resolvedValues;
