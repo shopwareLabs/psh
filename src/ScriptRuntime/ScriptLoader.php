@@ -152,19 +152,12 @@ class ScriptLoader
         return strpos($haystack, $needle) === 0;
     }
 
-
     /**
      * @param string $file
      * @return string
      */
     protected function loadFileContents(string $file): string
     {
-        $contents = file_get_contents($file);
-
-        if (false === $contents) {
-            throw new \RuntimeException('Unable to load config data - read failed in "' . $file . '".');
-        }
-
-        return $contents;
+        return file_get_contents($file);
     }
 }
