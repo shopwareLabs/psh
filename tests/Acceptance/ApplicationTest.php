@@ -64,7 +64,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'), '(2/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'), '(3/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
-        $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
+        $this->assertNotFalse(
+            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
+        );
         $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
@@ -88,7 +90,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "prod"'));
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
-        $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
+        $this->assertNotFalse(
+            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
+        );
         $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
@@ -103,7 +107,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
         $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
         $this->assertFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
-        $this->assertFalse(strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!');
+        $this->assertFalse(
+            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
+        );
         $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
     }
 
@@ -141,9 +147,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
 
-        $this->assertNotFalse(strstr(MockWriter::$content, "Using .psh.yml"));
-        $this->assertNotFalse(strstr(MockWriter::$content, "default:"));
-        $this->assertNotFalse(strstr(MockWriter::$content, "test:"));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'default:'));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'test:'));
     }
 
     public function test_bash_autocomplete_listing()
@@ -154,8 +160,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
 
-        $this->assertFalse(strstr(MockWriter::$content, "Using .psh.yml"));
-        $this->assertNotFalse(strstr(MockWriter::$content, "error simple test:env test:env2"));
+        $this->assertFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'error simple test:env test:env2'));
     }
 
     public function test_script_not_found_listing_with_guess()
@@ -166,10 +172,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
 
-        $this->assertNotFalse(strstr(MockWriter::$content, "Using .psh.yml"));
-        $this->assertNotFalse(strstr(MockWriter::$content, "Have you been looking for this?"));
-        $this->assertNotFalse(strstr(MockWriter::$content, "- simple"));
-        $this->assertNotFalse(strstr(MockWriter::$content, "1 script(s) available"));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'Have you been looking for this?'));
+        $this->assertNotFalse(strstr(MockWriter::$content, '- simple'));
+        $this->assertNotFalse(strstr(MockWriter::$content, '1 script(s) available'));
     }
 
     public function test_script_not_found_listing_without_guess()
@@ -180,7 +186,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
 
-        $this->assertNotFalse(strstr(MockWriter::$content, "Using .psh.yml"));
-        $this->assertNotFalse(strstr(MockWriter::$content, "Script with name pkdi not found"));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
+        $this->assertNotFalse(strstr(MockWriter::$content, 'Script with name pkdi not found'));
+    }
+
+    public function test_showListings_returns_no_scripts_available()
+    {
+        $application = new Application(__DIR__);
+        MockWriter::addToApplication($application);
+
+        $application->showListing([]);
+
+        $this->assertNotFalse(strstr(MockWriter::$content, 'Currently no scripts available'));
     }
 }
