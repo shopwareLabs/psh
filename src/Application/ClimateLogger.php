@@ -15,7 +15,7 @@ class ClimateLogger implements Logger
     /**
      * @var CLImate
      */
-    private $cliMate;
+    public $cliMate;
 
     /**
      * @var int
