@@ -199,4 +199,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotFalse(strstr(MockWriter::$content, 'Currently no scripts available'));
     }
+
+    public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched()
+    {
+        $application = new Application(__DIR__.'/_app_invalid_template');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'simple']);
+
+        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+    }
 }
