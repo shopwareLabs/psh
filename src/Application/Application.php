@@ -104,12 +104,7 @@ class Application
             return self::RESULT_ERROR;
         }
 
-        try {
-            $this->showListing($scriptFinder->getAllScripts());
-        } catch (ScriptPathNotValidException $e) {
-            $this->notifyError($e->getMessage() . "\n");
-            return self::RESULT_ERROR;
-        }
+        $this->showListing($scriptFinder->getAllScripts());
 
         return self::RESULT_SUCCESS;
     }

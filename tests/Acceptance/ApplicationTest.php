@@ -209,4 +209,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
     }
+
+    public function test_it_throws_exception_InvalidParameterException_and_it_is_catched()
+    {
+        $application = new Application(__DIR__.'/_app');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'simple', '-param']);
+
+        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+    }
 }
