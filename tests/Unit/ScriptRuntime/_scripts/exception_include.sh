@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
 bin/phpunit --debug --verbose
-INCLUDE: simple.sh
-INCLUDE: ./tests/Unit/ScriptRuntime/_scripts/simple.sh
+INCLUDE: file_not_exists.sh
 bin/phpunit --debug --verbose

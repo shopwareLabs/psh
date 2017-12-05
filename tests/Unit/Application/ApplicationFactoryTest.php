@@ -53,6 +53,23 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $result2);
     }
 
+    public function test_createConfig_with_invalid_config_file()
+    {
+        $testParams = [
+            './psh',
+            'unit'
+        ];
+
+        $factory = $this->getApplicationFactory();
+
+        $this->expectException(\RuntimeException::class);
+
+        $factory->createConfig(
+            __DIR__ . '/_fixtures_with_invalid_config_files/config/.psh.yAml',
+            $testParams
+        );
+    }
+
     public function test_reformatParams_expects_exception()
     {
         $factory = $this->getApplicationFactory();

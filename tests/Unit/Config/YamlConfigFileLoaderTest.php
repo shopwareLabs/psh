@@ -306,4 +306,16 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt']
         ], $config->getTemplates());
     }
+
+    public function test_fixPath_throws_exception()
+    {
+        $loader = $this->createConfigLoader();
+
+        $method = new \ReflectionMethod(YamlConfigFileLoader::class, 'fixPath');
+        $method->setAccessible(true);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $method->invoke($loader, 'absoluteOrRelativePath', 'baseFile');
+    }
 }

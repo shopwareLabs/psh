@@ -77,7 +77,7 @@ class ScriptLoaderTest extends \PHPUnit_Framework_TestCase
 
         $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'local_include.sh'));
 
-        $this->assertCount(5, $commands);
+        $this->assertCount(8, $commands);
         $this->assertContainsOnlyInstancesOf(ProcessCommand::class, $commands);
 
         $this->assertEquals(2, $commands[0]->getLineNumber());
@@ -85,9 +85,16 @@ class ScriptLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($commands[0]->isIgnoreError());
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(4, $lastCommand->getLineNumber());
+        $this->assertEquals(5, $lastCommand->getLineNumber());
         $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
         $this->assertFalse($lastCommand->isIgnoreError());
+    }
+
+    public function test_it_include_throws_exception()
+    {
+        $loader = new ScriptLoader(new CommandBuilder());
+        $this->expectException(\RuntimeException::class);
+        $loader->loadScript(new Script(__DIR__ . '/_scripts', 'exception_include.sh'));
     }
 
     public function test_renders_templates_on_demand()

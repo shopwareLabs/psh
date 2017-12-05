@@ -4,6 +4,7 @@ namespace Shopware\Psh\Test\Acceptance;
 
 use League\CLImate\Util\Writer\WriterInterface;
 use Shopware\Psh\Application\Application;
+use Shopware\Psh\Application\ClimateLogger;
 
 class MockWriter implements WriterInterface
 {
@@ -11,7 +12,6 @@ class MockWriter implements WriterInterface
 
     /**
      * @param  string $content
-     *
      * @return void
      */
     public function write($content)
@@ -27,5 +27,15 @@ class MockWriter implements WriterInterface
         $application->cliMate->output->add('error', new self());
         $application->cliMate->output->add('buffer', new self());
         $application->cliMate->output->defaultTo('out');
+    }
+
+    public static function addToClimateLogger(ClimateLogger $climateLogger)
+    {
+        self::$content = '';
+
+        $climateLogger->cliMate->output->add('out', new self());
+        $climateLogger->cliMate->output->add('error', new self());
+        $climateLogger->cliMate->output->add('buffer', new self());
+        $climateLogger->cliMate->output->defaultTo('out');
     }
 }

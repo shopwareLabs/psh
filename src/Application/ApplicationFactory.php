@@ -27,6 +27,7 @@ class ApplicationFactory
 {
     /**
      * @param string $rootDirectory
+     * @param array $params
      * @return Config
      * @throws \RuntimeException
      */
@@ -134,7 +135,7 @@ class ApplicationFactory
         return $reformattedParams;
     }
 
-    public function getConfigFiles($directory)
+    public function getConfigFiles($directory): array
     {
         return  (new ConfigFileFinder())->discoverFiles($directory);
     }
