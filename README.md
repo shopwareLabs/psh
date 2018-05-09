@@ -53,7 +53,7 @@ Key benefits are:
 * Share your existing shell scripts with your team members
 * Add error handling if single statement in the *sh* scripts fails
 * Replace placeholders in *sh* scripts with variables
-* Overload variables and scripts in a environment configuration
+* Overload variables and scripts in an environment configuration
  
 Installation
 ------------
