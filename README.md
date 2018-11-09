@@ -345,20 +345,20 @@ You can add more commands to be executed in a chain, by comma separating the scr
 You can add parameter for replace placeholder in your .sh files like the following examples:
 
 ```sh 
-    ./ps.phar unit --param someValue  #or
-    ./ps.phar unit --param=someValue --otherParam value --onMoreParam=value ...
-    ./ps.phar list --add -l
+    ./psh.phar unit --param someValue  #or
+    ./psh.phar unit --param=someValue --otherParam value --onMoreParam=value ...
+    ./psh.phar list --add -l
 ```
 
 in your .sh files write.
 ```sh 
-    ls _ADD_
+    ls __ADD__
 ```
 
 executes:
 ```sh
     ls -l
-``` 
+```
 
 ### Bash Autocompletion
 
