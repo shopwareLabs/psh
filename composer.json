@@ -15,16 +15,16 @@
     },
     "require": {
         "php": ">=7",
-        "symfony/finder": "^3.1",
-        "symfony/process": "^3.1",
-        "symfony/filesystem": "^3.1",
-        "symfony/yaml": "^3.1",
-        "league/climate": "^3.2",
+        "symfony/finder": "^4.1",
+        "symfony/process": "^4.1",
+        "symfony/filesystem": "^4.1",
+        "symfony/yaml": "^4.1",
+        "league/climate": "^3.4",
         "khill/php-duration": "^1.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^1.11",
-        "phpunit/phpunit": "^5.4"
+        "friendsofphp/php-cs-fixer": "^2.13",
+        "phpunit/phpunit": "^7.4"
     },
     "license": "MIT",
     "authors": [
@@ -36,6 +36,5 @@
     "config": {
         "bin-dir": "bin"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "minimum-stability": "stable"
 }

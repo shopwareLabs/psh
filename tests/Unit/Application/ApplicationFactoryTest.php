@@ -27,7 +27,7 @@ namespace Shopware\Psh\Test\Unit\Application;
 use Shopware\Psh\Application\ApplicationFactory;
 use Shopware\Psh\Config\Config;
 
-class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
+class ApplicationFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function test_createConfig()
     {

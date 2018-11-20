@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
@@ -6,7 +6,7 @@ namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 use Shopware\Psh\ScriptRuntime\Template;
 use Shopware\Psh\ScriptRuntime\TemplateNotValidException;
 
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends \PHPUnit\Framework\TestCase
 {
     public function test_get_content_on_invalid_file_fails()
     {

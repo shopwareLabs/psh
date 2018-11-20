@@ -1,11 +1,11 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Shopware\Psh\Test\Acceptance;
 
 use Shopware\Psh\Application\Application;
 
-class MinApplicationTest extends \PHPUnit_Framework_TestCase
+class MinApplicationTest extends \PHPUnit\Framework\TestCase
 {
     public function test_application_listing()
     {

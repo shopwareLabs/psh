@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
@@ -10,7 +10,7 @@ use Shopware\Psh\ScriptRuntime\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
 use Shopware\Psh\Test\BlackholeLogger;
 
-class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
+class ProcessExecutorTest extends \PHPUnit\Framework\TestCase
 {
     public function test_environment_and_export_work()
     {

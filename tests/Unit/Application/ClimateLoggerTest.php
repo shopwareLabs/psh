@@ -7,7 +7,7 @@ use League\CLImate\CLImate;
 use Shopware\Psh\Application\ClimateLogger;
 use Shopware\Psh\Test\Acceptance\MockWriter;
 
-class ClimateLoggerTest extends \PHPUnit_Framework_TestCase
+class ClimateLoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function test_logTemplate()
     {

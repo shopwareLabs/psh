@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
@@ -9,7 +9,7 @@ use Shopware\Psh\ScriptRuntime\Template;
 use Shopware\Psh\ScriptRuntime\ValueProvider;
 use Symfony\Component\Process\Process;
 
-class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
+class ProcessEnvironmentTest extends \PHPUnit\Framework\TestCase
 {
     public function test_it_returns_all_passed_constants()
     {

@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
@@ -9,7 +9,7 @@ use Shopware\Psh\ScriptRuntime\ProcessCommand;
 use Shopware\Psh\ScriptRuntime\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\TemplateCommand;
 
-class ScriptLoaderTest extends \PHPUnit_Framework_TestCase
+class ScriptLoaderTest extends \PHPUnit\Framework\TestCase
 {
     public function test_it_loads_all_simple_commands_from_a_script()
     {
