@@ -81,7 +81,6 @@ Download `psh.phar` to your local environment.
 
 ```sh
 wget https://shopwarelabs.github.io/psh/psh.phar # PHP7 Version
-# OR wget https://shopwarelabs.github.io/psh/psh56.phar for the PHP5.6 Version
 chmod +x psh.phar
 ```
 

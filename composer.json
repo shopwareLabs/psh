@@ -24,8 +24,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^1.11",
-        "phpunit/phpunit": "^5.4",
-        "janpiet/php-version-transpiler": "dev-master"
+        "phpunit/phpunit": "^5.4"
     },
     "license": "MIT",
     "authors": [
