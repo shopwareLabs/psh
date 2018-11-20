@@ -9,6 +9,7 @@ build/*
 # composer
 vendor
 bin
+composer.lock
 
-#externals
-humbuglog.txt
+# cs fixer
+.php_cs.cache
