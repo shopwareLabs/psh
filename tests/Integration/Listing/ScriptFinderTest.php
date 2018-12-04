@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\Test\Unit\Integration\Listing;
+namespace Shopware\Psh\Test\Integration\Listing;
 
 use Shopware\Psh\Config\ScriptPath;
 use Shopware\Psh\Listing\Script;

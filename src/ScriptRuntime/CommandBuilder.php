@@ -38,7 +38,13 @@ class CommandBuilder
      */
     private $template;
 
-    private function reset()
+    public function __construct()
+    {
+        $this->finishLast();
+    }
+
+
+    public function finishLast(): CommandBuilder
     {
         if ($this->currentShellCommand) {
             $this->allCommands[] = new ProcessCommand(
@@ -54,6 +60,8 @@ class CommandBuilder
         $this->ignoreError = false;
         $this->tty = false;
         $this->template = false;
+
+        return $this;
     }
 
     /**
@@ -62,14 +70,10 @@ class CommandBuilder
      * @param bool $ignoreError
      * @return CommandBuilder
      */
-    public function next(string $shellCommand, int $startLine, bool $ignoreError, bool $tty): CommandBuilder
+    public function setExecutable(string $shellCommand, int $startLine): CommandBuilder
     {
-        $this->reset();
-
         $this->currentShellCommand = $shellCommand;
         $this->startLine = $startLine;
-        $this->ignoreError = $ignoreError;
-        $this->tty = $tty;
 
         return $this;
     }
@@ -82,8 +86,6 @@ class CommandBuilder
      */
     public function addTemplateCommand(string $source, string $destination, int $lineNumber)
     {
-        $this->reset();
-
         $this->allCommands[] = new TemplateCommand(
             $source,
             $destination,
@@ -104,11 +106,18 @@ class CommandBuilder
         return $this;
     }
 
+    public function setTty(bool $set = true): CommandBuilder
+    {
+        $this->tty = $set;
+
+        return $this;
+    }
+
     /**
      * @param string $shellCommand
      * @return CommandBuilder
      */
-    public function add(string $shellCommand): CommandBuilder
+    public function append(string $shellCommand): CommandBuilder
     {
         $this->currentShellCommand .= ' ' . trim($shellCommand);
 
@@ -131,7 +140,6 @@ class CommandBuilder
      */
     public function getAll(): array
     {
-        $this->reset();
         $allCommands = $this->allCommands;
         $this->allCommands = [];
 

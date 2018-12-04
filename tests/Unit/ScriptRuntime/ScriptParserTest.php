@@ -6,14 +6,14 @@ use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\Command;
 use Shopware\Psh\ScriptRuntime\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ProcessCommand;
-use Shopware\Psh\ScriptRuntime\ScriptLoader;
+use Shopware\Psh\ScriptRuntime\ScriptParser;
 use Shopware\Psh\ScriptRuntime\TemplateCommand;
 
-class ScriptLoaderTest extends \PHPUnit\Framework\TestCase
+class ScriptParserTest extends \PHPUnit\Framework\TestCase
 {
     public function test_it_loads_all_simple_commands_from_a_script()
     {
-        $loader = new ScriptLoader(new CommandBuilder());
+        $loader = new ScriptParser(new CommandBuilder());
 
         $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'simple.sh'));
 
@@ -28,7 +28,7 @@ class ScriptLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function test_it_concatenates_commands()
     {
-        $loader = new ScriptLoader(new CommandBuilder());
+        $loader = new ScriptParser(new CommandBuilder());
 
         $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'concatenate.sh'));
 
@@ -43,7 +43,7 @@ class ScriptLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function test_it_sets_ignore_error()
     {
-        $loader = new ScriptLoader(new CommandBuilder());
+        $loader = new ScriptParser(new CommandBuilder());
 
         $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'ignore_error.sh'));
 
@@ -58,7 +58,7 @@ class ScriptLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function test_it_sets_tty()
     {
-        $loader = new ScriptLoader(new CommandBuilder());
+        $loader = new ScriptParser(new CommandBuilder());
 
         $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'tty.sh'));
 
@@ -73,7 +73,7 @@ class ScriptLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function test_it_includes_local_commands()
     {
-        $loader = new ScriptLoader(new CommandBuilder());
+        $loader = new ScriptParser(new CommandBuilder());
 
         $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'local_include.sh'));
 
@@ -92,14 +92,14 @@ class ScriptLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function test_it_include_throws_exception()
     {
-        $loader = new ScriptLoader(new CommandBuilder());
+        $loader = new ScriptParser(new CommandBuilder());
         $this->expectException(\RuntimeException::class);
         $loader->loadScript(new Script(__DIR__ . '/_scripts', 'exception_include.sh'));
     }
 
     public function test_renders_templates_on_demand()
     {
-        $loader = new ScriptLoader(new CommandBuilder());
+        $loader = new ScriptParser(new CommandBuilder());
 
         $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'template.sh'));
 

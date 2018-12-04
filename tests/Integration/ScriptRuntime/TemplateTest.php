@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
+namespace Shopware\Psh\Test\Integration\ScriptRuntime;
 
 use Shopware\Psh\ScriptRuntime\Template;
 use Shopware\Psh\ScriptRuntime\TemplateNotValidException;

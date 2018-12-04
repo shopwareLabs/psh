@@ -16,7 +16,7 @@ use Shopware\Psh\ScriptRuntime\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\Logger;
 use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\ProcessExecutor;
-use Shopware\Psh\ScriptRuntime\ScriptLoader;
+use Shopware\Psh\ScriptRuntime\ScriptParser;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
 use Symfony\Component\Yaml\Parser;
 
@@ -92,7 +92,7 @@ class ApplicationFactory
      */
     public function createCommands(Script $script): array
     {
-        $scriptLoader = new ScriptLoader(new CommandBuilder());
+        $scriptLoader = new ScriptParser(new CommandBuilder());
         return $scriptLoader->loadScript($script);
     }
 

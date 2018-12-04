@@ -8,7 +8,7 @@ use Shopware\Psh\Listing\Script;
 /**
  * Load scripts and parse it into commands
  */
-class ScriptLoader
+class ScriptParser
 {
     const MODIFIER_IS_TTY = 'TTY: ';
 
@@ -43,15 +43,12 @@ class ScriptLoader
         $lines = explode("\n", $content);
 
         foreach ($lines as $lineNumber => $currentLine) {
-            $ignoreError = false;
-            $tty = false;
-
             if (!$this->isExecutableLine($currentLine)) {
                 continue;
             }
 
             if ($this->startsWith(self::CONCATENATE_PREFIX, $currentLine)) {
-                $this->commandBuilder->add($currentLine);
+                $this->commandBuilder->append($currentLine);
                 continue;
             }
 
@@ -73,26 +70,30 @@ class ScriptLoader
                 $destination = $script->getDirectory() . '/' . $rawDestination;
 
                 $this->commandBuilder
+                    ->finishLast()
                     ->addTemplateCommand($source, $destination, $lineNumber);
 
                 continue;
             }
 
+            $this->commandBuilder->finishLast();
+
             if ($this->startsWith(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine)) {
                 $currentLine = $this->removeFromStart(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine);
-                $ignoreError = true;
+                $this->commandBuilder->setIgnoreError();
             }
 
             if ($this->startsWith(self::MODIFIER_IS_TTY, $currentLine)) {
                 $currentLine = $this->removeFromStart(self::MODIFIER_IS_TTY, $currentLine);
-                $tty = true;
+                $this->commandBuilder->setTty();
             }
 
             $this->commandBuilder
-                ->next($currentLine, $lineNumber, $ignoreError, $tty);
+                ->setExecutable($currentLine, $lineNumber);
         }
 
-        return $this->commandBuilder->getAll();
+        return $this->commandBuilder->finishLast()
+            ->getAll();
     }
 
     /**

@@ -7,19 +7,17 @@
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
 >
-
-    <testsuite name="Psh Unit Test Suite">
-        <directory>tests/Unit</directory>
-    </testsuite>
-
-    <testsuite name="Psh Integration Test Suite">
-        <directory>tests/Integration</directory>
-    </testsuite>
-
-    <testsuite name="Psh Acceptance Test Suite">
-        <directory>tests/Acceptance</directory>
-    </testsuite>
-
+    <testsuites>
+        <testsuite name="Psh Unit Test Suite">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Psh Integration Test Suite">
+            <directory>tests/Integration</directory>
+        </testsuite>
+        <testsuite name="Psh Acceptance Test Suite">
+            <directory>tests/Acceptance</directory>
+        </testsuite>
+    </testsuites>
     <filter>
         <whitelist>
             <directory>.</directory>
