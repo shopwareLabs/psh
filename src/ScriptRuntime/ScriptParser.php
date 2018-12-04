@@ -42,37 +42,10 @@ class ScriptParser
         $content = $this->loadFileContents($script->getPath());
         $lines = explode("\n", $content);
 
+        $lines = $this->concatenateStatements($lines);
+
         foreach ($lines as $lineNumber => $currentLine) {
-            if (!$this->isExecutableLine($currentLine)) {
-                continue;
-            }
-
-            if ($this->startsWith(self::CONCATENATE_PREFIX, $currentLine)) {
-                $this->commandBuilder->append($currentLine);
-                continue;
-            }
-
-            if ($this->startsWith(self::INCLUDE_STATEMENT_PREFIX, $currentLine)) {
-                $path = $this->findInclude($script, $this->removeFromStart(self::INCLUDE_STATEMENT_PREFIX, $currentLine));
-                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
-
-                $commands = $this->loadScript($includeScript);
-                $this->commandBuilder->setCommands($commands);
-
-                continue;
-            }
-
-            if ($this->startsWith(self::TEMPLATE_STATEMENT_PREFIX, $currentLine)) {
-                $definition = $this->removeFromStart(self::TEMPLATE_STATEMENT_PREFIX, $currentLine);
-                list($rawSource, $rawDestination) = explode(':', $definition);
-
-                $source = $script->getDirectory() . '/' . $rawSource;
-                $destination = $script->getDirectory() . '/' . $rawDestination;
-
-                $this->commandBuilder
-                    ->finishLast()
-                    ->addTemplateCommand($source, $destination, $lineNumber);
-
+            if ($this->isNotHandledAsCommand($script, $lineNumber, $currentLine)) {
                 continue;
             }
 
@@ -94,6 +67,45 @@ class ScriptParser
 
         return $this->commandBuilder->finishLast()
             ->getAll();
+    }
+
+    /**
+     * @param Script $script
+     * @param int $lineNumber
+     * @param string $currentLine
+     * @return bool
+     */
+    private function isNotHandledAsCommand(Script $script, int $lineNumber, string $currentLine): bool
+    {
+        if (!$this->isExecutableLine($currentLine)) {
+            return true;
+        }
+
+        if ($this->startsWith(self::INCLUDE_STATEMENT_PREFIX, $currentLine)) {
+            $path = $this->findInclude($script, $this->removeFromStart(self::INCLUDE_STATEMENT_PREFIX, $currentLine));
+            $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
+
+            $commands = $this->loadScript($includeScript);
+            $this->commandBuilder->setCommands($commands);
+
+            return true;
+        }
+
+        if ($this->startsWith(self::TEMPLATE_STATEMENT_PREFIX, $currentLine)) {
+            $definition = $this->removeFromStart(self::TEMPLATE_STATEMENT_PREFIX, $currentLine);
+            list($rawSource, $rawDestination) = explode(':', $definition);
+
+            $source = $script->getDirectory() . '/' . $rawSource;
+            $destination = $script->getDirectory() . '/' . $rawDestination;
+
+            $this->commandBuilder
+                ->finishLast()
+                ->addTemplateCommand($source, $destination, $lineNumber);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -157,8 +169,30 @@ class ScriptParser
      * @param string $file
      * @return string
      */
-    protected function loadFileContents(string $file): string
+    private function loadFileContents(string $file): string
     {
         return file_get_contents($file);
+    }
+
+    /**
+     * @param array $lines
+     * @return array
+     */
+    private function concatenateStatements(array $lines): array
+    {
+        $filteredResult = [];
+        $previousLine = key($lines);
+
+        foreach ($lines as $lineNumber => $currentLine) {
+            if ($this->startsWith(self::CONCATENATE_PREFIX, $currentLine)) {
+                $filteredResult[$previousLine] .= ' ' . trim($currentLine);
+                continue;
+            }
+
+            $filteredResult[$lineNumber] = $currentLine;
+            $previousLine = $lineNumber;
+        }
+
+        return $filteredResult;
     }
 }

@@ -82,9 +82,9 @@ class CommandBuilder
      * @param string $source
      * @param string $destination
      * @param int $lineNumber
-     * @return $this
+     * @return CommandBuilder
      */
-    public function addTemplateCommand(string $source, string $destination, int $lineNumber)
+    public function addTemplateCommand(string $source, string $destination, int $lineNumber): CommandBuilder
     {
         $this->allCommands[] = new TemplateCommand(
             $source,
@@ -109,17 +109,6 @@ class CommandBuilder
     public function setTty(bool $set = true): CommandBuilder
     {
         $this->tty = $set;
-
-        return $this;
-    }
-
-    /**
-     * @param string $shellCommand
-     * @return CommandBuilder
-     */
-    public function append(string $shellCommand): CommandBuilder
-    {
-        $this->currentShellCommand .= ' ' . trim($shellCommand);
 
         return $this;
     }
