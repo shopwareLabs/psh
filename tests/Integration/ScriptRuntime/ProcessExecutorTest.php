@@ -8,10 +8,25 @@ use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\ProcessExecutor;
 use Shopware\Psh\ScriptRuntime\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\TemplateEngine;
+use Shopware\Psh\ScriptRuntime\WaitCommand;
 use Shopware\Psh\Test\BlackholeLogger;
 
 class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 {
+    const DEFERED_FILES = [
+        __DIR__ . '/1.json',
+        __DIR__ . '/2.json',
+        __DIR__ . '/3.json',
+        __DIR__ . '/4.json',
+    ];
+
+    protected function tearDown()
+    {
+        foreach (self::DEFERED_FILES as $file) {
+            @unlink($file);
+        }
+    }
+
     public function test_environment_and_export_work()
     {
         $script = new Script(__DIR__ . '/_scripts', 'environment.sh');
@@ -94,6 +109,48 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $executor->execute($script, $commands);
 
         $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
+    }
+
+    public function test_executor_recognises_defered_commands()
+    {
+        $script = new Script(__DIR__ . '/_scripts', 'deferred.sh');
+        $loader = new ScriptLoader(new CommandBuilder());
+
+        $commands = $loader->loadScript($script);
+
+        $this->assertCount(5, $commands);
+        $this->assertInstanceOf(WaitCommand::class, $commands[2]);
+        $this->assertTrue($commands[0]->isDeferred());
+
+        $logger = new BlackholeLogger();
+
+        $executor = new ProcessExecutor(
+            new ProcessEnvironment([], [], []),
+            new TemplateEngine(),
+            $logger,
+            __DIR__
+        );
+
+        $beginExecution = microtime(true);
+        $executor->execute($script, $commands);
+        $executionTime = microtime(true) - $beginExecution;
+        // check a wait occurred
+        $totalWait = 0;
+        foreach (self::DEFERED_FILES as $file) {
+            $this->assertFileExists($file);
+
+            $data = json_decode(file_get_contents($file), true);
+
+            $currentWait = $data['after'] - $data['before'];
+            $totalWait += $currentWait;
+
+            $this->assertGreaterThan(0.0001, $currentWait);
+        }
+
+        //assert total duration was less then total wait -> Then it just becomes a problem of more processes on travis if necessary
+        $this->assertLessThan($executionTime * 0.6, $totalWait);
+        $this->assertCount(0, $logger->errors);
+        $this->assertEquals(["Done\n", "Done\n", "Done\n", "Done\n"], $logger->output);
     }
 
     /**

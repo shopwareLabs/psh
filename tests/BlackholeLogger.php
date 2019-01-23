@@ -4,6 +4,7 @@ namespace Shopware\Psh\Test;
 
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\Logger;
+use Shopware\Psh\ScriptRuntime\LogMessage;
 
 class BlackholeLogger implements Logger
 {
@@ -18,48 +19,52 @@ class BlackholeLogger implements Logger
     {
     }
 
-    /**
-     * @param string $shellCommand
-     * @param int $line
-     * @param bool $isIgnoreError
-     * @param int $index
-     * @param int $max
-     */
-    public function logCommandStart(string $shellCommand, int $line, bool $isIgnoreError, int $index, int $max)
-    {
-    }
-
-
-    /**
-     * @param string $destination
-     * @param int $line
-     * @param int $index
-     * @param int $max
-     */
-    public function logTemplate(string $destination, int $line, int $index, int $max)
-    {
-    }
-
-    /**
-     * @param string $response
-     */
-    public function err(string $response)
-    {
-        $this->errors[] = $response;
-    }
-
-    /**
-     * @param string $response
-     */
-    public function out(string $response)
-    {
-        $this->output[] = $response;
-    }
 
     /**
      * @param Script $script
      */
     public function finishScript(Script $script)
+    {
+    }
+
+    /**
+     * @return void
+     */
+    public function logWait()
+    {
+    }
+
+    /**
+     * @param string $headline
+     * @param string $subject
+     * @param int $line
+     * @param bool $isIgnoreError
+     * @param int $index
+     * @param int $max
+     */
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
+    {
+        // TODO: Implement logStart() method.
+    }
+
+    /**
+     * @param LogMessage $logMessage
+     * @return mixed
+     */
+    public function log(LogMessage $logMessage)
+    {
+        if ($logMessage->isError()) {
+            $this->errors[] = $logMessage->getMessage();
+        } else {
+            $this->output[] = $logMessage->getMessage();
+        }
+    }
+
+    public function logSuccess()
+    {
+    }
+
+    public function LogFailure()
     {
     }
 }

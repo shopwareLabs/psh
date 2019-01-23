@@ -261,6 +261,23 @@ TEMPLATE: ../templates/template.ini.tpl:../destination/template.ini
 
 Notice that all paths here must be **relative** to the script location.
 
+#### Defer execution to the background
+
+Execute the script in the background, so the following command gets executed right away
+
+```sh
+D: php generate_come_things.php
+```
+
+#### Wait for all deferred commands to execute
+
+If you then want to wait for all results, just add a `WAIT` in there.
+
+```sh
+WAIT:
+```
+
+
 #### Open a ssh connection to another machine
 
 Many dev-ops script open a SSH channel to a locally running virtual machine / container or a remote staging / test system. If you do this 

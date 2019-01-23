@@ -6,6 +6,7 @@ use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\Logger;
+use Shopware\Psh\ScriptRuntime\LogMessage;
 
 /**
  * A CLImate implementation of the runtime logger
@@ -61,35 +62,35 @@ class ClimateLogger implements Logger
     }
 
     /**
-     * @param string $shellCommand
-     * @param int $line
-     * @param bool $isIgnoreError
-     * @param int $index
-     * @param int $max
+     * @param string $response
+     * @return string
      */
-    public function logCommandStart(string $shellCommand, int $line, bool $isIgnoreError, int $index, int $max)
+    private function formatOutput(string $response) :string
     {
-        $index++;
-        $this->cliMate->yellow()->inline("\n({$index}/{$max}) Starting\n<bold>> {$shellCommand}</bold>\n\t");
+        return str_replace(PHP_EOL, PHP_EOL . "\t", $response);
     }
 
-
     /**
-     * @param string $destination
-     * @param int $line
-     * @param int $index
-     * @param int $max
+     * @return void
      */
-    public function logTemplate(string $destination, int $line, int $index, int $max)
+    public function logWait()
     {
-        $index++;
-        $this->cliMate->yellow()->inline("\n({$index}/{$max}) Rendering\n<bold>> {$destination}</bold>\n\t");
+        $this->cliMate->green()->bold()->inline("\nWAITING...\n\t");
+    }
+
+    public function log(LogMessage $logMessage)
+    {
+        if ($logMessage->isError()) {
+            $this->err($logMessage->getMessage());
+        } else {
+            $this->out($logMessage->getMessage());
+        }
     }
 
     /**
      * @param string $response
      */
-    public function err(string $response)
+    private function err(string $response)
     {
         $this->cliMate->red()->inline($this->formatOutput($response));
     }
@@ -97,17 +98,32 @@ class ClimateLogger implements Logger
     /**
      * @param string $response
      */
-    public function out(string $response)
+    private function out(string $response)
     {
         $this->cliMate->green()->inline($this->formatOutput($response));
     }
 
     /**
-     * @param string $response
-     * @return string
+     * @param string $headline
+     * @param string $subject
+     * @param int $line
+     * @param bool $isIgnoreError
+     * @param int $index
+     * @param int $max
      */
-    private function formatOutput(string $response) :string
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
     {
-        return str_replace(PHP_EOL, PHP_EOL . "\t", $response);
+        $index++;
+        $this->cliMate->yellow()->inline("\n({$index}/{$max}) $headline\n<bold>> {$subject}</bold>\n\t");
+    }
+
+    public function logSuccess()
+    {
+        $this->cliMate->green()->bold()->out('Executed Successfully');
+    }
+
+    public function LogFailure()
+    {
+        $this->cliMate->green()->red()->out('Executed with failure');
     }
 }

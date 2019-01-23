@@ -14,7 +14,11 @@ class ScriptLoader
 
     const MODIFIER_IGNORE_ERROR_PREFIX = 'I: ';
 
+    const MODIFIER_DEFERRED_EXECUTION_PREFIX = 'D: ';
+
     const INCLUDE_STATEMENT_PREFIX = 'INCLUDE: ';
+
+    const WAIT_STATEMENT = 'WAIT:';
 
     const TEMPLATE_STATEMENT_PREFIX = 'TEMPLATE: ';
 
@@ -35,7 +39,7 @@ class ScriptLoader
 
     /**
      * @param Script $script
-     * @return array
+     * @return Command[]
      */
     public function loadScript(Script $script): array
     {
@@ -45,6 +49,7 @@ class ScriptLoader
         foreach ($lines as $lineNumber => $currentLine) {
             $ignoreError = false;
             $tty = false;
+            $deferred = false;
 
             if (!$this->isExecutableLine($currentLine)) {
                 continue;
@@ -78,6 +83,12 @@ class ScriptLoader
                 continue;
             }
 
+            if ($this->startsWith(self::WAIT_STATEMENT, $currentLine)) {
+                $this->commandBuilder
+                    ->addWaitCommand($lineNumber);
+                continue;
+            }
+
             if ($this->startsWith(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine)) {
                 $currentLine = $this->removeFromStart(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine);
                 $ignoreError = true;
@@ -88,8 +99,13 @@ class ScriptLoader
                 $tty = true;
             }
 
+            if ($this->startsWith(self::MODIFIER_DEFERRED_EXECUTION_PREFIX, $currentLine)) {
+                $currentLine = $this->removeFromStart(self::MODIFIER_DEFERRED_EXECUTION_PREFIX, $currentLine);
+                $deferred = true;
+            }
+
             $this->commandBuilder
-                ->next($currentLine, $lineNumber, $ignoreError, $tty);
+                ->next($currentLine, $lineNumber, $ignoreError, $tty, $deferred);
         }
 
         return $this->commandBuilder->getAll();

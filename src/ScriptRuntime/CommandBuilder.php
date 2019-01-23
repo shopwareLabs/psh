@@ -38,6 +38,11 @@ class CommandBuilder
      */
     private $template;
 
+    /**
+     * @var bool
+     */
+    private $deferred;
+
     private function reset()
     {
         if ($this->currentShellCommand) {
@@ -45,7 +50,8 @@ class CommandBuilder
                 $this->currentShellCommand,
                 $this->startLine,
                 $this->ignoreError,
-                $this->tty
+                $this->tty,
+                $this->deferred
             );
         }
 
@@ -54,15 +60,18 @@ class CommandBuilder
         $this->ignoreError = false;
         $this->tty = false;
         $this->template = false;
+        $this->deferred = false;
     }
 
     /**
      * @param string $shellCommand
      * @param int $startLine
      * @param bool $ignoreError
+     * @param bool $tty
+     * @param bool $deferred
      * @return CommandBuilder
      */
-    public function next(string $shellCommand, int $startLine, bool $ignoreError, bool $tty): CommandBuilder
+    public function next(string $shellCommand, int $startLine, bool $ignoreError, bool $tty, bool $deferred): CommandBuilder
     {
         $this->reset();
 
@@ -70,6 +79,7 @@ class CommandBuilder
         $this->startLine = $startLine;
         $this->ignoreError = $ignoreError;
         $this->tty = $tty;
+        $this->deferred = $deferred;
 
         return $this;
     }
@@ -89,6 +99,18 @@ class CommandBuilder
             $destination,
             $lineNumber
         );
+
+        return $this;
+    }
+
+    /**
+     * @param int $lineNumber
+     * @return CommandBuilder
+     */
+    public function addWaitCommand(int $lineNumber): CommandBuilder
+    {
+        $this->reset();
+        $this->allCommands[] = new WaitCommand($lineNumber);
 
         return $this;
     }
