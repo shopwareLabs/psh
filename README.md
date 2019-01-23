@@ -75,7 +75,7 @@ Globally:
 composer global require shopware/psh
 ```
 
-### As a PHAR archive (preferred)
+### As a PHAR archive
 
 Download `psh.phar` to your local environment. 
 
@@ -84,6 +84,14 @@ wget https://shopwarelabs.github.io/psh/psh.phar # PHP7 Version
 # OR wget https://shopwarelabs.github.io/psh/psh56.phar for the PHP5.6 Version
 chmod +x psh.phar
 ```
+
+### As a PHAR archive via phive (preferred)
+
+```sh
+phive install psh
+```
+
+If you want to know how to install phive please click [here](https://phar.io/#Install). 
 
 ### Build it yourself
 
