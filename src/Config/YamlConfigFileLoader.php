@@ -8,7 +8,7 @@ use Symfony\Component\Yaml\Parser;
 /**
  * Load the config data from a yaml file
  */
-class YamlConfigFileLoader implements ConfigLoader
+class YamlConfigFileLoader extends ConfigFileLoader
 {
     const KEY_HEADER = 'header';
 
@@ -56,7 +56,7 @@ class YamlConfigFileLoader implements ConfigLoader
      */
     public function isSupported(string $file): bool
     {
-        return in_array(pathinfo($file, PATHINFO_EXTENSION), ['yaml', 'yml', 'dist', 'override'], true);
+        return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.yaml', '.psh.yml', '.psh.yml.dist', '.psh.yml.override', '.psh.yaml.dist', '.psh.yaml.override'], true);
     }
 
     /**
@@ -129,14 +129,7 @@ class YamlConfigFileLoader implements ConfigLoader
         return $rawConfig[$key];
     }
 
-    /**
-     * @param string $file
-     * @return string
-     */
-    private function loadFileContents(string $file): string
-    {
-        return file_get_contents($file);
-    }
+
 
     /**
      * @param string $contents
@@ -159,7 +152,7 @@ class YamlConfigFileLoader implements ConfigLoader
         $paths = $this->extractData($key, $rawConfigData, []);
 
         return array_map(function ($path) use ($file) {
-            return $this->fixPath($path, $file);
+            return $this->fixPath($this->applicationRootDirectory, $path, $file);
         }, $paths);
     }
 
@@ -173,47 +166,10 @@ class YamlConfigFileLoader implements ConfigLoader
         $templates = $this->extractData(self::KEY_TEMPLATES, $rawConfigData, []);
 
         return array_map(function ($template) use ($file) {
-            $template['source'] = $this->fixPath($template['source'], $file);
+            $template['source'] = $this->fixPath($this->applicationRootDirectory, $template['source'], $file);
             $template['destination'] = $this->makeAbsolutePath($file, $template['destination']);
 
             return $template;
         }, $templates);
-    }
-
-    /**
-     * @param string $absoluteOrRelativePath
-     * @param string $baseFile
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    private function fixPath(string $absoluteOrRelativePath, string $baseFile): string
-    {
-        $possiblyValidFiles = [
-            $this->applicationRootDirectory . '/' . $absoluteOrRelativePath,
-            $this->makeAbsolutePath($baseFile, $absoluteOrRelativePath),
-            $absoluteOrRelativePath,
-        ];
-
-        foreach ($possiblyValidFiles as $file) {
-            if (file_exists($file)) {
-                return $file;
-            }
-        }
-
-        throw new \InvalidArgumentException(sprintf(
-            'Unable to find a file referenced by "%s", tried: %s',
-            $absoluteOrRelativePath,
-            print_r($possiblyValidFiles, true)
-        ));
-    }
-
-    /**
-     * @param string $baseFile
-     * @param string $path
-     * @return string
-     */
-    private function makeAbsolutePath(string $baseFile, string $path): string
-    {
-        return pathinfo($baseFile, PATHINFO_DIRNAME) . '/' . $path;
     }
 }

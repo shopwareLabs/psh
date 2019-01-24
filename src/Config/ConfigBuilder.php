@@ -87,6 +87,12 @@ class ConfigBuilder
         return $this;
     }
 
+    public function setDynamicVariable($key, $value): ConfigBuilder
+    {
+        $this->currentDynamicVariables[$key] = $value;
+        return $this;
+    }
+
     /**
      * @param array $constants
      * @return ConfigBuilder
@@ -94,6 +100,12 @@ class ConfigBuilder
     public function setConstants(array $constants): ConfigBuilder
     {
         $this->currentConstants = $constants;
+        return $this;
+    }
+
+    public function setConstVariable($key, $value): ConfigBuilder
+    {
+        $this->currentConstants[$key] = $value;
         return $this;
     }
 
