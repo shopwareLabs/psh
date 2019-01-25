@@ -5,8 +5,8 @@ namespace Shopware\Psh\Application;
 use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Listing\Script;
-use Shopware\Psh\ScriptRuntime\Logger;
-use Shopware\Psh\ScriptRuntime\LogMessage;
+use Shopware\Psh\ScriptRuntime\Execution\Logger;
+use Shopware\Psh\ScriptRuntime\Execution\LogMessage;
 
 /**
  * A CLImate implementation of the runtime logger

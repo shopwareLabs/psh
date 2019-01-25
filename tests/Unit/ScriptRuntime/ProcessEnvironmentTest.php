@@ -4,10 +4,10 @@
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
 use Shopware\Psh\Config\ScriptPath;
-use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
-use Shopware\Psh\ScriptRuntime\SimpleValueProvider;
-use Shopware\Psh\ScriptRuntime\Template;
-use Shopware\Psh\ScriptRuntime\ValueProvider;
+use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
+use Shopware\Psh\ScriptRuntime\Execution\SimpleValueProvider;
+use Shopware\Psh\ScriptRuntime\Execution\Template;
+use Shopware\Psh\ScriptRuntime\Execution\ValueProvider;
 use Symfony\Component\Process\Process;
 
 class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
@@ -16,7 +16,6 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     {
         putenv('FOO');
     }
-
 
     public function test_it_returns_all_passed_constants()
     {

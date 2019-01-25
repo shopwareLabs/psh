@@ -1,7 +1,14 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\ScriptRuntime;
+namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
+
+use Shopware\Psh\ScriptRuntime\Command;
+use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
+use Shopware\Psh\ScriptRuntime\Execution\DeferredProcess;
+use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
+use Shopware\Psh\ScriptRuntime\TemplateCommand;
+use Shopware\Psh\ScriptRuntime\WaitCommand;
 
 /**
  * Again, a statefull builder to ease the parsing
@@ -9,7 +16,7 @@ namespace Shopware\Psh\ScriptRuntime;
 class CommandBuilder
 {
     /**
-     * @var ProcessCommand[]
+     * @var Command[]
      */
     private $allCommands = [];
 
@@ -53,13 +60,21 @@ class CommandBuilder
      */
     public function addProcessCommand(string $shellCommand, int $startLine): CommandBuilder
     {
-        $this->allCommands[] = new ProcessCommand(
-            $shellCommand,
-            $startLine,
-            $this->ignoreError,
-            $this->tty,
-            $this->deferred
-        );
+        if ($this->deferred) {
+            $this->allCommands[] = new DeferredProcessCommand(
+                $shellCommand,
+                $startLine,
+                $this->ignoreError,
+                $this->tty
+            );
+        } else {
+            $this->allCommands[] = new SynchronusProcessCommand(
+                $shellCommand,
+                $startLine,
+                $this->ignoreError,
+                $this->tty
+            );
+        }
 
         $this->reset();
 
@@ -142,7 +157,7 @@ class CommandBuilder
     }
 
     /**
-     * @return ProcessCommand[]
+     * @return SynchronusProcessCommand[]
      */
     public function getAll(): array
     {

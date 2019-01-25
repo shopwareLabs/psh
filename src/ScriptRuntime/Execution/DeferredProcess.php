@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Shopware\Psh\ScriptRuntime;
+namespace Shopware\Psh\ScriptRuntime\Execution;
 
+use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
 use Symfony\Component\Process\Process;
 
 class DeferredProcess
@@ -12,7 +13,7 @@ class DeferredProcess
     private $parsedCommand;
 
     /**
-     * @var ProcessCommand
+     * @var DeferredProcessCommand
      */
     private $command;
 
@@ -28,10 +29,10 @@ class DeferredProcess
 
     /**
      * @param string $parsedCommand
-     * @param ProcessCommand $command
+     * @param DeferredProcessCommand $command
      * @param Process $process
      */
-    public function __construct(string $parsedCommand, ProcessCommand $command, Process $process)
+    public function __construct(string $parsedCommand, DeferredProcessCommand $command, Process $process)
     {
         $this->command = $command;
         $this->process = $process;
@@ -47,9 +48,9 @@ class DeferredProcess
     }
 
     /**
-     * @return ProcessCommand
+     * @return DeferredProcessCommand
      */
-    public function getCommand(): ProcessCommand
+    public function getCommand(): DeferredProcessCommand
     {
         return $this->command;
     }

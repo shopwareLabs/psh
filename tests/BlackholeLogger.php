@@ -3,8 +3,8 @@
 namespace Shopware\Psh\Test;
 
 use Shopware\Psh\Listing\Script;
-use Shopware\Psh\ScriptRuntime\Logger;
-use Shopware\Psh\ScriptRuntime\LogMessage;
+use Shopware\Psh\ScriptRuntime\Execution\Logger;
+use Shopware\Psh\ScriptRuntime\Execution\LogMessage;
 
 class BlackholeLogger implements Logger
 {
@@ -44,7 +44,6 @@ class BlackholeLogger implements Logger
      */
     public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
     {
-        // TODO: Implement logStart() method.
     }
 
     /**

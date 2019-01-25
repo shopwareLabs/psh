@@ -1,95 +1,29 @@
-<?php declare(strict_types=1);
-
+<?php
 
 namespace Shopware\Psh\ScriptRuntime;
 
 /**
  * A single command of a script
  */
-class ProcessCommand implements Command
+interface ProcessCommand extends Command
 {
-    /**
-     * @var string
-     */
-    private $shellCommand;
-
-    /**
-     * @var bool
-     */
-    private $ignoreError;
-
-    /**
-     * @var int
-     */
-    private $lineNumber;
-
-    /**
-     * @var bool
-     */
-    private $tty;
-    /**
-     * @var bool
-     */
-    private $deferred;
-
-    /**
-     * @param string $shellCommand
-     * @param int $lineNumber
-     * @param bool $ignoreError
-     * @param bool $tty
-     * @param bool $deferred
-     */
-    public function __construct(
-        string $shellCommand,
-        int $lineNumber,
-        bool $ignoreError,
-        bool $tty,
-        bool $deferred
-    ) {
-        $this->shellCommand = $shellCommand;
-        $this->ignoreError = $ignoreError;
-        $this->lineNumber = $lineNumber;
-        $this->tty = $tty;
-        $this->deferred = $deferred;
-    }
-
     /**
      * @return string
      */
-    public function getShellCommand(): string
-    {
-        return $this->shellCommand;
-    }
+    public function getShellCommand(): string;
 
     /**
      * @return boolean
      */
-    public function isIgnoreError(): bool
-    {
-        return $this->ignoreError;
-    }
+    public function isIgnoreError(): bool;
 
     /**
      * @return int
      */
-    public function getLineNumber(): int
-    {
-        return $this->lineNumber;
-    }
+    public function getLineNumber(): int;
 
     /**
      * @return bool
      */
-    public function isTTy(): bool
-    {
-        return $this->tty;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDeferred(): bool
-    {
-        return $this->deferred;
-    }
+    public function isTTy(): bool;
 }

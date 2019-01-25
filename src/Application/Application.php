@@ -10,8 +10,7 @@ use Shopware\Psh\Config\Config;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\Listing\ScriptNotFoundException;
-use Shopware\Psh\Listing\ScriptPathNotValidException;
-use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
+use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
 
 /**
  * Main application entry point. moves the requested data around and outputs user information.

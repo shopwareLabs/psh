@@ -5,12 +5,15 @@ namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
-use Shopware\Psh\ScriptRuntime\CommandBuilder;
-use Shopware\Psh\ScriptRuntime\ExecutionErrorException;
-use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
-use Shopware\Psh\ScriptRuntime\ProcessExecutor;
-use Shopware\Psh\ScriptRuntime\ScriptLoader;
-use Shopware\Psh\ScriptRuntime\TemplateEngine;
+use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
+use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
+use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
+use Shopware\Psh\ScriptRuntime\Execution\ProcessExecutor;
+use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\BashScriptParser;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\WaitCommand;
 use Shopware\Psh\Test\BlackholeLogger;
 
@@ -33,8 +36,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     public function test_environment_and_export_work()
     {
         $script = new Script(__DIR__ . '/_scripts', 'environment.sh');
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
-        $commands = $loader->loadScript($script);
+        $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
@@ -53,8 +55,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     public function test_root_dir_is_application_directory()
     {
         $script = new Script(__DIR__ . '/_scripts', 'root-dir.sh');
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
-        $commands = $loader->loadScript($script);
+        $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
@@ -73,8 +74,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     public function test_template_engine_works_with_template_destinations()
     {
         $script = new Script(__DIR__ . '/_scripts', 'root-dir.sh');
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
-        $commands = $loader->loadScript($script);
+        $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
@@ -98,8 +98,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     public function test_executor_recognises_template_commands()
     {
         $script = new Script(__DIR__ . '/_scripts', 'template.sh');
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
-        $commands = $loader->loadScript($script);
+        $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
@@ -114,16 +113,41 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
     }
 
+    public function test_non_executable_bash_commnds_throw()
+    {
+        $script = new Script(__DIR__ . '/_scripts', 'bash-non-executable.sh');
+
+        $this->expectException(\RuntimeException::class);
+        $this->loadCommands($script);
+    }
+
+    public function test_executor_recognises_bash_commands()
+    {
+        $script = new Script(__DIR__ . '/_scripts', 'bash.sh');
+        $commands = $this->loadCommands($script);
+        $logger = new BlackholeLogger();
+
+        $executor = new ProcessExecutor(
+            new ProcessEnvironment([], [], []),
+            new TemplateEngine(),
+            $logger,
+            __DIR__
+        );
+
+        $executor->execute($script, $commands);
+
+        $this->assertCount(1, $logger->output);
+        $this->assertEquals("/psh/tests/Integration/ScriptRuntime\nBAR\n", $logger->output[0]);
+    }
+
     public function test_executor_recognises_defered_commands()
     {
         $script = new Script(__DIR__ . '/_scripts', 'deferred.sh');
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
-
-        $commands = $loader->loadScript($script);
+        $commands = $this->loadCommands($script);
 
         $this->assertCount(5, $commands);
         $this->assertInstanceOf(WaitCommand::class, $commands[2]);
-        $this->assertTrue($commands[0]->isDeferred());
+        $this->assertInstanceOf(DeferredProcessCommand::class, $commands[0]);
 
         $logger = new BlackholeLogger();
 
@@ -159,12 +183,10 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     public function test_deferred_commands_get_executed_even_with_error_in_between()
     {
         $script = new Script(__DIR__ . '/_scripts', 'deferred_with_error.sh');
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
-
-        $commands = $loader->loadScript($script);
+        $commands = $this->loadCommands($script);
 
         $this->assertCount(4, $commands);
-        $this->assertTrue($commands[0]->isDeferred());
+        $this->assertInstanceOf(DeferredProcessCommand::class, $commands[0]);
 
         $logger = new BlackholeLogger();
 
@@ -210,5 +232,19 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     public function removeState()
     {
         @unlink(__DIR__ . '/_testvalue.tpl');
+    }
+
+    /**
+     * @param Script $script
+     * @return mixed
+     */
+    private function loadCommands(Script $script)
+    {
+        $loader = new ScriptLoader(
+            new BashScriptParser(),
+            new PshScriptParser(new CommandBuilder()),
+            new ScriptFinder([], new DescriptionReader())
+        );
+        return $loader->loadScript($script);
     }
 }

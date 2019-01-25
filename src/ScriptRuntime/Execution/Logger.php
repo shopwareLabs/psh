@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\ScriptRuntime;
+namespace Shopware\Psh\ScriptRuntime\Execution;
 
 use Shopware\Psh\Listing\Script;
 

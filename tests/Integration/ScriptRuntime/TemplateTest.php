@@ -3,14 +3,14 @@
 
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
-use Shopware\Psh\ScriptRuntime\Template;
-use Shopware\Psh\ScriptRuntime\TemplateNotValidException;
+use Shopware\Psh\ScriptRuntime\Execution\Template;
+use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValidException;
 
 class TemplateTest extends \PHPUnit_Framework_TestCase
 {
     public function test_get_content_on_invalid_file_fails()
     {
-        $template = new Template(uniqid('foo'), '**');
+        $template = new Template('not-avaliable', '**');
         $this->expectException(TemplateNotValidException::class);
         $template->getContent();
     }

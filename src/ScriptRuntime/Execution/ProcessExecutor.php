@@ -1,9 +1,16 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\ScriptRuntime;
+namespace Shopware\Psh\ScriptRuntime\Execution;
 
 use Shopware\Psh\Listing\Script;
+use Shopware\Psh\ScriptRuntime\BashCommand;
+use Shopware\Psh\ScriptRuntime\Command;
+use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
+use Shopware\Psh\ScriptRuntime\ProcessCommand;
+use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
+use Shopware\Psh\ScriptRuntime\TemplateCommand;
+use Shopware\Psh\ScriptRuntime\WaitCommand;
 use Symfony\Component\Process\Process;
 
 /**
@@ -84,40 +91,72 @@ class ProcessExecutor
     private function executeCommand(Command $command, int $index, int $totalCount)
     {
         switch ($command) {
-            case $command instanceof ProcessCommand:
-                $parsedCommand = $this->getParsedShellCommand($command);
-                $process = $this->environment->createProcess($parsedCommand);
-                $this->setProcessDefaults($command, $process);
+            case $command instanceof BashCommand:
+                $originalContent = file_get_contents($command->getScript()->getPath());
 
-                if ($command->isDeferred()) {
+                try {
+                    file_put_contents($command->getScript()->getPath(), $this->templateEngine->render($originalContent, $this->environment->getAllValues()));
+
+                    $process = $this->environment->createProcess($command->getScript()->getPath());
+                    $this->setProcessDefaults($process, false);
+
                     $this->logger->logStart(
-                        'Deferring',
-                        $parsedCommand,
+                        'Executing',
+                        $command->getScript()->getPath(),
                         $command->getLineNumber(),
-                        $command->isIgnoreError(),
-                        $index,
-                        $totalCount
-                    );
-                    $this->deferProcess($parsedCommand, $command, $process);
-                } else {
-                    $this->logger->logStart(
-                        'Starting',
-                        $parsedCommand,
-                        $command->getLineNumber(),
-                        $command->isIgnoreError(),
+                        false,
                         $index,
                         $totalCount
                     );
 
                     $this->runProcess($process);
-                    $this->testProcessResultValid($command, $process);
+                    $this->testProcessResultValid($process, false);
+                } finally {
+                    file_put_contents($command->getScript()->getPath(), $originalContent);
                 }
+
+
+                break;
+            case $command instanceof SynchronusProcessCommand:
+                $parsedCommand = $this->getParsedShellCommand($command);
+                $process = $this->environment->createProcess($parsedCommand);
+                $this->setProcessDefaults($process, $command->isTTy());
+
+                $this->logger->logStart(
+                    'Starting',
+                    $parsedCommand,
+                    $command->getLineNumber(),
+                    $command->isIgnoreError(),
+                    $index,
+                    $totalCount
+                );
+
+                $this->runProcess($process);
+                $this->testProcessResultValid($process, $command->isIgnoreError());
+
+                break;
+
+
+            case $command instanceof DeferredProcessCommand:
+                $parsedCommand = $this->getParsedShellCommand($command);
+                $process = $this->environment->createProcess($parsedCommand);
+                $this->setProcessDefaults($process, $command->isTTy());
+
+                $this->logger->logStart(
+                    'Defering',
+                    $parsedCommand,
+                    $command->getLineNumber(),
+                    $command->isIgnoreError(),
+                    $index,
+                    $totalCount
+                );
+                $this->deferProcess($parsedCommand, $command, $process);
 
                 break;
 
 
             case $command instanceof TemplateCommand:
-                $template = $command->getTemplate();
+                    $template = $command->createTemplate();
 
                 $this->logger->logStart(
                     'Template',
@@ -171,12 +210,13 @@ class ProcessExecutor
 
     /**
      * @param Process $process
+     * @param bool $isTty
      */
-    private function setProcessDefaults(ProcessCommand $command, Process $process)
+    private function setProcessDefaults(Process $process, bool $isTty)
     {
         $process->setWorkingDirectory($this->applicationDirectory);
         $process->setTimeout(0);
-        $process->setTty($command->isTTy());
+        $process->setTty($isTty);
     }
 
     /**
@@ -190,12 +230,12 @@ class ProcessExecutor
     }
 
     /**
-     * @param ProcessCommand $command
      * @param Process $process
+     * @param bool $ignoreError
      */
-    protected function testProcessResultValid(ProcessCommand $command, Process $process)
+    protected function testProcessResultValid(Process $process, bool $ignoreError)
     {
-        if (!$this->isProcessResultValid($command, $process)) {
+        if (!$this->isProcessResultValid($process, $ignoreError)) {
             throw new ExecutionErrorException('Command exited with Error');
         }
     }
@@ -218,7 +258,7 @@ class ProcessExecutor
 
     private function waitForDeferredProcesses()
     {
-        if (!$this->deferredProcesses) {
+        if (count($this->deferredProcesses) === 0) {
             return;
         }
 
@@ -240,7 +280,7 @@ class ProcessExecutor
                 $this->logger->log($logMessage);
             }
 
-            if ($this->isProcessResultValid($deferredProcess->getCommand(), $deferredProcess->getProcess())) {
+            if ($this->isProcessResultValid($deferredProcess->getProcess(), $deferredProcess->getCommand()->isIgnoreError())) {
                 $this->logger->logSuccess();
             } else {
                 $this->logger->logFailure();
@@ -248,17 +288,18 @@ class ProcessExecutor
         }
 
         foreach ($this->deferredProcesses as $deferredProcess) {
-            $this->testProcessResultValid($deferredProcess->getCommand(), $deferredProcess->getProcess());
+            $this->testProcessResultValid($deferredProcess->getProcess(), $deferredProcess->getCommand()->isIgnoreError());
         }
 
         $this->deferredProcesses = [];
     }
 
     /**
-     * @param ProcessCommand $command
+     * @param string $parsedCommand
+     * @param DeferredProcessCommand $command
      * @param Process $process
      */
-    private function deferProcess(string $parsedCommand, ProcessCommand $command, Process $process)
+    private function deferProcess(string $parsedCommand, DeferredProcessCommand $command, Process $process)
     {
         $deferredProcess = new DeferredProcess($parsedCommand, $command, $process);
 
@@ -270,12 +311,12 @@ class ProcessExecutor
     }
 
     /**
-     * @param ProcessCommand $command
      * @param Process $process
+     * @param bool $ignoreError
      * @return bool
      */
-    protected function isProcessResultValid(ProcessCommand $command, Process $process): bool
+    protected function isProcessResultValid(Process $process, bool $ignoreError): bool
     {
-        return $command->isIgnoreError() || $process->isSuccessful();
+        return $ignoreError || $process->isSuccessful();
     }
 }
