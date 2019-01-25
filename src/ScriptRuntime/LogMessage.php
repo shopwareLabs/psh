@@ -4,16 +4,20 @@ namespace Shopware\Psh\ScriptRuntime;
 
 class LogMessage
 {
-
     /**
      * @var string
      */
     private $message;
+
     /**
      * @var bool
      */
     private $error;
 
+    /**
+     * @param string $message
+     * @param bool $error
+     */
     public function __construct(string $message, bool $error)
     {
         $this->message = $message;

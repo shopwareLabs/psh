@@ -10,6 +10,7 @@ class DeferredProcess
      * @var ProcessCommand
      */
     private $command;
+
     /**
      * @var Process
      */
@@ -20,6 +21,10 @@ class DeferredProcess
      */
     private $log = [];
 
+    /**
+     * @param ProcessCommand $command
+     * @param Process $process
+     */
     public function __construct(ProcessCommand $command, Process $process)
     {
         $this->command = $command;
@@ -42,6 +47,9 @@ class DeferredProcess
         return $this->process;
     }
 
+    /**
+     * @param LogMessage $logMessage
+     */
     public function log(LogMessage $logMessage)
     {
         $this->log[] = $logMessage;

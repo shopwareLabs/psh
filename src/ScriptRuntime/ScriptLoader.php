@@ -46,7 +46,7 @@ class ScriptLoader
     {
         $content = $this->loadFileContents($script->getPath());
         $lines = $this->splitIntoLines($content);
-        $tokenHandler = $this->getTokenHandler();
+        $tokenHandler = $this->createTokenHandler();
 
         foreach ($lines as $lineNumber => $currentLine) {
             foreach ($tokenHandler as $token => $handler) {
@@ -63,7 +63,7 @@ class ScriptLoader
         return $this->commandBuilder->getAll();
     }
 
-    public function getTokenHandler(): array
+    public function createTokenHandler(): array
     {
         return [
             self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script): string {
