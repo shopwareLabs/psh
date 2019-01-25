@@ -148,7 +148,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         }
 
         //assert total duration was less then total wait -> Then it just becomes a problem of more processes on travis if necessary
-        $this->assertLessThan($executionTime * 0.6, $totalWait);
+        $this->assertLessThan($executionTime * 0.75, $totalWait);
         $this->assertCount(0, $logger->errors);
         $this->assertEquals(["Done\n", "Done\n", "Done\n", "Done\n"], $logger->output);
     }

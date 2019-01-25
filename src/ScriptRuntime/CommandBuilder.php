@@ -14,16 +14,6 @@ class CommandBuilder
     private $allCommands = [];
 
     /**
-     * @var string
-     */
-    private $currentShellCommand;
-
-    /**
-     * @var int
-     */
-    private $startLine;
-
-    /**
      * @var bool
      */
     private $ignoreError;
@@ -43,20 +33,13 @@ class CommandBuilder
      */
     private $deferred;
 
+    public function __construct()
+    {
+        $this->reset();
+    }
+
     private function reset()
     {
-        if ($this->currentShellCommand) {
-            $this->allCommands[] = new ProcessCommand(
-                $this->currentShellCommand,
-                $this->startLine,
-                $this->ignoreError,
-                $this->tty,
-                $this->deferred
-            );
-        }
-
-        $this->currentShellCommand = null;
-        $this->startLine = null;
         $this->ignoreError = false;
         $this->tty = false;
         $this->template = false;
@@ -66,20 +49,19 @@ class CommandBuilder
     /**
      * @param string $shellCommand
      * @param int $startLine
-     * @param bool $ignoreError
-     * @param bool $tty
-     * @param bool $deferred
      * @return CommandBuilder
      */
-    public function next(string $shellCommand, int $startLine, bool $ignoreError, bool $tty, bool $deferred): CommandBuilder
+    public function addProcessCommand(string $shellCommand, int $startLine): CommandBuilder
     {
-        $this->reset();
+        $this->allCommands[] = new ProcessCommand(
+            $shellCommand,
+            $startLine,
+            $this->ignoreError,
+            $this->tty,
+            $this->deferred
+        );
 
-        $this->currentShellCommand = $shellCommand;
-        $this->startLine = $startLine;
-        $this->ignoreError = $ignoreError;
-        $this->tty = $tty;
-        $this->deferred = $deferred;
+        $this->reset();
 
         return $this;
     }
@@ -90,7 +72,7 @@ class CommandBuilder
      * @param int $lineNumber
      * @return $this
      */
-    public function addTemplateCommand(string $source, string $destination, int $lineNumber)
+    public function addTemplateCommand(string $source, string $destination, int $lineNumber): CommandBuilder
     {
         $this->reset();
 
@@ -127,12 +109,23 @@ class CommandBuilder
     }
 
     /**
-     * @param string $shellCommand
+     * @param bool $set
      * @return CommandBuilder
      */
-    public function add(string $shellCommand): CommandBuilder
+    public function setTty(bool $set = true): CommandBuilder
     {
-        $this->currentShellCommand .= ' ' . trim($shellCommand);
+        $this->tty = $set;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $set
+     * @return CommandBuilder
+     */
+    public function setDeferredExecution(bool $set = true): CommandBuilder
+    {
+        $this->deferred = $set;
 
         return $this;
     }
@@ -141,7 +134,7 @@ class CommandBuilder
      * @param array $commands
      * @return CommandBuilder
      */
-    public function setCommands(array $commands): CommandBuilder
+    public function replaceCommands(array $commands): CommandBuilder
     {
         $this->allCommands = $commands;
 
