@@ -4,7 +4,6 @@ namespace Shopware\Psh\Config;
 
 abstract class ConfigFileLoader implements ConfigLoader
 {
-
     /**
      * @param string $file
      * @return string

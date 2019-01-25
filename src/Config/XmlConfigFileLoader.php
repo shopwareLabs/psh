@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Config;
 
 use DOMElement;
@@ -124,7 +123,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
             }
         }
 
-        if (0 === count($nodes)) {
+        if (count($nodes) === 0) {
             return [];
         }
 
