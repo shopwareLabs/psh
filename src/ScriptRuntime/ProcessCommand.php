@@ -27,24 +27,30 @@ class ProcessCommand implements Command
      * @var bool
      */
     private $tty;
+    /**
+     * @var bool
+     */
+    private $deferred;
 
     /**
-     * Command constructor.
      * @param string $shellCommand
      * @param int $lineNumber
      * @param bool $ignoreError
      * @param bool $tty
+     * @param bool $deferred
      */
     public function __construct(
         string $shellCommand,
         int $lineNumber,
         bool $ignoreError,
-        bool $tty
+        bool $tty,
+        bool $deferred
     ) {
         $this->shellCommand = $shellCommand;
         $this->ignoreError = $ignoreError;
         $this->lineNumber = $lineNumber;
         $this->tty = $tty;
+        $this->deferred = $deferred;
     }
 
     /**
@@ -77,5 +83,13 @@ class ProcessCommand implements Command
     public function isTTy(): bool
     {
         return $this->tty;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeferred(): bool
+    {
+        return $this->deferred;
     }
 }

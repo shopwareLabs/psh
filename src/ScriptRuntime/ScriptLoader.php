@@ -10,15 +10,20 @@ use Shopware\Psh\Listing\Script;
  */
 class ScriptLoader
 {
-    const MODIFIER_IS_TTY = 'TTY: ';
+    const TOKEN_MODIFIER_TTY = 'TTY: ';
 
-    const MODIFIER_IGNORE_ERROR_PREFIX = 'I: ';
+    const TOKEN_MODIFIER_IGNORE_ERROR = 'I: ';
 
-    const INCLUDE_STATEMENT_PREFIX = 'INCLUDE: ';
+    const TOKEN_MODIFIER_DEFERRED = 'D: ';
 
-    const TEMPLATE_STATEMENT_PREFIX = 'TEMPLATE: ';
+    const TOKEN_INCLUDE = 'INCLUDE: ';
+
+    const TOKEN_WAIT = 'WAIT:';
+
+    const TOKEN_TEMPLATE = 'TEMPLATE: ';
 
     const CONCATENATE_PREFIX = '   ';
+    const TOKEN_WILDCARD = '*';
 
     /**
      * @var CommandBuilder
@@ -35,38 +40,44 @@ class ScriptLoader
 
     /**
      * @param Script $script
-     * @return array
+     * @return Command[]
      */
     public function loadScript(Script $script): array
     {
         $content = $this->loadFileContents($script->getPath());
-        $lines = explode("\n", $content);
+        $lines = $this->splitIntoLines($content);
+        $tokenHandler = $this->createTokenHandler();
 
         foreach ($lines as $lineNumber => $currentLine) {
-            $ignoreError = false;
-            $tty = false;
+            foreach ($tokenHandler as $token => $handler) {
+                if ($this->startsWith($token, $currentLine)) {
+                    $currentLine = $handler($currentLine, $lineNumber, $script);
+                }
 
-            if (!$this->isExecutableLine($currentLine)) {
-                continue;
+                if ($currentLine === '') {
+                    break;
+                }
             }
+        }
 
-            if ($this->startsWith(self::CONCATENATE_PREFIX, $currentLine)) {
-                $this->commandBuilder->add($currentLine);
-                continue;
-            }
+        return $this->commandBuilder->getAll();
+    }
 
-            if ($this->startsWith(self::INCLUDE_STATEMENT_PREFIX, $currentLine)) {
-                $path = $this->findInclude($script, $this->removeFromStart(self::INCLUDE_STATEMENT_PREFIX, $currentLine));
+    public function createTokenHandler(): array
+    {
+        return [
+            self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script): string {
+                $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
                 $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
 
                 $commands = $this->loadScript($includeScript);
-                $this->commandBuilder->setCommands($commands);
+                $this->commandBuilder->replaceCommands($commands);
 
-                continue;
-            }
+                return '';
+            },
 
-            if ($this->startsWith(self::TEMPLATE_STATEMENT_PREFIX, $currentLine)) {
-                $definition = $this->removeFromStart(self::TEMPLATE_STATEMENT_PREFIX, $currentLine);
+            self::TOKEN_TEMPLATE => function (string $currentLine, int $lineNumber, Script $script): string {
+                $definition = $this->removeFromStart(self::TOKEN_TEMPLATE, $currentLine);
                 list($rawSource, $rawDestination) = explode(':', $definition);
 
                 $source = $script->getDirectory() . '/' . $rawSource;
@@ -75,24 +86,42 @@ class ScriptLoader
                 $this->commandBuilder
                     ->addTemplateCommand($source, $destination, $lineNumber);
 
-                continue;
-            }
+                return '';
+            },
 
-            if ($this->startsWith(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine)) {
-                $currentLine = $this->removeFromStart(self::MODIFIER_IGNORE_ERROR_PREFIX, $currentLine);
-                $ignoreError = true;
-            }
+            self::TOKEN_WAIT => function (string $currentLine, int $lineNumber): string {
+                $this->commandBuilder
+                    ->addWaitCommand($lineNumber);
 
-            if ($this->startsWith(self::MODIFIER_IS_TTY, $currentLine)) {
-                $currentLine = $this->removeFromStart(self::MODIFIER_IS_TTY, $currentLine);
-                $tty = true;
-            }
 
-            $this->commandBuilder
-                ->next($currentLine, $lineNumber, $ignoreError, $tty);
-        }
+                return '';
+            },
 
-        return $this->commandBuilder->getAll();
+            self::TOKEN_MODIFIER_IGNORE_ERROR => function (string $currentLine): string {
+                $this->commandBuilder->setIgnoreError();
+
+                return $this->removeFromStart(self::TOKEN_MODIFIER_IGNORE_ERROR, $currentLine);
+            },
+
+            self::TOKEN_MODIFIER_TTY => function (string $currentLine): string {
+                $this->commandBuilder->setTty();
+
+                return  $this->removeFromStart(self::TOKEN_MODIFIER_TTY, $currentLine);
+            },
+
+            self::TOKEN_MODIFIER_DEFERRED => function (string $currentLine): string {
+                $this->commandBuilder->setDeferredExecution();
+
+                return $this->removeFromStart(self::TOKEN_MODIFIER_DEFERRED, $currentLine);
+            },
+
+            self::TOKEN_WILDCARD => function (string $currentLine, int $lineNumber): string {
+                $this->commandBuilder
+                    ->addProcessCommand($currentLine, $lineNumber);
+
+                return '';
+            },
+        ];
     }
 
     /**
@@ -149,7 +178,7 @@ class ScriptLoader
      */
     private function startsWith(string $needle, string $haystack): bool
     {
-        return strpos($haystack, $needle) === 0;
+        return (self::TOKEN_WILDCARD === $needle && $haystack !== '') || strpos($haystack, $needle) === 0;
     }
 
     /**
@@ -159,5 +188,34 @@ class ScriptLoader
     protected function loadFileContents(string $file): string
     {
         return file_get_contents($file);
+    }
+
+    /**
+     * @param string $contents
+     * @return string[]
+     */
+    private function splitIntoLines(string $contents): array
+    {
+        $lines = [];
+        $lineNumber = -1;
+
+        foreach (explode("\n", $contents) as $line) {
+            $lineNumber++;
+
+            if (!$this->isExecutableLine($line)) {
+                continue;
+            }
+
+            if ($this->startsWith(self::CONCATENATE_PREFIX, $line)) {
+                $lastValue = array_pop($lines);
+                $lines[] = $lastValue  . ' ' . trim($line);
+
+                continue;
+            }
+
+            $lines[$lineNumber] = $line;
+        }
+
+        return $lines;
     }
 }

@@ -20,30 +20,29 @@ interface Logger
      */
     public function finishScript(Script $script);
 
+
     /**
-     * @param string $shellCommand
+     * @param string $headline
+     * @param string $subject
      * @param int $line
      * @param bool $isIgnoreError
      * @param int $index
      * @param int $max
      */
-    public function logCommandStart(string $shellCommand, int $line, bool $isIgnoreError, int $index, int $max);
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max);
 
     /**
-     * @param string $destination
-     * @param int $line
-     * @param int $index
-     * @param int $max
+     * @return void
      */
-    public function logTemplate(string $destination, int $line, int $index, int $max);
+    public function logWait();
 
     /**
-     * @param string $response
+     * @param LogMessage $logMessage
+     * @return mixed
      */
-    public function err(string $response);
+    public function log(LogMessage $logMessage);
 
-    /**
-     * @param string $response
-     */
-    public function out(string $response);
+    public function logSuccess();
+
+    public function LogFailure();
 }

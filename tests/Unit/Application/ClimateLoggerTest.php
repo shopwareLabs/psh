@@ -9,12 +9,21 @@ use Shopware\Psh\Test\Acceptance\MockWriter;
 
 class ClimateLoggerTest extends \PHPUnit_Framework_TestCase
 {
-    public function test_logTemplate()
+    public function test_success_output()
     {
         $cliMateLogger = new ClimateLogger(new CLImate(), new Duration());
         MockWriter::addToClimateLogger($cliMateLogger);
-        $cliMateLogger->logTemplate('some_destination_string', 11, 22, 0);
+        $cliMateLogger->logSuccess();
 
-        self::assertContains('some_destination_string', MockWriter::$content);
+        self::assertSame("Executed Successfully\n", MockWriter::$content);
+    }
+
+    public function test_error_output()
+    {
+        $cliMateLogger = new ClimateLogger(new CLImate(), new Duration());
+        MockWriter::addToClimateLogger($cliMateLogger);
+        $cliMateLogger->logFailure();
+
+        self::assertSame("Executed with failure\n", MockWriter::$content);
     }
 }
