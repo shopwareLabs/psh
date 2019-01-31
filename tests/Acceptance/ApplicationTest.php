@@ -27,7 +27,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'test:env'));
         $this->assertNotFalse(strpos(MockWriter::$content, 'test:env2'));
-        $this->assertNotFalse(strpos(MockWriter::$content, '4 script(s) available'));
+        $this->assertNotFalse(strpos(MockWriter::$content, '5 script(s) available'));
         $this->assertFalse(strpos(MockWriter::$content, 'Duration:'));
     }
 
@@ -63,6 +63,29 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Starting'), '(1/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'), '(2/3) Starting');
         $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'), '(3/3) Starting');
+        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
+        $this->assertNotFalse(
+            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
+        );
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
+        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
+    }
+
+    public function test_environment_deferred_application_execution()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'test:deferred']);
+
+        $this->assertEquals(0, $exitCode);
+        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
+        $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Deferring'), '(1/3) Deferring');
+        $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Waiting'), '(2/3) Waiting');
+        $this->assertNotFalse(strpos(MockWriter::$content, 'WAITING...'), 'WAITING...');
+        $this->assertNotFalse(strpos(MockWriter::$content, '(1/1) Output from'), '(1/1) Output from');
+        $this->assertFalse(strpos(MockWriter::$content, 'echo "__ENV__"'), 'echo "__ENV__"');
+        $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Deferring'), '(3/3) Deferring');
         $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
         $this->assertNotFalse(
             strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'

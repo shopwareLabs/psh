@@ -266,7 +266,7 @@ Notice that all paths here must be **relative** to the script location.
 Execute the script in the background, so the following command gets executed right away
 
 ```sh
-D: php generate_come_things.php
+D: php generate_some_things.php
 ```
 
 #### Wait for all deferred commands to execute

@@ -65,73 +65,85 @@ class ProcessExecutor
 
         $this->executeTemplateRendering();
 
-        foreach ($commands as $index => $command) {
-            switch ($command) {
-                case $command instanceof ProcessCommand:
-                    $parsedCommand = $this->getParsedShellCommand($command);
-                    $process = $this->environment->createProcess($parsedCommand);
-                    $this->setProcessDefaults($command, $process);
-
-                    if ($command->isDeferred()) {
-                        $this->logger->logStart(
-                            'Defering',
-                            $parsedCommand,
-                            $command->getLineNumber(),
-                            $command->isIgnoreError(),
-                            $index,
-                            count($commands)
-                        );
-                        $this->deferProcess($command, $process);
-                    } else {
-                        $this->logger->logStart(
-                            'Starting',
-                            $parsedCommand,
-                            $command->getLineNumber(),
-                            $command->isIgnoreError(),
-                            $index,
-                            count($commands)
-                        );
-
-                        $this->runProcess($process);
-                        $this->testProcessResultValid($command, $process);
-                    }
-
-                    break;
-
-
-                case $command instanceof TemplateCommand:
-                    $template = $command->getTemplate();
-
-                    $this->logger->logStart(
-                        'Template',
-                        $template->getDestination(),
-                        $command->getLineNumber(),
-                        false,
-                        $index,
-                        count($commands)
-                    );
-
-                    $this->renderTemplate($template);
-                    break;
-
-                case $command instanceof WaitCommand:
-                    $this->logger->logStart(
-                        'Waiting',
-                        '',
-                        $command->getLineNumber(),
-                        false,
-                        $index,
-                        count($commands)
-                    );
-
-                    $this->waitForDeferredProcesses();
-                    break;
+        try {
+            foreach ($commands as $index => $command) {
+                $this->executeCommand($command, $index, count($commands));
             }
+        } finally {
+            $this->waitForDeferredProcesses();
         }
 
-        $this->waitForDeferredProcesses();
-
         $this->logger->finishScript($script);
+    }
+
+    /**
+     * @param Command $command
+     * @param int $index
+     * @param int $totalCount
+     */
+    private function executeCommand(Command $command, int $index, int $totalCount)
+    {
+        switch ($command) {
+            case $command instanceof ProcessCommand:
+                $parsedCommand = $this->getParsedShellCommand($command);
+                $process = $this->environment->createProcess($parsedCommand);
+                $this->setProcessDefaults($command, $process);
+
+                if ($command->isDeferred()) {
+                    $this->logger->logStart(
+                        'Deferring',
+                        $parsedCommand,
+                        $command->getLineNumber(),
+                        $command->isIgnoreError(),
+                        $index,
+                        $totalCount
+                    );
+                    $this->deferProcess($parsedCommand, $command, $process);
+                } else {
+                    $this->logger->logStart(
+                        'Starting',
+                        $parsedCommand,
+                        $command->getLineNumber(),
+                        $command->isIgnoreError(),
+                        $index,
+                        $totalCount
+                    );
+
+                    $this->runProcess($process);
+                    $this->testProcessResultValid($command, $process);
+                }
+
+                break;
+
+
+            case $command instanceof TemplateCommand:
+                $template = $command->getTemplate();
+
+                $this->logger->logStart(
+                    'Template',
+                    $template->getDestination(),
+                    $command->getLineNumber(),
+                    false,
+                    $index,
+                    $totalCount
+                );
+
+                $this->renderTemplate($template);
+                break;
+
+            case $command instanceof WaitCommand:
+                $this->logger->logStart(
+                    'Waiting',
+                    '',
+                    $command->getLineNumber(),
+                    false,
+                    $index,
+                    $totalCount
+                );
+
+                $this->waitForDeferredProcesses();
+                break;
+        }
     }
 
     private function executeTemplateRendering()
@@ -206,6 +218,10 @@ class ProcessExecutor
 
     private function waitForDeferredProcesses()
     {
+        if (!$this->deferredProcesses) {
+            return;
+        }
+
         $this->logger->logWait();
 
         foreach ($this->deferredProcesses as $index => $deferredProcess) {
@@ -213,7 +229,7 @@ class ProcessExecutor
 
             $this->logger->logStart(
                 'Output from',
-                $deferredProcess->getCommand()->getShellCommand(),
+                $deferredProcess->getParsedCommand(),
                 $deferredProcess->getCommand()->getLineNumber(),
                 $deferredProcess->getCommand()->isIgnoreError(),
                 $index,
@@ -238,9 +254,13 @@ class ProcessExecutor
         $this->deferredProcesses = [];
     }
 
-    private function deferProcess(ProcessCommand $command, Process $process)
+    /**
+     * @param ProcessCommand $command
+     * @param Process $process
+     */
+    private function deferProcess(string $parsedCommand, ProcessCommand $command, Process $process)
     {
-        $deferredProcess = new DeferredProcess($command, $process);
+        $deferredProcess = new DeferredProcess($parsedCommand, $command, $process);
 
         $process->start(function ($type, $response) use ($deferredProcess) {
             $deferredProcess->log(new LogMessage($response, $type === Process::ERR));

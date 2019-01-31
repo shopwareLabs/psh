@@ -7,6 +7,11 @@ use Symfony\Component\Process\Process;
 class DeferredProcess
 {
     /**
+     * @var string
+     */
+    private $parsedCommand;
+
+    /**
      * @var ProcessCommand
      */
     private $command;
@@ -22,13 +27,23 @@ class DeferredProcess
     private $log = [];
 
     /**
+     * @param string $parsedCommand
      * @param ProcessCommand $command
      * @param Process $process
      */
-    public function __construct(ProcessCommand $command, Process $process)
+    public function __construct(string $parsedCommand, ProcessCommand $command, Process $process)
     {
         $this->command = $command;
         $this->process = $process;
+        $this->parsedCommand = $parsedCommand;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParsedCommand(): string
+    {
+        return $this->parsedCommand;
     }
 
     /**
