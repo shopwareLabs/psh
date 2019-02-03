@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../resource/config.xsd">
+
+    <header>SHOPWARE PHP-SH</header>
+    <template source="templates/test.tpl" destination="result.txt"/>
+    <path>scripts/</path>
+    <placeholder>
+        <const name="ENV">prod</const>
+        <const name="TEST">prod</const>
+        <const name="HOST">http://www.selfish.de</const>
+        <const name="NUMBER">1701</const>
+        <dynamic name="ID">id</dynamic>
+        <dynamic name="LL">ls -ahl</dynamic>
+    </placeholder>
+    <environment name="test">
+        <path>envpath/</path>
+        <path>envpath2/</path>
+        <placeholder>
+            <const name="ENV">test</const>
+        </placeholder>
+    </environment>
+</psh>

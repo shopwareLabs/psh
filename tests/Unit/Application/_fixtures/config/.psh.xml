@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="../../../../../resource/config.xsd">
+    <placeholder>
+        <const name="PHP_VERSION">7.0</const>
+        <const name="FILTER"/>
+    </placeholder>
+</psh>

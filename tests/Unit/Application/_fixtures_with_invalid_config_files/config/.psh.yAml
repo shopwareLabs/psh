@@ -1,8 +1,0 @@
-const:
-    PHP_VERSION: "7.0"
-    FILTER: ""
-
-environments:
-  local:
-      constants:
-          b, a, c

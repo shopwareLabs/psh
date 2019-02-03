@@ -22,13 +22,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run([]);
-
-        $this->assertEquals(0, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'test:env'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'test:env2'));
-        $this->assertNotFalse(strpos(MockWriter::$content, '5 script(s) available'));
-        $this->assertFalse(strpos(MockWriter::$content, 'Duration:'));
+        
+        $this->assertNoErrorExitCode($exitCode);
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('test:env', MockWriter::$content);
+        $this->assertContains('test:env2', MockWriter::$content);
+        $this->assertContains('5 script(s) available', MockWriter::$content);
+        $this->assertNotContains('Duration:', MockWriter::$content);
     }
 
     public function test_application_execution()
@@ -38,15 +38,15 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $exitCode = $application->run(['', 'simple']);
 
-        $this->assertEquals(0, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'ls -al'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
-        $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Starting'));
-        $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'));
-        $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'));
-        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "prod"'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'All commands successfully executed!'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
+        $this->assertNoErrorExitCode($exitCode);
+        $this->assertContains('ls -al', MockWriter::$content);
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('(1/3) Starting', MockWriter::$content);
+        $this->assertContains('(2/3) Starting', MockWriter::$content);
+        $this->assertContains('(3/3) Starting', MockWriter::$content);
+        $this->assertContains(' echo "prod"', MockWriter::$content);
+        $this->assertContains('All commands successfully executed!', MockWriter::$content);
+        $this->assertContains('Duration:', MockWriter::$content);
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'prod');
     }
 
@@ -57,17 +57,15 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $exitCode = $application->run(['', 'test:env']);
 
-        $this->assertEquals(0, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'ls -al'), 'ls -al');
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
-        $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Starting'), '(1/3) Starting');
-        $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Starting'), '(2/3) Starting');
-        $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Starting'), '(3/3) Starting');
-        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
-        $this->assertNotFalse(
-            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
-        );
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
+        $this->assertNoErrorExitCode($exitCode);
+        $this->assertContains('ls -al', MockWriter::$content);
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('(1/3) Starting', MockWriter::$content);
+        $this->assertContains('(2/3) Starting', MockWriter::$content);
+        $this->assertContains('(3/3) Starting', MockWriter::$content);
+        $this->assertContains(' echo "test"', MockWriter::$content);
+        $this->assertContains('All commands successfully executed!', MockWriter::$content);
+        $this->assertContains('Duration:', MockWriter::$content);
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
@@ -78,19 +76,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $exitCode = $application->run(['', 'test:deferred']);
 
-        $this->assertEquals(0, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
-        $this->assertNotFalse(strpos(MockWriter::$content, '(1/3) Deferring'), '(1/3) Deferring');
-        $this->assertNotFalse(strpos(MockWriter::$content, '(2/3) Waiting'), '(2/3) Waiting');
-        $this->assertNotFalse(strpos(MockWriter::$content, 'WAITING...'), 'WAITING...');
-        $this->assertNotFalse(strpos(MockWriter::$content, '(1/1) Output from'), '(1/1) Output from');
-        $this->assertFalse(strpos(MockWriter::$content, 'echo "__ENV__"'), 'echo "__ENV__"');
-        $this->assertNotFalse(strpos(MockWriter::$content, '(3/3) Deferring'), '(3/3) Deferring');
-        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
-        $this->assertNotFalse(
-            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
-        );
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
+        $this->assertNoErrorExitCode($exitCode);
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('(1/3) Deferring', MockWriter::$content);
+        $this->assertContains('(2/3) Waiting', MockWriter::$content);
+        $this->assertContains('WAITING...', MockWriter::$content);
+        $this->assertContains('(1/1) Output from', MockWriter::$content);
+        $this->assertNotContains('echo "__ENV__"', MockWriter::$content);
+        $this->assertContains('(3/3) Deferring', MockWriter::$content);
+        $this->assertContains(' echo "test"', MockWriter::$content);
+        $this->assertContains('All commands successfully executed!', MockWriter::$content);
+        $this->assertContains('Duration:', MockWriter::$content);
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
@@ -109,15 +105,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'simple,test:env']);
 
-        $this->assertEquals(0, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'));
-        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "prod"'));
-        $this->assertNotFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
-        $this->assertNotFalse(
-            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
-        );
-        $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Duration:'));
+        $this->assertNoErrorExitCode($exitCode);
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains(' echo "prod"', MockWriter::$content);
+        $this->assertContains(' echo "test"', MockWriter::$content);
+        $this->assertContains('All commands successfully executed!', MockWriter::$content);
+        $this->assertNotContains('3 script(s) available', MockWriter::$content);
+        $this->assertContains('Duration:', MockWriter::$content);
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
@@ -128,12 +122,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run(['', 'error,test:env']);
 
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yml'), 'Using .psh.yml');
-        $this->assertFalse(strpos(MockWriter::$content, ' echo "test"'), ' echo "test"');
-        $this->assertFalse(
-            strpos(MockWriter::$content, 'All commands successfully executed!'), 'All commands successfully executed!'
-        );
-        $this->assertFalse(strpos(MockWriter::$content, '3 script(s) available'));
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertNotContains(' echo "test"', MockWriter::$content);
+        $this->assertNotContains('All commands successfully executed!', MockWriter::$content);
+        $this->assertNotContains('3 script(s) available', MockWriter::$content);
     }
 
     public function test_psh_config_override_should_override_existing_psh_configuration()
@@ -143,9 +135,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run([]);
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yaml extended by .psh.yaml.override'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'override-app'));
+        $this->assertContains('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
+        $this->assertContains('override', MockWriter::$content);
+        $this->assertContains('override-app', MockWriter::$content);
     }
 
     public function test_psh_config_override_should_override_existing_psh_configuration_executes_with_override_params()
@@ -155,11 +147,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run(['', 'override-app', '--external_param', 'foo-content']);
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
-        $this->assertNotFalse(strpos(MockWriter::$content, 'Using .psh.yaml extended by .psh.yaml.override'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'override'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'override-app'));
-        $this->assertFalse(strpos(MockWriter::$content, '_EXTERNAL_PARAM_'));
-        $this->assertNotFalse(strpos(MockWriter::$content, 'foo-content'));
+        $this->assertContains('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
+        $this->assertContains('override', MockWriter::$content);
+        $this->assertContains('override-app', MockWriter::$content);
+        $this->assertNotContains('_EXTERNAL_PARAM_', MockWriter::$content);
+        $this->assertContains('foo-content', MockWriter::$content);
     }
 
     public function test_psh_groups_commands_by_environment()
@@ -170,9 +162,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
 
-        $this->assertNotFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
-        $this->assertNotFalse(strstr(MockWriter::$content, 'default:'));
-        $this->assertNotFalse(strstr(MockWriter::$content, 'test:'));
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('default:', MockWriter::$content);
+        $this->assertContains('test:', MockWriter::$content);
     }
 
     public function test_bash_autocomplete_listing()
@@ -183,8 +175,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
 
-        $this->assertFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
-        $this->assertNotFalse(strstr(MockWriter::$content, 'error simple test:env test:env2'));
+        $this->assertNotContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('error simple test:env test:env2', MockWriter::$content);
     }
 
     public function test_script_not_found_listing_with_guess()
@@ -195,10 +187,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
 
-        $this->assertNotFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
-        $this->assertNotFalse(strstr(MockWriter::$content, 'Have you been looking for this?'));
-        $this->assertNotFalse(strstr(MockWriter::$content, '- simple'));
-        $this->assertNotFalse(strstr(MockWriter::$content, '1 script(s) available'));
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('Have you been looking for this?', MockWriter::$content);
+        $this->assertContains('- simple', MockWriter::$content);
+        $this->assertContains('1 script(s) available', MockWriter::$content);
     }
 
     public function test_script_not_found_listing_without_guess()
@@ -209,8 +201,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
 
-        $this->assertNotFalse(strstr(MockWriter::$content, 'Using .psh.yml'));
-        $this->assertNotFalse(strstr(MockWriter::$content, 'Script with name pkdi not found'));
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('Script with name pkdi not found', MockWriter::$content);
     }
 
     public function test_showListings_returns_no_scripts_available()
@@ -220,7 +212,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $application->showListing([]);
 
-        $this->assertNotFalse(strstr(MockWriter::$content, 'Currently no scripts available'));
+        $this->assertContains('Currently no scripts available', MockWriter::$content);
     }
 
     public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched()
@@ -230,6 +222,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $exitCode = $application->run(['', 'simple']);
 
+        $this->assertContains('Unable to find a file referenced by "templates/testa.tpl', MockWriter::$content);
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
     }
 
@@ -240,6 +233,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $exitCode = $application->run(['', 'simple', '-param']);
 
+        $this->assertContains('Unable to parse parameter -param', MockWriter::$content);
         $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+    }
+
+    private function assertNoErrorExitCode(int $exitCode)
+    {
+        $this->assertEquals(0, $exitCode, 'Application errored unexpextedly: ' . MockWriter::$content);
     }
 }
