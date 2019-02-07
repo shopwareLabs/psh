@@ -76,11 +76,11 @@ EOD
         $dir = __DIR__;
 
         $this->writeTempFile(<<<EOD
-<path>$dir/_foo</path>
-<path>$dir/_bar</path>
 <placeholder>
     <const name="FOO">bar</const>
 </placeholder>
+<path>$dir/_foo</path>
+<path>$dir/_bar</path>
 EOD
 );
 
@@ -95,11 +95,11 @@ EOD
         $dir = __DIR__;
 
         $this->writeTempFile(<<<EOD
-<path>$dir/_foo</path>
-<path>$dir/_bar</path>
 <placeholder>
     <dynamic name="filesystem">ls -al</dynamic>
 </placeholder>
+<path>$dir/_foo</path>
+<path>$dir/_bar</path>
 EOD
 );
         $loader = $this->createConfigLoader();
@@ -118,12 +118,12 @@ EOD
         $dir = __DIR__;
 
         $this->writeTempFile(<<<EOD
-<path>$dir/_foo</path>
-<path>$dir/_bar</path>
 <placeholder>
     <const name="FOO">bar</const>
     <dynamic name="filesystem">ls -al</dynamic>
 </placeholder>
+<path>$dir/_foo</path>
+<path>$dir/_bar</path>
 EOD
 );
 
@@ -139,12 +139,12 @@ EOD
 
         $this->writeTempFile(<<<EOD
 <header>foo</header>
-<path>$dir/_foo</path>
-<path>$dir/_bar</path>
 <placeholder>
     <const name="FOO">bar</const>
     <dynamic name="filesystem">ls -al</dynamic>
 </placeholder>
+<path>$dir/_foo</path>
+<path>$dir/_bar</path>
 EOD
         );
 
@@ -160,11 +160,11 @@ EOD
         $dir = __DIR__;
 
         $this->writeTempFile(<<<EOD
-<path>$dir/_foo</path>
 <placeholder>
     <const name="FOO">bar</const>
     <dynamic name="filesystem">ls -al</dynamic>
 </placeholder>
+<path>$dir/_foo</path>
 <environment name="namespace">
     <path>$dir/_bar</path>
 </environment>
@@ -197,11 +197,11 @@ EOD
         $dir = __DIR__;
 
         $this->writeTempFile(<<<EOD
-<path>$dir/_foo</path>
 <placeholder>
     <const name="FOO">bar</const>
     <dynamic name="filesystem">ls -al</dynamic>
 </placeholder>
+<path>$dir/_foo</path>
 <environment name="namespace">
     <path>$dir/_bar</path>
 </environment>
@@ -234,17 +234,17 @@ EOD
         $dir = __DIR__;
 
         $this->writeTempFile(<<<EOD
-<path>$dir/_foo</path>
 <placeholder>
     <const name="FOO">bar</const>
     <dynamic name="filesystem">ls -al</dynamic>
 </placeholder>
+<path>$dir/_foo</path>
 <environment name="namespace">
-    <path>$dir/_bar</path>
     <placeholder>
         <dynamic name="booh">bar</dynamic>    
         <const name="booh">hah</const>    
     </placeholder>
+    <path>$dir/_bar</path>
 </environment>
 EOD
         );
@@ -287,5 +287,35 @@ EOD
         $this->assertEquals([
             ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt']
         ], $config->getTemplates());
+    }
+
+    public function test_invalid_format()
+    {
+        $this->writeTempFile(<<<EOD
+<not-allowed />
+EOD
+);
+
+        $loader =$this->createConfigLoader();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $loader->load(self::TEMP_FILE, []);
+    }
+
+    public function test_invalid_format_double_placeholder()
+    {
+        $this->writeTempFile(<<<EOD
+<placeholder>
+   <const name="FOO">bar</const>
+</placeholder>
+<placeholder>
+    <const name="BAR">foo</const>
+</placeholder>
+EOD
+);
+
+        $loader =$this->createConfigLoader();
+        $this->expectException(\InvalidArgumentException::class);
+        $loader->load(self::TEMP_FILE, []);
     }
 }

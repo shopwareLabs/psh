@@ -139,7 +139,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
     {
         $nodes = $this->extractNodes($key, $parent);
 
-        if (count($nodes) === 0) {
+        if (count($nodes) !== 1) {
             throw new \InvalidArgumentException('No node found for ' . $key);
         }
 
@@ -204,15 +204,11 @@ class XmlConfigFileLoader extends ConfigFileLoader
      */
     private function loadXmlRoot(string $file): DOMElement
     {
-        $xml = XmlUtils::loadFile($file);
+        $xml = XmlUtils::loadFile($file, __DIR__ . '/../../resource/config.xsd');
         $xPath = new DOMXPath($xml);
 
         /** @var \DOMNodeList $pshConfigNodes */
         $pshConfigNodes = $xPath->query('//psh');
-
-        if (false === $pshConfigNodes) {
-            throw new \RuntimeException('Invalid file at ' . $file . ' found');
-        }
 
         return $pshConfigNodes[0];
     }

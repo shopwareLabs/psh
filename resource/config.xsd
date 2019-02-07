@@ -1,57 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified">
 
-    <xsd:element name="psh" type="pshConfig"/>
+    <xs:element name="psh" type="pshConfig"/>
 
-    <xsd:complexType name="pshConfig">
-        <xsd:complexContent>
-            <xsd:extension base="baseConfig">
-                <xsd:sequence>
-                    <xsd:element name="header" type="xsd:string" minOccurs="0"/>
-                    <xsd:element name="environment" type="environment" minOccurs="0" maxOccurs="unbounded"/>
-                </xsd:sequence>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
+    <xs:complexType name="pshConfig" vc:minVersion="1.1">
+        <xs:all>
+            <xs:element name="header" type="xs:string" minOccurs="0"/>
+            <xs:element name="placeholder" type="vars" minOccurs="0"/>
 
-    <xsd:complexType name="environment">
-        <xsd:complexContent>
-            <xsd:extension base="baseConfig">
-                <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
+            <xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="template" type="template" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="environment" type="environment" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:all>
+    </xs:complexType>
 
-    
-    <xsd:complexType name="baseConfig">
-        <xsd:sequence>
-            <xsd:element name="path" type="xsd:string"/>
-            <xsd:element name="placeholder" type="vars"/>
-            <xsd:element name="template" type="template"/>
-            <xsd:element name="environment" type="pshConfig"/>
-        </xsd:sequence>
-    </xsd:complexType>
+    <xs:complexType name="environment">
+        <xs:all>
+            <xs:element name="placeholder" type="vars" minOccurs="0" />
+            <xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="template" type="template" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:all>
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
 
-    <xsd:complexType name="template">
-        <xsd:attribute name="source" type="xsd:string" use="required"/>
-        <xsd:attribute name="destination" type="xsd:string" use="required"/>
-    </xsd:complexType>
+    <xs:complexType name="template">
+        <xs:attribute name="source" type="xs:string" use="required"/>
+        <xs:attribute name="destination" type="xs:string" use="required"/>
+    </xs:complexType>
 
-    <xsd:complexType name="vars">
-        <xsd:sequence>
-            <xsd:element name="const" type="var" minOccurs="0" maxOccurs="unbounded"/>
-            <xsd:element name="dynamic" type="var" minOccurs="0" maxOccurs="unbounded"/>
-        </xsd:sequence>
-    </xsd:complexType>
+    <xs:complexType name="vars">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="const" type="var" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="dynamic" type="var" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+    </xs:complexType>
 
-    <xsd:complexType name="var">
-        <xsd:attribute name="name" type="xsd:normalizedString" use="required" />
-    </xsd:complexType>
-
-    <xsd:simpleType name="nonEmptyStringValue">
-        <xsd:restriction base="xsd:string">
-            <xsd:minLength value="1"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-</xsd:schema>
+    <xs:complexType name="var">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>
