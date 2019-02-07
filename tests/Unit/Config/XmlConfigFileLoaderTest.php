@@ -302,7 +302,7 @@ EOD
         $loader->load(self::TEMP_FILE, []);
     }
 
-    public function test_invalid_format_double_placeholder()
+    public function test_multiple_placeholder_elements_are_supported()
     {
         $this->writeTempFile(<<<EOD
 <placeholder>
@@ -315,7 +315,20 @@ EOD
 );
 
         $loader =$this->createConfigLoader();
-        $this->expectException(\InvalidArgumentException::class);
-        $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, []);
+        $this->assertCount(2, $config->getConstants());
+    }
+
+    public function test_multiple_header_work_although_they_overwrite_each_other()
+    {
+        $this->writeTempFile(<<<EOD
+<header>NO</header>
+<header>YES</header>
+EOD
+);
+
+        $loader =$this->createConfigLoader();
+        $config = $loader->load(self::TEMP_FILE, []);
+        $this->assertSame('YES', $config->getHeader());
     }
 }

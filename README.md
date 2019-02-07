@@ -23,6 +23,7 @@ Table of contents
  * [Build it yourself](#build-it-yourself)
 * [Usage](#usage)
 * [Configuration](#configuration)
+    * [Paths](#paths)
     * [Placeholders](#placeholders)
     * [Constants](#constants)
     * [Variables](#variables)
@@ -113,26 +114,34 @@ compatible version is currently created with it `build/psh56.phar`.
 Usage
 ------------
 
-PSH is a CLI application. Before you can use it you need to create a configuration file in your project root named `.psh.yml`.
+> Notice: The YAML configuration format is deprecated and will be removed in version 2.0. If you need the old documentation, please refer to [older versions](https://github.com/shopwareLabs/psh/blob/v1.3.0/README.md) of this document
+
+PSH is a CLI application. Before you can use it you need to create a configuration file in your project root named `.psh.xml` or `.psh.xml.dist`.
 
 ## Configuration
 
 The minimum required file looks like this:
 
-```yaml
-paths:
-  - my/sh/scripts
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://github.com/shopwareLabs/psh/blob/master/resource/config.xsd">
 
-const: []
+</psh>
+```
+The root element (`<psh>`) can contain one many or all if the following configuration options.
 
-dynamic: []
+#### Paths
+
+In order to use psh as a script executor, you need to define the locations in which to search.
+
+```xml
+<path>deployment/scripts</path>
+<path>test/scripts</path>
+<path>more/scripts</path>
 ```
 
-* `paths` - The locations of your `*.sh` scripts
-* `const` - The constant environment values you want PSH to replace in your scripts
-* `dynamic` - The dynamic values you want PSH to replace in your scripts
-
-This just lists all `*.sh` scripts in `my/sh/scripts` and allows you to call them by filename.
+PSH will then search in all these locations for `*.sh` files. These scripts can then be executed through PSH.
 
 #### Placeholders
 
@@ -150,9 +159,10 @@ The placeholder `__PATH__` now needs to be part of your configuration file as ei
 
 Constants are the basic solution to placeholder replacements. You define placeholders in your config like this:
 
-```yaml
-const:
-  PATH: /var/www
+```xml
+<placeholder>
+    <const name="PATH">/var/www</const>
+</placeholder>
 ```
 
 This will then execute 
@@ -165,14 +175,15 @@ ln -s /var/www
 
 With variables you can use the output of one line shell statements in your scripts.
   
-```yaml
-dynamic:
-  PATH: echo $HOME
+```xml
+<placeholder>
+    <dynamic name="PATH">echo $HOME</dynamic>
+</placeholder>
 ```
 
 The Variables get executed before the actual statement is executed, but you can imagine the outcome to be equivalent to:
 
-```yaml
+```sh
 ln -s `echo $HOME`
 ```
 
@@ -224,20 +235,22 @@ echo __TEST__
 If your application depends on files that are not part of your repository because they differ for different systems (Typically `*.dist` files), 
 you can use templates to achieve automatic deployment of these files.
 
-```yaml
-templates:
-  - source: templates/consts.tpl
-    destination: app/consts.php
+```xml
+<template 
+    source="templates/consts.tpl" 
+    destination="app/consts.php"
+/>
 ```
 
 This reads the contents of `templates/consts.tpl`, replaces placeholders with constants or variables from your configuration and writes the result to `app/consts.php`.
 
 It is even possible to use placeholders in template destinations:
 
-```yaml
-templates:
-  - source: templates/consts.tpl
-    destination: app/consts-__ENVIRONMENT__.php
+```xml
+<template
+    source="templates/consts.tpl"
+    destination="app/consts-__ENVIRONMENT__.php"
+/>
 ```
 
 #### Environments
@@ -245,18 +258,21 @@ templates:
 Environments are used to extend or overwrite your base configuration. You can add more scripts, redefine or add constants or variables. 
 A environment called `foo` may look like this:
 
-```yaml
-environments:
-    foo:
-        paths:
-            - foo/sh/scripts
-        const: 
-            TEST: 1
-        dynamic: 
-            ID: id
+```xml
+<environment name="foo">
+
+    <path>foo/sh/scripts</path>
+    <path>bar/sh/scripts</path>
+    
+    <placeholder>
+        <const name="TEST">1</const>
+        <dynamic name="ID">id</dynamic>   
+    </placeholder>
+
+</environment>
 ```
 
-This environment loads all scripts from `foo/sh/scripts`, adds a constant `TEST` and a variable `ID`. 
+This environment loads all scripts from `foo/sh/scripts` and `bar/sh/scripts`, adds a constant `TEST` and a variable `ID`. 
 If you want to call a script in this environment you have to prefix your call with `foo:`.
 
 
@@ -264,19 +280,23 @@ If you want to call a script in this environment you have to prefix your call wi
 
 Optionally - and just for fun - you can output a ASCII header in front of every PSH execution.
 
-```yaml
-header: |
+```xml
+    <header><![CDATA[
          _
      ___| |__   ___  _ ____      ____ _ _ __ ___
     / __| '_ \ / _ \| '_ \ \ /\ / / _` | '__/ _ \
     \__ \ | | | (_) | |_) \ V  V / (_| | | |  __/
     |___/_| |_|\___/| .__/ \_/\_/ \__,_|_|  \___|
                     |_|
+    ]]></header>
+
 ```
 
 #### Overriding configuration file
 
-You can place a `.psh.yaml.override` inside your directory where the `.psh.yaml` is located to override the specific configurations.
+You can place a `.psh.xml.override` inside your directory where the `.psh.xml` is located to override the specific configurations.
+
+> Notice: You can overwrite a XML config file with a YAML file to ease the migration from one format to the other.
 
 ## SH-Scripts
 

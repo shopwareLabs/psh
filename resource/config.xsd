@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
     <xs:element name="psh" type="pshConfig"/>
 
-    <xs:complexType name="pshConfig" vc:minVersion="1.1">
-        <xs:all>
-            <xs:element name="header" type="xs:string" minOccurs="0"/>
-            <xs:element name="placeholder" type="vars" minOccurs="0"/>
+    <xs:complexType name="pshConfig">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="header" type="xs:string"/>
+            <xs:element name="placeholder" type="vars"/>
 
-            <xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="template" type="template" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="environment" type="environment" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:all>
+            <xs:element name="path" type="xs:string"/>
+            <xs:element name="template" type="template"/>
+            <xs:element name="environment" type="environment" />
+        </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="environment">
-        <xs:all>
-            <xs:element name="placeholder" type="vars" minOccurs="0" />
-            <xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="template" type="template" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:all>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="placeholder" type="vars" />
+            <xs:element name="path" type="xs:string"/>
+            <xs:element name="template" type="template"/>
+        </xs:choice>
         <xs:attribute name="name" type="xs:string" use="required" />
     </xs:complexType>
 

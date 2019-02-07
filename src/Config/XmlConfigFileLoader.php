@@ -65,11 +65,11 @@ class XmlConfigFileLoader extends ConfigFileLoader
         $pshConfigNode = $this->loadXmlRoot($file);
         $this->configBuilder->start();
 
-        try {
-            $this->configBuilder->setHeader(
-                $this->extractNode(self::NODE_HEADER, $pshConfigNode)->nodeValue
-            );
-        } catch (\InvalidArgumentException $e) {
+        $headers = $this->extractNodes(self::NODE_HEADER, $pshConfigNode);
+
+        foreach ($headers as $header) {
+            $this->configBuilder
+                ->setHeader($header->nodeValue);
         }
 
         $this->setConfigData($file, $pshConfigNode);
@@ -95,12 +95,10 @@ class XmlConfigFileLoader extends ConfigFileLoader
             $this->extractCommandPaths($file, $pshConfigNode)
         );
 
-        try {
-            $this->extractPlaceholders(
-                $this->extractNode(self::NODE_PLACEHOLDER, $pshConfigNode)
-            );
-        } catch (\InvalidArgumentException $e) {
-            // nth
+        $placeholders = $this->extractNodes(self::NODE_PLACEHOLDER, $pshConfigNode);
+
+        foreach ($placeholders as $placeholder) {
+            $this->extractPlaceholders($placeholder);
         }
 
         $this->configBuilder->setTemplates(
@@ -128,22 +126,6 @@ class XmlConfigFileLoader extends ConfigFileLoader
         }
 
         return $nodes;
-    }
-
-    /**
-     * @param string $key
-     * @param DOMElement $parent
-     * @return DOMElement
-     */
-    private function extractNode(string $key, DOMElement $parent): DOMElement
-    {
-        $nodes = $this->extractNodes($key, $parent);
-
-        if (count($nodes) !== 1) {
-            throw new \InvalidArgumentException('No node found for ' . $key);
-        }
-
-        return $nodes[0];
     }
 
     /**

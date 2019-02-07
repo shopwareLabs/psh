@@ -22,7 +22,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run([]);
-        
+
         $this->assertNoErrorExitCode($exitCode);
         $this->assertContains('Using .psh.xml', MockWriter::$content);
         $this->assertContains('test:env', MockWriter::$content);

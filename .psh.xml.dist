@@ -4,15 +4,15 @@
      xsi:noNamespaceSchemaLocation="resource/config.xsd">
 
     <header><![CDATA[
-    PHP Shell Helper
-                _
-               | |
-      _ __  ___| |__
-     | '_ \/ __| '_ \
-     | |_) \__ \ | | |
-     | .__/|___/_| |_|
-     | |
-     |_|
+ PHP Shell Helper
+             _
+            | |
+   _ __  ___| |__
+  | '_ \/ __| '_ \
+  | |_) \__ \ | | |
+  | .__/|___/_| |_|
+  | |
+  |_|
 
     ]]></header>
     <path>actions</path>
