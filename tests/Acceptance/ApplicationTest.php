@@ -27,7 +27,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('Using .psh.xml', MockWriter::$content);
         $this->assertContains('test:env', MockWriter::$content);
         $this->assertContains('test:env2', MockWriter::$content);
-        $this->assertContains('5 script(s) available', MockWriter::$content);
+        $this->assertContains('6 script(s) available', MockWriter::$content);
         $this->assertNotContains('Duration:', MockWriter::$content);
     }
 

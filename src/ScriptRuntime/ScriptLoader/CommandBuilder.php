@@ -5,7 +5,6 @@ namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
 use Shopware\Psh\ScriptRuntime\Command;
 use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
-use Shopware\Psh\ScriptRuntime\Execution\DeferredProcess;
 use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
 use Shopware\Psh\ScriptRuntime\TemplateCommand;
 use Shopware\Psh\ScriptRuntime\WaitCommand;

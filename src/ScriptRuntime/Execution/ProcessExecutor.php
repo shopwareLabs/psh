@@ -90,7 +90,7 @@ class ProcessExecutor
      */
     private function executeCommand(Command $command, int $index, int $totalCount)
     {
-        switch ($command) {
+        switch (true) {
             case $command instanceof BashCommand:
                 $originalContent = file_get_contents($command->getScript()->getPath());
 
@@ -99,88 +99,41 @@ class ProcessExecutor
 
                     $process = $this->environment->createProcess($command->getScript()->getPath());
                     $this->setProcessDefaults($process, false);
-
-                    $this->logger->logStart(
-                        'Executing',
-                        $command->getScript()->getPath(),
-                        $command->getLineNumber(),
-                        false,
-                        $index,
-                        $totalCount
-                    );
-
+                    $this->logBashStart($command, $index, $totalCount);
                     $this->runProcess($process);
                     $this->testProcessResultValid($process, false);
                 } finally {
                     file_put_contents($command->getScript()->getPath(), $originalContent);
                 }
 
-
                 break;
             case $command instanceof SynchronusProcessCommand:
                 $parsedCommand = $this->getParsedShellCommand($command);
                 $process = $this->environment->createProcess($parsedCommand);
                 $this->setProcessDefaults($process, $command->isTTy());
-
-                $this->logger->logStart(
-                    'Starting',
-                    $parsedCommand,
-                    $command->getLineNumber(),
-                    $command->isIgnoreError(),
-                    $index,
-                    $totalCount
-                );
-
+                $this->logSynchronousProcessStart($command, $index, $totalCount, $parsedCommand);
                 $this->runProcess($process);
                 $this->testProcessResultValid($process, $command->isIgnoreError());
 
                 break;
-
-
             case $command instanceof DeferredProcessCommand:
                 $parsedCommand = $this->getParsedShellCommand($command);
                 $process = $this->environment->createProcess($parsedCommand);
                 $this->setProcessDefaults($process, $command->isTTy());
-
-                $this->logger->logStart(
-                    'Defering',
-                    $parsedCommand,
-                    $command->getLineNumber(),
-                    $command->isIgnoreError(),
-                    $index,
-                    $totalCount
-                );
+                $this->logDeferedStart($command, $index, $totalCount, $parsedCommand);
                 $this->deferProcess($parsedCommand, $command, $process);
 
                 break;
-
-
             case $command instanceof TemplateCommand:
-                    $template = $command->createTemplate();
-
-                $this->logger->logStart(
-                    'Template',
-                    $template->getDestination(),
-                    $command->getLineNumber(),
-                    false,
-                    $index,
-                    $totalCount
-                );
-
+                $template = $command->createTemplate();
+                $this->logTemplateStart($command, $index, $totalCount, $template);
                 $this->renderTemplate($template);
+
                 break;
-
             case $command instanceof WaitCommand:
-                $this->logger->logStart(
-                    'Waiting',
-                    '',
-                    $command->getLineNumber(),
-                    false,
-                    $index,
-                    $totalCount
-                );
-
+                $this->logWaitStart($command, $index, $totalCount);
                 $this->waitForDeferredProcesses();
+
                 break;
         }
     }
@@ -318,5 +271,93 @@ class ProcessExecutor
     protected function isProcessResultValid(Process $process, bool $ignoreError): bool
     {
         return $ignoreError || $process->isSuccessful();
+    }
+
+    /**
+     * @param Command $command
+     * @param int $index
+     * @param int $totalCount
+     */
+    private function logWaitStart(Command $command, int $index, int $totalCount)
+    {
+        $this->logger->logStart(
+            'Waiting',
+            '',
+            $command->getLineNumber(),
+            false,
+            $index,
+            $totalCount
+        );
+    }
+
+    /**
+     * @param Command $command
+     * @param int $index
+     * @param int $totalCount
+     * @param Template $template
+     */
+    private function logTemplateStart(Command $command, int $index, int $totalCount, Template $template)
+    {
+        $this->logger->logStart(
+            'Template',
+            $template->getDestination(),
+            $command->getLineNumber(),
+            false,
+            $index,
+            $totalCount
+        );
+    }
+
+    /**
+     * @param Command $command
+     * @param int $index
+     * @param int $totalCount
+     * @param string $parsedCommand
+     */
+    private function logDeferedStart(Command $command, int $index, int $totalCount, string $parsedCommand)
+    {
+        $this->logger->logStart(
+            'Defering',
+            $parsedCommand,
+            $command->getLineNumber(),
+            $command->isIgnoreError(),
+            $index,
+            $totalCount
+        );
+    }
+
+    /**
+     * @param Command $command
+     * @param int $index
+     * @param int $totalCount
+     * @param string $parsedCommand
+     */
+    private function logSynchronousProcessStart(Command $command, int $index, int $totalCount, string $parsedCommand)
+    {
+        $this->logger->logStart(
+            'Starting',
+            $parsedCommand,
+            $command->getLineNumber(),
+            $command->isIgnoreError(),
+            $index,
+            $totalCount
+        );
+    }
+
+    /**
+     * @param Command $command
+     * @param int $index
+     * @param int $totalCount
+     */
+    private function logBashStart(Command $command, int $index, int $totalCount)
+    {
+        $this->logger->logStart(
+            'Executing',
+            $command->getScript()->getPath(),
+            $command->getLineNumber(),
+            false,
+            $index,
+            $totalCount
+        );
     }
 }
