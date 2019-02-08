@@ -6,7 +6,7 @@ namespace Shopware\Psh\ScriptRuntime;
 /**
  * A single command of a script
  */
-class DeferredProcessCommand implements ProcessCommand
+class DeferredProcessCommand implements ProcessCommand, ParsableCommand
 {
     /**
      * @var string

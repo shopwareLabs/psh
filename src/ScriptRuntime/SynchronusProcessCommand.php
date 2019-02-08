@@ -6,7 +6,7 @@ namespace Shopware\Psh\ScriptRuntime;
 /**
  * A single command of a script
  */
-class SynchronusProcessCommand implements ProcessCommand
+class SynchronusProcessCommand implements ProcessCommand, ParsableCommand
 {
     /**
      * @var string

@@ -8,11 +8,6 @@ namespace Shopware\Psh\ScriptRuntime;
 interface ProcessCommand extends Command
 {
     /**
-     * @return string
-     */
-    public function getShellCommand(): string;
-
-    /**
      * @return boolean
      */
     public function isIgnoreError(): bool;

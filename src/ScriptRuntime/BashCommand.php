@@ -4,7 +4,7 @@ namespace Shopware\Psh\ScriptRuntime;
 
 use Shopware\Psh\Listing\Script;
 
-class BashCommand implements Command
+class BashCommand implements ProcessCommand
 {
     /**
      * @var Script
@@ -33,5 +33,21 @@ class BashCommand implements Command
     public function getLineNumber(): int
     {
         return 1;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isIgnoreError(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTTy(): bool
+    {
+        return false;
     }
 }
