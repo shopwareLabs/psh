@@ -12,11 +12,18 @@ class BashCommand implements ProcessCommand
     private $script;
 
     /**
-     * @param Script $script
+     * @var string[]
      */
-    public function __construct(Script $script)
+    private $warnings;
+
+    /**
+     * @param Script $script
+     * @param string ...$warnings
+     */
+    public function __construct(Script $script, string ...$warnings)
     {
         $this->script = $script;
+        $this->warnings = $warnings;
     }
 
     /**

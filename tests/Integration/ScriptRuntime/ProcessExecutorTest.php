@@ -4,6 +4,7 @@ namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
+use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
 use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
@@ -113,9 +114,17 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
     }
 
-    public function test_non_executable_bash_commnds_throw()
+    public function test_non_executable_bash_commands_throw()
     {
         $script = new Script(__DIR__ . '/_scripts', 'bash-non-executable.sh');
+
+        $this->expectException(\RuntimeException::class);
+        $this->loadCommands($script);
+    }
+
+    public function test_non_writable_bash_commands_throw()
+    {
+        $script = new Script(__DIR__ . '/_non_writable', 'bash.sh');
 
         $this->expectException(\RuntimeException::class);
         $this->loadCommands($script);
@@ -126,6 +135,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $script = new Script(__DIR__ . '/_scripts', 'bash.sh');
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
+
+        $this->assertInstanceOf(BashCommand::class, $commands[0]);
 
         $executor = new ProcessExecutor(
             new ProcessEnvironment([], [], []),

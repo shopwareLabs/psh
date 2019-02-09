@@ -96,15 +96,16 @@ class ProcessExecutor
                 $originalContent = file_get_contents($command->getScript()->getPath());
 
                 try {
-                    file_put_contents($command->getScript()->getPath(), $this->templateEngine->render($originalContent, $this->environment->getAllValues()));
+                    file_put_contents($command->getScript()->getTmpPath(), $this->templateEngine->render($originalContent, $this->environment->getAllValues()));
+                    chmod($command->getScript()->getTmpPath(), 0700);
 
-                    $process = $this->environment->createProcess($command->getScript()->getPath());
+                    $process = $this->environment->createProcess($command->getScript()->getTmpPath());
                     $this->setProcessDefaults($process, $command);
                     $this->logBashStart($command, $index, $totalCount);
                     $this->runProcess($process);
                     $this->testProcessResultValid($process, $command);
                 } finally {
-                    file_put_contents($command->getScript()->getPath(), $originalContent);
+                    unlink($command->getScript()->getTmpPath());
                 }
 
                 break;

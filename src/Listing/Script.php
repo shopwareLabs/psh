@@ -45,6 +45,15 @@ class Script
     /**
      * @return string
      */
+    public function getTmpPath(): string
+    {
+        return $this->directory . '/.tmp_' . getmypid() . '_' . $this->scriptName;
+    }
+
+
+    /**
+     * @return string
+     */
     public function getPath(): string
     {
         return $this->directory . '/' . $this->scriptName;
