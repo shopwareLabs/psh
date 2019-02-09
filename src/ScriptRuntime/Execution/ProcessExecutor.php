@@ -103,6 +103,11 @@ class ProcessExecutor
                     $this->setProcessDefaults($process, $command);
                     $this->logBashStart($command, $index, $totalCount);
                     $this->runProcess($process);
+
+                    if ($command->hasWarning()) {
+                        $this->logger->warn($command->getWarning());
+                    }
+
                     $this->testProcessResultValid($process, $command);
                 } finally {
                     unlink($command->getScript()->getTmpPath());

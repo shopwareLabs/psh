@@ -9,9 +9,6 @@ class BashScriptParser implements ScriptParser
 {
     const TYPE_DIRECT_EXECUTE = '<PSH_EXECUTE_THROUGH_CMD>';
 
-    /**
-     * @todo add validation and notice
-     */
     const SHOULD_BE_PRESENT = "set -euo pipefail";
 
     /**
@@ -23,12 +20,13 @@ class BashScriptParser implements ScriptParser
         $this->testScriptFileFitsRequirements($script);
 
         $shouldWarn = $this->shouldWarnAboutBestPractice($content);
+        $warning = null;
 
         if ($shouldWarn) {
-            $warning = self::SHOULD_BE_PRESENT;
+            $warning = 'Execution of this script is not secure, please consider adding <bold>set -euo pipefail</bold> in the beginning';
         }
 
-        return [new BashCommand($script)];
+        return [new BashCommand($script, $warning)];
     }
 
     /**

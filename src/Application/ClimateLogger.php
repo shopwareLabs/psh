@@ -13,6 +13,17 @@ use Shopware\Psh\ScriptRuntime\Execution\LogMessage;
  */
 class ClimateLogger implements Logger
 {
+    const WARNING_TEMPLATE = <<<EOD
+<yellow>
+##############################################################################################################
+               <bold>WARNING</bold>                               
+  %s
+                                                                  
+##############################################################################################################
+</yellow>
+EOD;
+
+
     /**
      * @var CLImate
      */
@@ -125,5 +136,10 @@ class ClimateLogger implements Logger
     public function LogFailure()
     {
         $this->cliMate->green()->red()->out('Executed with failure');
+    }
+
+    public function warn(string $message)
+    {
+        $this->cliMate->out(sprintf(self::WARNING_TEMPLATE, $message));
     }
 }

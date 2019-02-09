@@ -12,18 +12,18 @@ class BashCommand implements ProcessCommand
     private $script;
 
     /**
-     * @var string[]
+     * @var string
      */
-    private $warnings;
+    private $warning;
 
     /**
      * @param Script $script
-     * @param string ...$warnings
+     * @param string $warning
      */
-    public function __construct(Script $script, string ...$warnings)
+    public function __construct(Script $script, string $warning = null)
     {
         $this->script = $script;
-        $this->warnings = $warnings;
+        $this->warning = $warning;
     }
 
     /**
@@ -56,5 +56,21 @@ class BashCommand implements ProcessCommand
     public function isTTy(): bool
     {
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasWarning(): bool
+    {
+        return null !== $this->warning;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWarning(): string
+    {
+        return $this->warning;
     }
 }

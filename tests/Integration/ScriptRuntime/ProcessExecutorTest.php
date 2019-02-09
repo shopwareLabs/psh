@@ -124,6 +124,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_non_writable_bash_commands_throw()
     {
+        chmod(__DIR__ . '/_non_writable', 0555);
         $script = new Script(__DIR__ . '/_non_writable', 'bash.sh');
 
         $this->expectException(\RuntimeException::class);
@@ -136,7 +137,9 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
+        $this->assertCount(1, $commands);
         $this->assertInstanceOf(BashCommand::class, $commands[0]);
+        $this->assertTrue($commands[0]->hasWarning());
 
         $executor = new ProcessExecutor(
             new ProcessEnvironment([], [], []),
@@ -146,9 +149,33 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         );
 
         $executor->execute($script, $commands);
+        $this->assertFileNotExists($script->getTmpPath());
+
+        $this->assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
+    }
+
+    public function test_executor_recognises_secure_bash_commands()
+    {
+        $script = new Script(__DIR__ . '/_scripts', 'better_bash.sh');
+        $commands = $this->loadCommands($script);
+        $logger = new BlackholeLogger();
+
+        $this->assertCount(1, $commands);
+        $this->assertInstanceOf(BashCommand::class, $commands[0]);
+        $this->assertFalse($commands[0]->hasWarning());
+
+        $executor = new ProcessExecutor(
+            new ProcessEnvironment([], [], []),
+            new TemplateEngine(),
+            $logger,
+            __DIR__
+        );
+
+        $executor->execute($script, $commands);
+        $this->assertFileNotExists($script->getTmpPath());
 
         $this->assertCount(1, $logger->output);
-        $this->assertEquals("/psh/tests/Integration/ScriptRuntime\nBAR\n", $logger->output[0]);
+        $this->assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
     }
 
     public function test_executor_recognises_defered_commands()

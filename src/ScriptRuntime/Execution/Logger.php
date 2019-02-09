@@ -45,4 +45,10 @@ interface Logger
     public function logSuccess();
 
     public function LogFailure();
+
+    /**
+     * @param string $message
+     * @return mixed
+     */
+    public function warn(string $message);
 }

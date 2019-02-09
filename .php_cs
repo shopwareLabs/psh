@@ -1,6 +1,10 @@
 <?php
 
 $finder = Symfony\CS\Finder\DefaultFinder::create()
+    ->ignoreUnreadableDirs()
+    ->exclude([
+        __DIR__ . '/tests/Integration/ScriptRuntime/_non_writable'
+    ])
     ->in(__DIR__ . '/src')
     ->in(__DIR__ . '/tests')
 ;
