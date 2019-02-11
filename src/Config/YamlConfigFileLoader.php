@@ -16,6 +16,8 @@ class YamlConfigFileLoader implements ConfigLoader
 
     const KEY_CONST_VARIABLES = 'const';
 
+    const KEY_DOTENV_PATHS = 'dotenv';
+
     const KEY_COMMAND_PATHS = 'paths';
 
     const KEY_ENVIRONMENTS = 'environments';
@@ -92,7 +94,7 @@ class YamlConfigFileLoader implements ConfigLoader
     private function setConfigData(string $file, array $rawConfigData)
     {
         $this->configBuilder->setCommandPaths(
-            $this->extractCommandPaths($file, $rawConfigData)
+            $this->extractPaths($file, $rawConfigData, self::KEY_COMMAND_PATHS)
         );
 
         $this->configBuilder->setDynamicVariables(
@@ -105,6 +107,10 @@ class YamlConfigFileLoader implements ConfigLoader
 
         $this->configBuilder->setTemplates(
             $this->extractTemplates($file, $rawConfigData)
+        );
+
+        $this->configBuilder->setDotenvPaths(
+            $this->extractPaths($file, $rawConfigData, self::KEY_DOTENV_PATHS)
         );
     }
 
@@ -143,12 +149,14 @@ class YamlConfigFileLoader implements ConfigLoader
 
     /**
      * @param string $file
-     * @param $rawConfigData
+     * @param array $rawConfigData
+     * @param string $key
+     *
      * @return array
      */
-    private function extractCommandPaths(string $file, array $rawConfigData): array
+    private function extractPaths(string $file, array $rawConfigData, string $key): array
     {
-        $paths = $this->extractData(self::KEY_COMMAND_PATHS, $rawConfigData, []);
+        $paths = $this->extractData($key, $rawConfigData, []);
 
         return array_map(function ($path) use ($file) {
             return $this->fixPath($path, $file);

@@ -36,7 +36,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], []),
+            new ProcessEnvironment([], [], [], []),
             new TemplateEngine(),
             $logger,
             __DIR__
@@ -56,7 +56,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], []),
+            new ProcessEnvironment([], [], [], []),
             new TemplateEngine(),
             $logger,
             __DIR__
@@ -82,7 +82,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
                 'source' => __DIR__ . '/_test_read.tpl',
                 'destination' => __DIR__ . '/_test__VAR__.tpl'
             ]
-            ]),
+            ], []),
             new TemplateEngine(),
             $logger,
             __DIR__
@@ -101,7 +101,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], []),
+            new ProcessEnvironment([], [], [], []),
             new TemplateEngine(),
             $logger,
             __DIR__
@@ -126,7 +126,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], []),
+            new ProcessEnvironment([], [], [], []),
             new TemplateEngine(),
             $logger,
             __DIR__
@@ -167,7 +167,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], []),
+            new ProcessEnvironment([], [], [], []),
             new TemplateEngine(),
             $logger,
             __DIR__

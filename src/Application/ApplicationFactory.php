@@ -78,7 +78,8 @@ class ApplicationFactory
             new ProcessEnvironment(
                 $config->getConstants($script->getEnvironment()),
                 $config->getDynamicVariables($script->getEnvironment()),
-                $config->getTemplates($script->getEnvironment())
+                $config->getTemplates($script->getEnvironment()),
+                $config->getDotenvPaths($script->getEnvironment())
             ),
             new TemplateEngine(),
             $logger,

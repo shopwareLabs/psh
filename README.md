@@ -175,6 +175,49 @@ The Variables get executed before the actual statement is executed, but you can 
 ln -s `echo $HOME`
 ```
 
+#### Dotenv
+
+With dotenv you have the ability to load .env-files of your project.
+
+```yaml
+dotenv:
+  - ".env"
+```
+
+You can also configure multiple paths to .env files.
+
+```yaml
+dotenv:
+  - ".env"
+  - ".env2"
+```
+
+`.env2` overrides `.env` in this example.
+
+Example:
+
+.psh.yaml
+```yaml
+paths:
+  - "dev-ops/common/actions"
+const: []
+dynamic: []
+dotenv:
+  - ".env"
+```
+
+.env
+```dotenv
+TEST=mytest
+```
+
+dev-ops/common/actions/test.sh
+```bash
+#!/usr/bin/env bash
+
+echo __TEST__
+```
+
 #### Templates
 
 If your application depends on files that are not part of your repository because they differ for different systems (Typically `*.dist` files), 
