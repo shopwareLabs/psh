@@ -88,11 +88,13 @@ class ApplicationFactory
 
     /**
      * @param Script $script
+     * @param ScriptFinder $scriptFinder
+     *
      * @return ProcessCommand[]
      */
-    public function createCommands(Script $script): array
+    public function createCommands(Script $script, ScriptFinder $scriptFinder): array
     {
-        $scriptLoader = new ScriptLoader(new CommandBuilder());
+        $scriptLoader = new ScriptLoader(new CommandBuilder(), $scriptFinder);
         return $scriptLoader->loadScript($script);
     }
 

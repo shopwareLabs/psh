@@ -96,6 +96,6 @@ class ScriptFinder
             }
         }
 
-        throw new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"');
+        throw (new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"'))->setScriptName($scriptName);
     }
 }

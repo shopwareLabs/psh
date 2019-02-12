@@ -3,7 +3,11 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+use function pathinfo;
+use const PATHINFO_BASENAME;
+use const PATHINFO_DIRNAME;
 use Shopware\Psh\Listing\Script;
+use Shopware\Psh\Listing\ScriptFinder;
 
 /**
  * Load scripts and parse it into commands
@@ -18,6 +22,8 @@ class ScriptLoader
 
     const TOKEN_INCLUDE = 'INCLUDE: ';
 
+    const TOKEN_ACTION = 'ACTION: ';
+
     const TOKEN_WAIT = 'WAIT:';
 
     const TOKEN_TEMPLATE = 'TEMPLATE: ';
@@ -31,11 +37,18 @@ class ScriptLoader
     private $commandBuilder;
 
     /**
-     * @param CommandBuilder $commandBuilder
+     * @var ScriptFinder
      */
-    public function __construct(CommandBuilder $commandBuilder)
+    private $scriptFinder;
+
+    /**
+     * @param CommandBuilder $commandBuilder
+     * @param ScriptFinder $scriptFinder
+     */
+    public function __construct(CommandBuilder $commandBuilder, ScriptFinder $scriptFinder)
     {
         $this->commandBuilder = $commandBuilder;
+        $this->scriptFinder = $scriptFinder;
     }
 
     /**
@@ -66,6 +79,19 @@ class ScriptLoader
     public function createTokenHandler(): array
     {
         return [
+            self::TOKEN_ACTION => function (string $currentLine, int $lineNumber, Script $script): string {
+                $scriptName = $this->removeFromStart(self::TOKEN_ACTION, $currentLine);
+                $actionScript = $this->scriptFinder->findScriptByName($scriptName);
+
+                $path = $actionScript->getPath();
+                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
+
+                $commands = $this->loadScript($includeScript);
+                $this->commandBuilder->replaceCommands($commands);
+
+                return '';
+            },
+
             self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script): string {
                 $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
                 $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
