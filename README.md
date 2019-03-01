@@ -32,6 +32,7 @@ Table of contents
     * [Overriding configuration file](#overriding-configuration-file)
 * [SH-Scripts](#sh-scripts)
     * [Defining placeholders](#defining-placeholders)
+    * [Including other actions](#including-other-actions)
     * [Including other scripts](#including-other-scripts)
     * [On demand templates](#on-demand-templates)
     * [Open a ssh connection to another machine](#open-a-ssh-connection-to-another-machine)
@@ -248,6 +249,17 @@ start and end with `__`, and contain only upper case letters, numbers, and singl
 ```sh
 __TEST_IT__
 ```
+
+#### Including other actions
+
+It is possible to include other scripts by it's name.
+
+```sh
+ACTION: build # default environment or
+ACTION: pipelines:build # if it's in an environment
+```
+
+The benefit of this instead of `Including other scripts` is that you don't have to deal with absolute or relative paths in general.
 
 #### Including other scripts
 

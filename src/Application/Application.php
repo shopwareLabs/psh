@@ -89,7 +89,7 @@ class Application
 
         try {
             foreach ($scriptNames as $scriptName) {
-                $executionExitCode = $this->execute($scriptFinder->findScriptByName($scriptName), $config);
+                $executionExitCode = $this->execute($scriptFinder->findScriptByName($scriptName), $config, $scriptFinder);
 
                 if ($executionExitCode !== self::RESULT_SUCCESS) {
                     return $executionExitCode;
@@ -100,7 +100,7 @@ class Application
                 return self::RESULT_SUCCESS;
             }
         } catch (ScriptNotFoundException $e) {
-            $this->showScriptNotFoundListing($inputArgs, $scriptNames, $scriptFinder);
+            $this->showScriptNotFoundListing($e, $scriptNames, $scriptFinder);
             return self::RESULT_ERROR;
         }
 
@@ -155,12 +155,14 @@ class Application
     /**
      * @param Script $script
      * @param Config $config
+     * @param ScriptFinder $scriptFinder
+     *
      * @return int
      */
-    protected function execute(Script $script, Config $config): int
+    protected function execute(Script $script, Config $config, ScriptFinder $scriptFinder): int
     {
         $commands = $this->applicationFactory
-            ->createCommands($script);
+            ->createCommands($script, $scriptFinder);
 
         $logger = new ClimateLogger($this->cliMate, $this->duration);
         $executor = $this->applicationFactory
@@ -254,13 +256,13 @@ class Application
     }
 
     /**
-     * @param array $inputArgs
+     * @param ScriptNotFoundException $ex
      * @param array $scriptNames
      * @param ScriptFinder $scriptFinder
      */
-    private function showScriptNotFoundListing(array $inputArgs, array $scriptNames, ScriptFinder $scriptFinder)
+    private function showScriptNotFoundListing(ScriptNotFoundException $ex, array $scriptNames, ScriptFinder $scriptFinder)
     {
-        $this->notifyError("Script with name {$inputArgs[1]} not found\n");
+        $this->notifyError("Script with name {$ex->getScriptName()} not found\n");
 
         $scripts = [];
         foreach ($scriptNames as $scriptName) {

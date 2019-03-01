@@ -8,4 +8,28 @@ namespace Shopware\Psh\Listing;
  */
 class ScriptNotFoundException extends \RuntimeException
 {
+    /**
+     * @var string
+     */
+    private $scriptName;
+
+    /**
+     * @param string $scriptName
+     *
+     * @return self
+     */
+    public function setScriptName(string $scriptName): self
+    {
+        $this->scriptName = $scriptName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScriptName(): string
+    {
+        return $this->scriptName;
+    }
 }

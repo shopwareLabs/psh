@@ -1,0 +1,7 @@
+paths:
+  - "actions/common"
+environments:
+  different:
+    paths:
+      - "actions/different"
+
