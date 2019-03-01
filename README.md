@@ -31,7 +31,7 @@ Table of contents
     * [Environments](#environments)
     * [Headers](#headers)
     * [Overriding configuration file](#overriding-configuration-file)
-* [SH-Scripts](#sh-scripts)
+* [PSH-Scripts](#sh-scripts)
     * [Defining placeholders](#defining-placeholders)
     * [Including other actions](#including-other-actions)
     * [Including other scripts](#including-other-scripts)
@@ -41,6 +41,7 @@ Table of contents
     * [Breaking statements into multiple lines](#breaking-statements-into-multiple-lines)
     * [Description](#description)
     * [Downsides](#downsides)
+* [BASH-Scripts](#bash-scripts)
 * [Executing it](#executing-it)
 * [Bash Autocompletion](#bash-autocompletion)
 
@@ -298,7 +299,7 @@ You can place a `.psh.xml.override` inside your directory where the `.psh.xml` i
 
 > Notice: You can overwrite a XML config file with a YAML file to ease the migration from one format to the other.
 
-## SH-Scripts
+## PSH-Scripts
 
 Although most of your existing sh scripts should work just fine, you may find some of the following additions useful or necessary.
 
@@ -401,6 +402,33 @@ You can add a description to a script which will be printed when the command lis
 
 * `export` statements and internal variables do not work, since the statements do **no longer share a single environment**.
 * Statements that change the flow of a script do not work out of the box.
+
+## BASH-Scripts
+
+PSH allows you to execute bash scripts directly. Most features from the above described PSH-Scripts do not work in this part of the runtime, but placeholder usage is still possible an encouraged.
+
+So if you have Bash scripts that you want PSH to execute directly just add a second line after the shebang:
+
+```bash
+#!/usr/bin/env bash
+# <PSH_EXECUTE_THROUGH_CMD>
+
+FOO="BAR"
+
+echo $PWD
+echo $FOO
+echo __PLACEHOLDER__
+
+```
+
+`# <PSH_EXECUTE_THROUGH_CMD>` will advice PSH to execute the script through your current OS.
+
+> Notice: PSH is written for security and predictability first, so it will warn you if you forget to add `set -euo pipefail` to the beginning of your script.  
+
+#### Internals
+
+* If and only if a placeholder is present PSH will internally create a hidden file in the same directory and mark it executable, please make shure that your environment allows that.
+* Future versions of PSH will change this to requiring a special shebang line for PSH-Scripts, please be aware of that (Something like `#!/usr/bin/env psh`).  
 
 ## Executing it
 
