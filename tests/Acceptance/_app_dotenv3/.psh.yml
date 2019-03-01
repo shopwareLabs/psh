@@ -1,0 +1,13 @@
+header: |
+  SHOPWARE PHP-SH
+
+paths:
+  - actions/common
+
+environments:
+  test:
+    paths:
+      - actions/test
+    dotenv:
+      - '.env'
+      - '.env2'

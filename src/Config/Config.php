@@ -103,6 +103,34 @@ class Config
     }
 
     /**
+     * @param string|null $environmentString
+     *
+     * @return ScriptPath[]
+     */
+    public function getDotenvPaths(string $environmentString = null): array
+    {
+        $environmentString = $environmentString ?? ConfigBuilder::DEFAULT_ENV;
+
+        $paths = $this->resolveEnvironmentDotEnvPaths(
+            $this->getEnvironment($this->defaultEnvironment),
+            $this->defaultEnvironment
+        );
+
+        if ($environmentString !== $this->defaultEnvironment) {
+            $environmentPaths = $this->resolveEnvironmentDotEnvPaths(
+                $this->getEnvironment($environmentString),
+                $environmentString
+            );
+
+            if ($environmentPaths) {
+                $paths = $environmentPaths;
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
      * @return string
      */
     public function getHeader()
@@ -162,5 +190,26 @@ class Config
         }
 
         return $this->environments[$name];
+    }
+
+    /**
+     * @param ConfigEnvironment $environmentConfig
+     * @param string|null $name
+     *
+     * @return array
+     */
+    private function resolveEnvironmentDotEnvPaths(ConfigEnvironment $environmentConfig, string $name = null): array
+    {
+        $paths = [];
+
+        foreach ($environmentConfig->getDotenvPaths() as $path) {
+            if ($name !== $this->defaultEnvironment) {
+                $paths[] = new ScriptPath($path, $name);
+            } else {
+                $paths[] = new ScriptPath($path);
+            }
+        }
+
+        return $paths;
     }
 }

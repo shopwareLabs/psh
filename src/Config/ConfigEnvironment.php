@@ -29,21 +29,29 @@ class ConfigEnvironment
     private $templates;
 
     /**
+     * @var array
+     */
+    private $dotenvPaths;
+
+    /**
      * @param array $commandPaths
      * @param array $dynamicVariables
      * @param array $constants
      * @param array $templates
+     * @param array $dotenvPaths
      */
     public function __construct(
         array $commandPaths = [],
         array $dynamicVariables = [],
         array $constants = [],
-        array $templates = []
+        array $templates = [],
+        array $dotenvPaths = []
     ) {
         $this->commandPaths = $commandPaths;
         $this->dynamicVariables = $dynamicVariables;
         $this->constants = $constants;
         $this->templates = $templates;
+        $this->dotenvPaths = $dotenvPaths;
     }
 
     /**
@@ -76,5 +84,13 @@ class ConfigEnvironment
     public function getTemplates(): array
     {
         return $this->templates;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDotenvPaths(): array
+    {
+        return $this->dotenvPaths;
     }
 }

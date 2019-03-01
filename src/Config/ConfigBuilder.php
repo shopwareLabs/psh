@@ -19,6 +19,8 @@ class ConfigBuilder
 
     private $currentCommandPaths;
 
+    private $currentDotenvPaths;
+
     private $currentDynamicVariables;
 
     private $templates;
@@ -57,6 +59,16 @@ class ConfigBuilder
     public function setCommandPaths(array $commandPaths): ConfigBuilder
     {
         $this->currentCommandPaths = $commandPaths;
+        return $this;
+    }
+
+    /**
+     * @param array $dotenvPaths
+     * @return ConfigBuilder
+     */
+    public function setDotenvPaths(array $dotenvPaths): ConfigBuilder
+    {
+        $this->currentDotenvPaths = $dotenvPaths;
         return $this;
     }
 
@@ -107,11 +119,13 @@ class ConfigBuilder
                 $this->currentCommandPaths,
                 $this->currentDynamicVariables,
                 $this->currentConstants,
-                $this->templates
+                $this->templates,
+                $this->currentDotenvPaths
             );
         }
 
         $this->currentCommandPaths = [];
+        $this->currentDotenvPaths = [];
         $this->currentDynamicVariables = [];
         $this->currentConstants = [];
         $this->templates = [];

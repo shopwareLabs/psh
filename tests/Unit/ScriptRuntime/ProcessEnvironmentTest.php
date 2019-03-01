@@ -13,13 +13,13 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
 {
     public function test_it_returns_all_passed_constants()
     {
-        $env = new ProcessEnvironment(['FOO' => 'BAR'], [], []);
+        $env = new ProcessEnvironment(['FOO' => 'BAR'], [], [], []);
         $this->assertEquals(['FOO' => new SimpleValueProvider('BAR')], $env->getAllValues());
     }
 
     public function test_it_creates_processes()
     {
-        $env = new ProcessEnvironment([], [], []);
+        $env = new ProcessEnvironment([], [], [], []);
         $this->assertInstanceOf(Process::class, $env->createProcess('foo'));
         $this->assertEquals('foo', $env->createProcess('foo')->getCommandLine());
     }
@@ -29,7 +29,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
         $env = new ProcessEnvironment([], [
             'FOO' => 'ls',
             'BAR' => 'echo "HEY"'
-        ], []);
+        ], [], []);
 
         $resolvedValues = $env->getAllValues();
 
@@ -45,7 +45,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     {
         $env = new ProcessEnvironment([], [], [
             ['source' => __DIR__ . '_foo.tpl', 'destination' => 'bar.txt']
-        ]);
+        ], []);
 
         $templates = $env->getTemplates();
 

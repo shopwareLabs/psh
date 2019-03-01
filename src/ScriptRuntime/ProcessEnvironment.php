@@ -2,6 +2,16 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+use function array_merge;
+use function dirname;
+use Dotenv\Dotenv;
+use Dotenv\Environment\DotenvFactory;
+use function pathinfo;
+use const PATHINFO_BASENAME;
+use const PATHINFO_DIRNAME;
+use const PATHINFO_EXTENSION;
+use const PATHINFO_FILENAME;
+use Shopware\Psh\Config\ScriptPath;
 use Symfony\Component\Process\Process;
 
 /**
@@ -25,15 +35,22 @@ class ProcessEnvironment
     private $templates;
 
     /**
+     * @var array
+     */
+    private $dotenvVariables;
+
+    /**
      * @param array $constants
      * @param array $variables
      * @param array $templates
+     * @param array $dotenvPaths
      */
-    public function __construct(array $constants, array $variables, array $templates)
+    public function __construct(array $constants, array $variables, array $templates, array $dotenvPaths)
     {
         $this->constants = $this->initializeConstants($constants);
         $this->variables = $this->initializeVariables($variables);
         $this->templates = $this->initializeTemplates($templates);
+        $this->dotenvVariables = $this->initializeDotenvVariables($dotenvPaths);
     }
 
     /**
@@ -66,6 +83,26 @@ class ProcessEnvironment
     }
 
     /**
+     * @param ScriptPath[] $dotenvPaths
+     *
+     * @return array
+     */
+    private function initializeDotenvVariables(array $dotenvPaths): array
+    {
+        $variables = [];
+
+        foreach ($dotenvPaths as $dotenvPath) {
+            $dotenvVariables = $this->getDotenvVariables($dotenvPath);
+
+            foreach ($dotenvVariables as $variableKey => $variableValue) {
+                $variables[$variableKey] = new SimpleValueProvider($variableValue);
+            }
+        }
+
+        return $variables;
+    }
+
+    /**
      * @param array $templates
      * @return ValueProvider[]
      */
@@ -86,6 +123,7 @@ class ProcessEnvironment
     {
         return array_merge(
             $this->constants,
+            $this->dotenvVariables,
             $this->variables
         );
     }
@@ -105,5 +143,23 @@ class ProcessEnvironment
     public function createProcess(string $shellCommand): Process
     {
         return new Process($shellCommand);
+    }
+
+    /**
+     * @param ScriptPath $dotenvPath
+     *
+     * @return array
+     */
+    private function getDotenvVariables(ScriptPath $dotenvPath): array
+    {
+        $filePath = $dotenvPath->getPath();
+
+        $dotenv = Dotenv::create(
+            pathinfo($filePath, PATHINFO_DIRNAME),
+            pathinfo($filePath, PATHINFO_BASENAME),
+            new DotenvFactory()
+        );
+
+        return $dotenv->load();
     }
 }
