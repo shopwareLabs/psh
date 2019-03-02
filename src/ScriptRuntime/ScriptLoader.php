@@ -29,6 +29,7 @@ class ScriptLoader
     const TOKEN_TEMPLATE = 'TEMPLATE: ';
 
     const CONCATENATE_PREFIX = '   ';
+
     const TOKEN_WILDCARD = '*';
 
     /**
@@ -79,14 +80,11 @@ class ScriptLoader
     public function createTokenHandler(): array
     {
         return [
-            self::TOKEN_ACTION => function (string $currentLine, int $lineNumber, Script $script): string {
+            self::TOKEN_ACTION => function (string $currentLine): string {
                 $scriptName = $this->removeFromStart(self::TOKEN_ACTION, $currentLine);
                 $actionScript = $this->scriptFinder->findScriptByName($scriptName);
 
-                $path = $actionScript->getPath();
-                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
-
-                $commands = $this->loadScript($includeScript);
+                $commands = $this->loadScript($actionScript);
                 $this->commandBuilder->replaceCommands($commands);
 
                 return '';

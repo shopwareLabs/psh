@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
+use Shopware\Psh\Config\ScriptPath;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
@@ -73,7 +74,7 @@ class ScriptLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($lastCommand->isTty());
     }
 
-    public function test_it_includes_local_commands()
+    public function test_includes_with_local_commands()
     {
         $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
 
@@ -92,11 +93,40 @@ class ScriptLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($lastCommand->isIgnoreError());
     }
 
-    public function test_it_include_throws_exception()
+    public function test_include_throws_exception()
     {
         $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
         $this->expectException(\RuntimeException::class);
         $loader->loadScript(new Script(__DIR__ . '/_scripts', 'exception_include.sh'));
+    }
+
+    public function test_action_with_local_commands()
+    {
+        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([
+            new ScriptPath(__DIR__ . '/_scripts/'),
+            new ScriptPath(__DIR__ . '/_scripts/', 'env'),
+        ], new DescriptionReader()));
+
+        $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'local_action.sh'));
+
+        $this->assertCount(8, $commands);
+        $this->assertContainsOnlyInstancesOf(ProcessCommand::class, $commands);
+
+        $this->assertEquals(2, $commands[0]->getLineNumber());
+        $this->assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
+        $this->assertFalse($commands[0]->isIgnoreError());
+
+        $lastCommand = array_pop($commands);
+        $this->assertEquals(5, $lastCommand->getLineNumber());
+        $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        $this->assertFalse($lastCommand->isIgnoreError());
+    }
+
+    public function test_action_throws_exception()
+    {
+        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
+        $this->expectException(\RuntimeException::class);
+        $loader->loadScript(new Script(__DIR__ . '/_scripts', 'exception_action.sh'));
     }
 
     public function test_renders_templates_on_demand()
