@@ -3,14 +3,11 @@
 namespace Shopware\Psh\ScriptRuntime;
 
 use function array_merge;
-use function dirname;
 use Dotenv\Dotenv;
 use Dotenv\Environment\DotenvFactory;
 use function pathinfo;
 use const PATHINFO_BASENAME;
 use const PATHINFO_DIRNAME;
-use const PATHINFO_EXTENSION;
-use const PATHINFO_FILENAME;
 use Shopware\Psh\Config\ScriptPath;
 use Symfony\Component\Process\Process;
 
@@ -84,15 +81,14 @@ class ProcessEnvironment
 
     /**
      * @param ScriptPath[] $dotenvPaths
-     *
-     * @return array
+     * @return ValueProvider[]
      */
     private function initializeDotenvVariables(array $dotenvPaths): array
     {
         $variables = [];
 
         foreach ($dotenvPaths as $dotenvPath) {
-            $dotenvVariables = $this->getDotenvVariables($dotenvPath);
+            $dotenvVariables = $this->loadDotenvVariables($dotenvPath);
 
             foreach ($dotenvVariables as $variableKey => $variableValue) {
                 $variables[$variableKey] = new SimpleValueProvider($variableValue);
@@ -150,16 +146,46 @@ class ProcessEnvironment
      *
      * @return array
      */
-    private function getDotenvVariables(ScriptPath $dotenvPath): array
+    private function loadDotenvVariables(ScriptPath $dotenvPath): array
+    {
+        $dotenvFactory = new DotenvFactory();
+
+        $fileData = $this->loadDotenvFile($dotenvPath, $dotenvFactory);
+        return $this->diffDotenvVarsWithEnv($fileData, $dotenvFactory);
+    }
+
+    /**
+     * @param ScriptPath $dotenvPath
+     * @param DotenvFactory $dotenvFactory
+     * @return array
+     */
+    private function loadDotenvFile(ScriptPath $dotenvPath, DotenvFactory $dotenvFactory): array
     {
         $filePath = $dotenvPath->getPath();
-
         $dotenv = Dotenv::create(
             pathinfo($filePath, PATHINFO_DIRNAME),
             pathinfo($filePath, PATHINFO_BASENAME),
-            new DotenvFactory()
+            $dotenvFactory
         );
 
         return $dotenv->load();
+    }
+
+    /**
+     * @param array $fileData
+     * @param DotenvFactory $dotenvFactory
+     * @return array
+     */
+    private function diffDotenvVarsWithEnv(array $fileData, DotenvFactory $dotenvFactory): array
+    {
+        $fileKeys = array_keys($fileData);
+        $result = [];
+
+        $existingVariables = $dotenvFactory->createImmutable();
+        foreach ($fileKeys as $key) {
+            $result[$key] = $existingVariables->get($key);
+        }
+
+        return $result;
     }
 }

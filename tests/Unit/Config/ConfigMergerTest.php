@@ -184,4 +184,30 @@ class ConfigMergerTest extends TestCase
             $result->getEnvironments()[self::DEFAULT_ENV]->getTemplates()[0]
         );
     }
+
+    public function test_dotenv_paths()
+    {
+        $configMerge = (new ConfigMerger())->merge(
+            new Config('', self::DEFAULT_ENV, [
+                self::DEFAULT_ENV => new ConfigEnvironment([], [], [], [], [
+                    '.a' => 'first/.a',
+                    '.b' => 'first/.b',
+                ])
+            ], []),
+            new Config('', self::DEFAULT_ENV, [
+                self::DEFAULT_ENV => new ConfigEnvironment([], [], [], [], [
+                    '.a' => 'overwrite/.a',
+                    '.c' => 'overwrite/.c',
+                ])
+            ], [])
+        );
+
+        $this->assertCount(3, $configMerge->getDotenvPaths());
+
+        $paths = $configMerge->getDotenvPaths();
+
+        $this->assertEquals('overwrite/.a', $paths['.a']->getPath());
+        $this->assertEquals('first/.b', $paths['.b']->getPath());
+        $this->assertEquals('overwrite/.c', $paths['.c']->getPath());
+    }
 }

@@ -1,7 +1,0 @@
-header: |
-  SHOPWARE PHP-SH
-
-paths:
-  - actions/
-dotenv:
-  - '.env'

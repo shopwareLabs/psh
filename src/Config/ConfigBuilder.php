@@ -68,7 +68,12 @@ class ConfigBuilder
      */
     public function setDotenvPaths(array $dotenvPaths): ConfigBuilder
     {
-        $this->currentDotenvPaths = $dotenvPaths;
+        $this->currentDotenvPaths = [];
+
+        foreach ($dotenvPaths as $dotenvPath) {
+            $this->currentDotenvPaths[pathinfo($dotenvPath, PATHINFO_BASENAME)] = $dotenvPath;
+        }
+
         return $this;
     }
 

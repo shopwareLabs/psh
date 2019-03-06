@@ -307,6 +307,52 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         ], $config->getTemplates());
     }
 
+    public function test_it_loads_dotenv_files()
+    {
+        $yamlMock = $this->prophesize(Parser::class);
+        $yamlMock->parse('foo')->willReturn([
+            'paths' => [],
+            'dotenv' => [
+                '.fiz',
+                '.baz',
+            ]
+        ]);
+
+        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $config = $loader->load(__DIR__ . '/_test.txt', []);
+
+        $this->assertCount(2, $config->getDotenvPaths());
+        $this->assertEquals(__DIR__ . '/.fiz', $config->getDotenvPaths()['.fiz']->getPath());
+        $this->assertEquals(__DIR__ . '/.baz', $config->getDotenvPaths()['.baz']->getPath());
+    }
+
+    public function test_it_loads_dotenv_files_from_environments_overwritten()
+    {
+        $yamlMock = $this->prophesize(Parser::class);
+        $yamlMock->parse('foo')->willReturn([
+            'paths' => [],
+            'dotenv' => [
+                '.fiz',
+                '.baz',
+            ],
+            'environments' => [
+                'env' => [
+                    'dotenv' => [
+                        '_foo/.fiz',
+                        '_foo/.buz'
+                    ]
+            ]]
+        ]);
+
+        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $config = $loader->load(__DIR__ . '/_test.txt', []);
+
+        $this->assertCount(3, $config->getDotenvPaths('env'));
+        $this->assertEquals(__DIR__ . '/_foo/.fiz', $config->getDotenvPaths('env')['.fiz']->getPath());
+        $this->assertEquals(__DIR__ . '/.baz', $config->getDotenvPaths('env')['.baz']->getPath());
+        $this->assertEquals(__DIR__ . '/_foo/.buz', $config->getDotenvPaths('env')['.buz']->getPath());
+    }
+
     public function test_fixPath_throws_exception()
     {
         $loader = $this->createConfigLoader();
