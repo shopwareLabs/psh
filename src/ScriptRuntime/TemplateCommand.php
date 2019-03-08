@@ -2,6 +2,8 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
+use Shopware\Psh\ScriptRuntime\Execution\Template;
+
 class TemplateCommand implements Command
 {
     /**
@@ -45,7 +47,7 @@ class TemplateCommand implements Command
     /**
      * @return Template
      */
-    public function getTemplate(): Template
+    public function createTemplate(): Template
     {
         return new Template(
             $this->source,

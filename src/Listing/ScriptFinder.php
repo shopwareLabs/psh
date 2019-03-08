@@ -3,7 +3,7 @@
 
 namespace Shopware\Psh\Listing;
 
-use Shopware\Psh\Config\ScriptPath;
+use Shopware\Psh\Config\ScriptsPath;
 
 /**
  * Load all scripts from all the supplied paths and create an array of scripts
@@ -16,9 +16,9 @@ class ScriptFinder
     ];
 
     /**
-     * @var ScriptPath[]
+     * @var ScriptsPath[]
      */
-    private $scriptPaths;
+    private $scriptsPaths;
 
     /**
      * @var DescriptionReader
@@ -26,12 +26,12 @@ class ScriptFinder
     private $scriptDescriptionReader;
 
     /**
-     * @param ScriptPath[] $scriptPaths
+     * @param ScriptsPath[] $scriptsPaths
      * @param DescriptionReader $scriptDescriptionReader
      */
-    public function __construct(array $scriptPaths, DescriptionReader $scriptDescriptionReader)
+    public function __construct(array $scriptsPaths, DescriptionReader $scriptDescriptionReader)
     {
-        $this->scriptPaths = $scriptPaths;
+        $this->scriptsPaths = $scriptsPaths;
         $this->scriptDescriptionReader = $scriptDescriptionReader;
     }
 
@@ -43,7 +43,7 @@ class ScriptFinder
     {
         $scripts = [];
 
-        foreach ($this->scriptPaths as $path) {
+        foreach ($this->scriptsPaths as $path) {
             if (!is_dir($path->getPath())) {
                 throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
             }
@@ -96,6 +96,6 @@ class ScriptFinder
             }
         }
 
-        throw new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"');
+        throw (new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"'))->setScriptName($scriptName);
     }
 }

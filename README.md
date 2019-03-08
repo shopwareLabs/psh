@@ -23,6 +23,7 @@ Table of contents
  * [Build it yourself](#build-it-yourself)
 * [Usage](#usage)
 * [Configuration](#configuration)
+    * [Paths](#paths)
     * [Placeholders](#placeholders)
     * [Constants](#constants)
     * [Variables](#variables)
@@ -30,8 +31,9 @@ Table of contents
     * [Environments](#environments)
     * [Headers](#headers)
     * [Overriding configuration file](#overriding-configuration-file)
-* [SH-Scripts](#sh-scripts)
+* [PSH-Scripts](#sh-scripts)
     * [Defining placeholders](#defining-placeholders)
+    * [Including other actions](#including-other-actions)
     * [Including other scripts](#including-other-scripts)
     * [On demand templates](#on-demand-templates)
     * [Open a ssh connection to another machine](#open-a-ssh-connection-to-another-machine)
@@ -39,6 +41,7 @@ Table of contents
     * [Breaking statements into multiple lines](#breaking-statements-into-multiple-lines)
     * [Description](#description)
     * [Downsides](#downsides)
+* [BASH-Scripts](#bash-scripts)
 * [Executing it](#executing-it)
 * [Bash Autocompletion](#bash-autocompletion)
 
@@ -112,26 +115,34 @@ compatible version is currently created with it `build/psh56.phar`.
 Usage
 ------------
 
-PSH is a CLI application. Before you can use it you need to create a configuration file in your project root named `.psh.yml`.
+> Notice: The YAML configuration format is deprecated and will be removed in version 2.0. If you need the old documentation, please refer to [older versions](https://github.com/shopwareLabs/psh/blob/v1.3.0/README.md) of this document
+
+PSH is a CLI application. Before you can use it you need to create a configuration file in your project root named `.psh.xml` or `.psh.xml.dist`.
 
 ## Configuration
 
 The minimum required file looks like this:
 
-```yaml
-paths:
-  - my/sh/scripts
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://github.com/shopwareLabs/psh/blob/master/resource/config.xsd">
 
-const: []
+</psh>
+```
+The root element (`<psh>`) can contain one many or all if the following configuration options.
 
-dynamic: []
+#### Paths
+
+In order to use psh as a script executor, you need to define the locations in which to search.
+
+```xml
+<path>deployment/scripts</path>
+<path>test/scripts</path>
+<path>more/scripts</path>
 ```
 
-* `paths` - The locations of your `*.sh` scripts
-* `const` - The constant environment values you want PSH to replace in your scripts
-* `dynamic` - The dynamic values you want PSH to replace in your scripts
-
-This just lists all `*.sh` scripts in `my/sh/scripts` and allows you to call them by filename.
+PSH will then search in all these locations for `*.sh` files. These scripts can then be executed through PSH.
 
 #### Placeholders
 
@@ -149,9 +160,10 @@ The placeholder `__PATH__` now needs to be part of your configuration file as ei
 
 Constants are the basic solution to placeholder replacements. You define placeholders in your config like this:
 
-```yaml
-const:
-  PATH: /var/www
+```xml
+<placeholder>
+    <const name="PATH">/var/www</const>
+</placeholder>
 ```
 
 This will then execute 
@@ -164,15 +176,59 @@ ln -s /var/www
 
 With variables you can use the output of one line shell statements in your scripts.
   
-```yaml
-dynamic:
-  PATH: echo $HOME
+```xml
+<placeholder>
+    <dynamic name="PATH">echo $HOME</dynamic>
+</placeholder>
 ```
 
 The Variables get executed before the actual statement is executed, but you can imagine the outcome to be equivalent to:
 
-```yaml
+```sh
 ln -s `echo $HOME`
+```
+
+#### Dotenv
+
+With dotenv you have the ability to load .env-files of your project.
+
+```xml
+<placeholder>
+    <dotenv>.env</dotenv>
+</placeholder>
+```
+
+You can also configure multiple paths to .env files.
+
+```xml
+<placeholder>
+    <dotenv>.env</dotenv>
+    <dotenv>.env2</dotenv>
+</placeholder>
+```
+
+`.env2` overrides `.env` in this example.
+
+Example:
+
+.psh.xml
+```xml
+<path>dev-ops/common/actions"</path>
+<placeholder>
+    <dotenv>.env</dotenv>
+</placeholder>
+```
+
+.env
+```dotenv
+TEST=mytest
+```
+
+dev-ops/common/actions/test.sh
+```bash
+#!/usr/bin/env bash
+
+echo __TEST__
 ```
 
 #### Templates
@@ -180,20 +236,22 @@ ln -s `echo $HOME`
 If your application depends on files that are not part of your repository because they differ for different systems (Typically `*.dist` files), 
 you can use templates to achieve automatic deployment of these files.
 
-```yaml
-templates:
-  - source: templates/consts.tpl
-    destination: app/consts.php
+```xml
+<template 
+    source="templates/consts.tpl" 
+    destination="app/consts.php"
+/>
 ```
 
 This reads the contents of `templates/consts.tpl`, replaces placeholders with constants or variables from your configuration and writes the result to `app/consts.php`.
 
 It is even possible to use placeholders in template destinations:
 
-```yaml
-templates:
-  - source: templates/consts.tpl
-    destination: app/consts-__ENVIRONMENT__.php
+```xml
+<template
+    source="templates/consts.tpl"
+    destination="app/consts-__ENVIRONMENT__.php"
+/>
 ```
 
 #### Environments
@@ -201,18 +259,21 @@ templates:
 Environments are used to extend or overwrite your base configuration. You can add more scripts, redefine or add constants or variables. 
 A environment called `foo` may look like this:
 
-```yaml
-environments:
-    foo:
-        paths:
-            - foo/sh/scripts
-        const: 
-            TEST: 1
-        dynamic: 
-            ID: id
+```xml
+<environment name="foo">
+
+    <path>foo/sh/scripts</path>
+    <path>bar/sh/scripts</path>
+    
+    <placeholder>
+        <const name="TEST">1</const>
+        <dynamic name="ID">id</dynamic>   
+    </placeholder>
+
+</environment>
 ```
 
-This environment loads all scripts from `foo/sh/scripts`, adds a constant `TEST` and a variable `ID`. 
+This environment loads all scripts from `foo/sh/scripts` and `bar/sh/scripts`, adds a constant `TEST` and a variable `ID`. 
 If you want to call a script in this environment you have to prefix your call with `foo:`.
 
 
@@ -220,21 +281,25 @@ If you want to call a script in this environment you have to prefix your call wi
 
 Optionally - and just for fun - you can output a ASCII header in front of every PSH execution.
 
-```yaml
-header: |
+```xml
+    <header><![CDATA[
          _
      ___| |__   ___  _ ____      ____ _ _ __ ___
     / __| '_ \ / _ \| '_ \ \ /\ / / _` | '__/ _ \
     \__ \ | | | (_) | |_) \ V  V / (_| | | |  __/
     |___/_| |_|\___/| .__/ \_/\_/ \__,_|_|  \___|
                     |_|
+    ]]></header>
+
 ```
 
 #### Overriding configuration file
 
-You can place a `.psh.yaml.override` inside your directory where the `.psh.yaml` is located to override the specific configurations.
+You can place a `.psh.xml.override` inside your directory where the `.psh.xml` is located to override the specific configurations.
 
-## SH-Scripts
+> Notice: You can overwrite a XML config file with a YAML file to ease the migration from one format to the other.
+
+## PSH-Scripts
 
 Although most of your existing sh scripts should work just fine, you may find some of the following additions useful or necessary.
 
@@ -248,6 +313,17 @@ start and end with `__`, and contain only upper case letters, numbers, and singl
 ```sh
 __TEST_IT__
 ```
+
+#### Including other actions
+
+It is possible to include other scripts by it's name.
+
+```sh
+ACTION: build # default environment or
+ACTION: pipelines:build # if it's in an environment
+```
+
+The benefit of this instead of `Including other scripts` is that you don't have to deal with absolute or relative paths in general.
 
 #### Including other scripts
 
@@ -326,6 +402,33 @@ You can add a description to a script which will be printed when the command lis
 
 * `export` statements and internal variables do not work, since the statements do **no longer share a single environment**.
 * Statements that change the flow of a script do not work out of the box.
+
+## BASH-Scripts
+
+PSH allows you to execute bash scripts directly. Most features from the above described PSH-Scripts do not work in this part of the runtime, but placeholder usage is still possible an encouraged.
+
+So if you have Bash scripts that you want PSH to execute directly just add a second line after the shebang:
+
+```bash
+#!/usr/bin/env bash
+# <PSH_EXECUTE_THROUGH_CMD>
+
+FOO="BAR"
+
+echo $PWD
+echo $FOO
+echo __PLACEHOLDER__
+
+```
+
+`# <PSH_EXECUTE_THROUGH_CMD>` will advice PSH to execute the script through your current OS.
+
+> Notice: PSH is written for security and predictability first, so it will warn you if you forget to add `set -euo pipefail` to the beginning of your script.  
+
+#### Internals
+
+* If and only if a placeholder is present PSH will internally create a hidden file in the same directory and mark it executable, please make shure that your environment allows that.
+* Future versions of PSH will change this to requiring a special shebang line for PSH-Scripts, please be aware of that (Something like `#!/usr/bin/env psh`).  
 
 ## Executing it
 

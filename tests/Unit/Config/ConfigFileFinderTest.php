@@ -16,45 +16,45 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
-            __DIR__ . '/.psh.yml',
+            __DIR__ . '/.psh.does-not-matter',
         ]);
 
-        self::assertEquals([__DIR__ . '/.psh.yml'], $result);
+        self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
     public function test_file_discovery_with_dist_file_only()
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
-            __DIR__ . '/.psh.yml.dist',
+            __DIR__ . '/.psh.does-not-matter.dist',
         ]);
 
-        self::assertEquals([__DIR__ . '/.psh.yml.dist'], $result);
+        self::assertEquals([__DIR__ . '/.psh.does-not-matter.dist'], $result);
     }
 
     public function test_file_discovery_with_dist_file_and_default_file()
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
-            __DIR__ . '/.psh.yml',
-            __DIR__ . '/.psh.yml.dist',
+            __DIR__ . '/.psh.does-not-matter',
+            __DIR__ . '/.psh.does-not-matter.dist',
         ]);
 
-        self::assertEquals([__DIR__ . '/.psh.yml'], $result);
+        self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
     public function test_file_discovery_with_dist_file_and_default_file_and_override_file()
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
-            __DIR__ . '/.psh.yml',
-            __DIR__ . '/.psh.yml.dist',
-            __DIR__ . '/.psh.yml.override',
+            __DIR__ . '/.psh.does-not-matter',
+            __DIR__ . '/.psh.does-not-matter.dist',
+            __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
         self::assertEquals([
-            __DIR__ . '/.psh.yml',
-            __DIR__ . '/.psh.yml.override',
+            __DIR__ . '/.psh.does-not-matter',
+            __DIR__ . '/.psh.does-not-matter.override',
         ], $result);
     }
 
@@ -62,13 +62,13 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
-            __DIR__ . '/.psh.yml',
-            __DIR__ . '/.psh.yml.override',
+            __DIR__ . '/.psh.does-not-matter',
+            __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
         self::assertEquals([
-            __DIR__ . '/.psh.yml',
-            __DIR__ . '/.psh.yml.override',
+            __DIR__ . '/.psh.does-not-matter',
+            __DIR__ . '/.psh.does-not-matter.override',
         ], $result);
     }
 
@@ -76,13 +76,13 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
-            __DIR__ . '/.psh.yml.dist',
-            __DIR__ . '/.psh.yml.override',
+            __DIR__ . '/.psh.does-not-matter.dist',
+            __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
         self::assertEquals([
-            __DIR__ . '/.psh.yml.dist',
-            __DIR__ . '/.psh.yml.override',
+            __DIR__ . '/.psh.does-not-matter.dist',
+            __DIR__ . '/.psh.does-not-matter.override',
         ], $result);
     }
 }

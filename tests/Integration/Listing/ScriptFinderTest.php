@@ -3,7 +3,7 @@
 
 namespace Shopware\Psh\Test\Unit\Integration\Listing;
 
-use Shopware\Psh\Config\ScriptPath;
+use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\ScriptFinder;
@@ -21,7 +21,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_finds_scripts_if_one_directory_is_passed()
     {
         $finder = new ScriptFinder(
-            [new ScriptPath(__DIR__ . '/_scripts')],
+            [new ScriptsPath(__DIR__ . '/_scripts')],
             new DescriptionReader()
         );
 
@@ -32,7 +32,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_finds_scripts_if_two_directories_are_passed_and_filters_noise()
     {
         $finder = new ScriptFinder(
-            [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')],
+            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
             new DescriptionReader()
         );
 
@@ -44,7 +44,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_finds_script_by_name_if_two_directories_are_passed_and_filters_noise()
     {
         $finder = new ScriptFinder(
-            [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')],
+            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
             new DescriptionReader()
         );
         $this->assertInstanceOf(ScriptFinder::class, $finder);
@@ -57,7 +57,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_prefixes_script_names_with_namespace_if_present()
     {
         $finder = new ScriptFinder(
-            [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff', 'biz')],
+            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff', 'biz')],
             new DescriptionReader()
         );
         $this->assertInstanceOf(ScriptFinder::class, $finder);
@@ -70,7 +70,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_throws_exception_if_path_is_not_valid()
     {
         $finder = new ScriptFinder(
-            [new ScriptPath(__DIR__ . '/_scripts_not_valid_directory')],
+            [new ScriptsPath(__DIR__ . '/_scripts_not_valid_directory')],
             new DescriptionReader()
         );
         
@@ -81,7 +81,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_adds_description_to_script()
     {
         $finder = new ScriptFinder(
-            [new ScriptPath(__DIR__ . '/_scripts')],
+            [new ScriptsPath(__DIR__ . '/_scripts')],
             new DescriptionReader()
         );
 
@@ -92,7 +92,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_finds_partial_name()
     {
         $finder = new ScriptFinder(
-            [new ScriptPath(__DIR__ . '/_scripts'), new ScriptPath(__DIR__ . '/_scripts_with_misc_stuff')],
+            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
             new DescriptionReader()
         );
 

@@ -15,7 +15,7 @@ class ClimateLoggerTest extends \PHPUnit_Framework_TestCase
         MockWriter::addToClimateLogger($cliMateLogger);
         $cliMateLogger->logSuccess();
 
-        self::assertSame("Executed Successfully\n", MockWriter::$content);
+        self::assertContains("Executed Successfully", MockWriter::$content);
     }
 
     public function test_error_output()
@@ -24,6 +24,15 @@ class ClimateLoggerTest extends \PHPUnit_Framework_TestCase
         MockWriter::addToClimateLogger($cliMateLogger);
         $cliMateLogger->logFailure();
 
-        self::assertSame("Executed with failure\n", MockWriter::$content);
+        self::assertContains("Executed with failure", MockWriter::$content);
+    }
+
+    public function test_warn_output()
+    {
+        $cliMateLogger = new ClimateLogger(new CLImate(), new Duration());
+        MockWriter::addToClimateLogger($cliMateLogger);
+        $cliMateLogger->warn('FOOOOOOOOOOOOOOOOO');
+
+        self::assertContains("FOOOOOOOOOOOOOOOOO", MockWriter::$content);
     }
 }

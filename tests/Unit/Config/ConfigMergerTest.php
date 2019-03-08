@@ -75,7 +75,7 @@ class ConfigMergerTest extends TestCase
         $result = $merger->merge($config, $override);
 
         $this->assertInstanceOf(Config::class, $result);
-        $this->assertEquals('actions', $result->getAllScriptPaths()[0]->getPath());
+        $this->assertEquals('actions', $result->getAllScriptsPaths()[0]->getPath());
     }
 
     public function test_it_should_override_environment_paths()
@@ -91,7 +91,7 @@ class ConfigMergerTest extends TestCase
         $result = $merger->merge($config, $override);
 
         $this->assertInstanceOf(Config::class, $result);
-        $this->assertEquals('override/actions', $result->getAllScriptPaths()[0]->getPath());
+        $this->assertEquals('override/actions', $result->getAllScriptsPaths()[0]->getPath());
     }
 
     public function test_it_should_override_environment_dynamic_values()
@@ -183,5 +183,31 @@ class ConfigMergerTest extends TestCase
             [ 'source' => '/tmp/override.tpl', 'destination' => '/tmp/override.php' ],
             $result->getEnvironments()[self::DEFAULT_ENV]->getTemplates()[0]
         );
+    }
+
+    public function test_dotenv_paths()
+    {
+        $configMerge = (new ConfigMerger())->merge(
+            new Config('', self::DEFAULT_ENV, [
+                self::DEFAULT_ENV => new ConfigEnvironment([], [], [], [], [
+                    '.a' => 'first/.a',
+                    '.b' => 'first/.b',
+                ])
+            ], []),
+            new Config('', self::DEFAULT_ENV, [
+                self::DEFAULT_ENV => new ConfigEnvironment([], [], [], [], [
+                    '.a' => 'overwrite/.a',
+                    '.c' => 'overwrite/.c',
+                ])
+            ], [])
+        );
+
+        $this->assertCount(3, $configMerge->getDotenvPaths());
+
+        $paths = $configMerge->getDotenvPaths();
+
+        $this->assertEquals('overwrite/.a', $paths['.a']->getPath());
+        $this->assertEquals('first/.b', $paths['.b']->getPath());
+        $this->assertEquals('overwrite/.c', $paths['.c']->getPath());
     }
 }

@@ -46,10 +46,11 @@ class ConfigMerger
             $originalConfigEnv = $config->getEnvironments()[$name];
 
             $environments[$name] = new ConfigEnvironment(
-                $this->overridePaths($originalConfigEnv, $overrideEnv),
+                $this->overrideScriptsPaths($originalConfigEnv, $overrideEnv),
                 $this->mergeDynamicVariables($config->getEnvironments()[$name], $overrideEnv),
                 $this->mergeConstants($config->getEnvironments()[$name], $overrideEnv),
-                $this->overrideTemplates($config->getEnvironments()[$name], $overrideEnv)
+                $this->overrideTemplates($config->getEnvironments()[$name], $overrideEnv),
+                $this->mergeDotenvPaths($originalConfigEnv, $overrideEnv)
             );
         }
 
@@ -69,15 +70,25 @@ class ConfigMerger
     /**
      * @param ConfigEnvironment $configEnvironment
      * @param ConfigEnvironment $overrideConfigEnv
-     * @return array|ScriptPath[]
+     * @return ScriptsPath[]
      */
-    private function overridePaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    private function mergeDotenvPaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
-        if ($overrideConfigEnv->getAllScriptPaths()) {
-            return $overrideConfigEnv->getAllScriptPaths();
+        return array_merge($configEnvironment->getDotenvPaths(), $overrideConfigEnv->getDotenvPaths());
+    }
+
+    /**
+     * @param ConfigEnvironment $configEnvironment
+     * @param ConfigEnvironment $overrideConfigEnv
+     * @return ScriptsPath[]
+     */
+    private function overrideScriptsPaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    {
+        if ($overrideConfigEnv->getAllScriptsPaths()) {
+            return $overrideConfigEnv->getAllScriptsPaths();
         }
 
-        return $configEnvironment->getAllScriptPaths();
+        return $configEnvironment->getAllScriptsPaths();
     }
 
     /**

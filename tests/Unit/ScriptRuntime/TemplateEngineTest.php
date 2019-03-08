@@ -3,8 +3,8 @@
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
-use Shopware\Psh\ScriptRuntime\SimpleValueProvider;
-use Shopware\Psh\ScriptRuntime\TemplateEngine;
+use Shopware\Psh\ScriptRuntime\Execution\SimpleValueProvider;
+use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
 
 class TemplateEngineTest extends \PHPUnit_Framework_TestCase
 {

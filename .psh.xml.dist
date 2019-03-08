@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="resource/config.xsd">
+
+    <header><![CDATA[
+ PHP Shell Helper
+             _
+            | |
+   _ __  ___| |__
+  | '_ \/ __| '_ \
+  | |_) \__ \ | | |
+  | .__/|___/_| |_|
+  | |
+  |_|
+
+    ]]></header>
+    <path>actions</path>
+</psh>

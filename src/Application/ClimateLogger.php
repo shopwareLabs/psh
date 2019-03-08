@@ -5,14 +5,25 @@ namespace Shopware\Psh\Application;
 use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Listing\Script;
-use Shopware\Psh\ScriptRuntime\Logger;
-use Shopware\Psh\ScriptRuntime\LogMessage;
+use Shopware\Psh\ScriptRuntime\Execution\Logger;
+use Shopware\Psh\ScriptRuntime\Execution\LogMessage;
 
 /**
  * A CLImate implementation of the runtime logger
  */
 class ClimateLogger implements Logger
 {
+    const WARNING_TEMPLATE = <<<EOD
+<yellow>
+##############################################################################################################
+               <bold>WARNING</bold>                               
+  %s
+                                                                  
+##############################################################################################################
+</yellow>
+EOD;
+
+
     /**
      * @var CLImate
      */
@@ -125,5 +136,10 @@ class ClimateLogger implements Logger
     public function LogFailure()
     {
         $this->cliMate->green()->red()->out('Executed with failure');
+    }
+
+    public function warn(string $message)
+    {
+        $this->cliMate->out(sprintf(self::WARNING_TEMPLATE, $message));
     }
 }

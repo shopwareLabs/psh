@@ -46,18 +46,18 @@ class Config
     }
 
     /**
-     * @return ScriptPath[]
+     * @return ScriptsPath[]
      */
-    public function getAllScriptPaths(): array
+    public function getAllScriptsPaths(): array
     {
         $paths = [];
 
         foreach ($this->environments as $name => $environmentConfig) {
-            foreach ($environmentConfig->getAllScriptPaths() as $path) {
+            foreach ($environmentConfig->getAllScriptsPaths() as $path) {
                 if ($name !== $this->defaultEnvironment) {
-                    $paths[] = new ScriptPath($path, $name);
+                    $paths[] = new ScriptsPath($path, $name);
                 } else {
-                    $paths[] = new ScriptPath($path);
+                    $paths[] = new ScriptsPath($path);
                 }
             }
         }
@@ -100,6 +100,22 @@ class Config
             [$this->getEnvironment($environment), 'getConstants'],
             [$this, 'getParams']
         );
+    }
+
+    /**
+     * @param string|null $environment
+     * @return DotenvFile[]
+     */
+    public function getDotenvPaths(string $environment = null): array
+    {
+        $paths = $this->createResult(
+            [$this->getEnvironment(), 'getDotenvPaths'],
+            [$this->getEnvironment($environment), 'getDotenvPaths']
+        );
+
+        return array_map(function (string $path): DotenvFile {
+            return new DotenvFile($path);
+        }, $paths);
     }
 
     /**
