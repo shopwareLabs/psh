@@ -81,7 +81,7 @@ class ProcessEnvironment
     }
 
     /**
-     * @param ScriptsPath[] $dotenvPaths
+     * @param DotenvFile[] $dotenvPaths
      * @return ValueProvider[]
      */
     private function initializeDotenvVariables(array $dotenvPaths): array
@@ -101,7 +101,7 @@ class ProcessEnvironment
 
     /**
      * @param array $templates
-     * @return ValueProvider[]
+     * @return Template[]
      */
     private function initializeTemplates(array $templates): array
     {
