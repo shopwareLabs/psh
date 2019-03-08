@@ -331,4 +331,46 @@ EOD
         $config = $loader->load(self::TEMP_FILE, []);
         $this->assertSame('YES', $config->getHeader());
     }
+
+    public function test_it_loads_dotenv_files()
+    {
+        $this->writeTempFile(<<<EOD
+<placeholder>
+    <dotenv>.fiz</dotenv>
+    <dotenv>.baz</dotenv>
+</placeholder>
+EOD
+        );
+
+        $loader =$this->createConfigLoader();
+        $config = $loader->load(self::TEMP_FILE, []);
+        $this->assertCount(2, $config->getDotenvPaths(), print_r($config->getDotenvPaths(), true));
+        $this->assertEquals(__DIR__ . '/.fiz', $config->getDotenvPaths()['.fiz']->getPath());
+        $this->assertEquals(__DIR__ . '/.baz', $config->getDotenvPaths()['.baz']->getPath());
+    }
+
+    public function test_it_loads_dotenv_files_from_environments_overwritten()
+    {
+        $this->writeTempFile(<<<EOD
+<placeholder>
+    <dotenv>.fiz</dotenv>
+    <dotenv>.baz</dotenv>
+</placeholder>
+<environment name="env">
+    <placeholder>
+        <dotenv>_foo/.fiz</dotenv>        
+        <dotenv>_foo/.buz</dotenv>        
+    </placeholder>    
+</environment>
+EOD
+        );
+
+        $loader =$this->createConfigLoader();
+        $config = $loader->load(self::TEMP_FILE, []);
+
+        $this->assertCount(3, $config->getDotenvPaths('env'));
+        $this->assertEquals(__DIR__ . '/_foo/.fiz', $config->getDotenvPaths('env')['.fiz']->getPath());
+        $this->assertEquals(__DIR__ . '/.baz', $config->getDotenvPaths('env')['.baz']->getPath());
+        $this->assertEquals(__DIR__ . '/_foo/.buz', $config->getDotenvPaths('env')['.buz']->getPath());
+    }
 }

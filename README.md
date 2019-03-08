@@ -191,31 +191,31 @@ ln -s `echo $HOME`
 
 With dotenv you have the ability to load .env-files of your project.
 
-```yaml
-dotenv:
-  - ".env"
+```xml
+<placeholder>
+    <dotenv>.env</dotenv>
+</placeholder>
 ```
 
 You can also configure multiple paths to .env files.
 
-```yaml
-dotenv:
-  - ".env"
-  - ".env2"
+```xml
+<placeholder>
+    <dotenv>.env</dotenv>
+    <dotenv>.env2</dotenv>
+</placeholder>
 ```
 
 `.env2` overrides `.env` in this example.
 
 Example:
 
-.psh.yaml
-```yaml
-paths:
-  - "dev-ops/common/actions"
-const: []
-dynamic: []
-dotenv:
-  - ".env"
+.psh.xml
+```xml
+<path>dev-ops/common/actions"</path>
+<placeholder>
+    <dotenv>.env</dotenv>
+</placeholder>
 ```
 
 .env

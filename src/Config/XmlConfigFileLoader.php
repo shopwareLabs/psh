@@ -19,6 +19,8 @@ class XmlConfigFileLoader extends ConfigFileLoader
 
     const NODE_PLACEHOLDER_CONST = 'const';
 
+    const NODE_PLACEHOLDER_DOTENV = 'dotenv';
+
     const NODE_PATH = 'path';
 
     const NODE_ENVIRONMENT = 'environment';
@@ -98,7 +100,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
         $placeholders = $this->extractNodes(self::NODE_PLACEHOLDER, $pshConfigNode);
 
         foreach ($placeholders as $placeholder) {
-            $this->extractPlaceholders($placeholder);
+            $this->extractPlaceholders($file, $placeholder);
         }
 
         $this->configBuilder->setTemplates(
@@ -169,14 +171,18 @@ class XmlConfigFileLoader extends ConfigFileLoader
     /**
      * @param DOMElement $placeholder
      */
-    private function extractPlaceholders(DOMElement $placeholder)
+    private function extractPlaceholders(string $file, DOMElement $placeholder)
     {
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DYNAMIC, $placeholder) as $dynamic) {
             $this->configBuilder->setDynamicVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);
         }
 
-        foreach ($this->extractNodes(self::NODE_PLACEHOLDER_CONST, $placeholder) as $dynamic) {
-            $this->configBuilder->setConstVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);
+        foreach ($this->extractNodes(self::NODE_PLACEHOLDER_CONST, $placeholder) as $const) {
+            $this->configBuilder->setConstVariable($const->getAttribute('name'), $const->nodeValue);
+        }
+
+        foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DOTENV, $placeholder) as $dotenv) {
+            $this->configBuilder->setDotenvPath($this->fixPath($this->applicationRootDirectory, $dotenv->nodeValue, $file));
         }
     }
 

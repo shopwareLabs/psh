@@ -71,13 +71,25 @@ class ConfigBuilder
         $this->currentDotenvPaths = [];
 
         foreach ($dotenvPaths as $dotenvPath) {
-            $this->currentDotenvPaths[pathinfo($dotenvPath, PATHINFO_BASENAME)] = $dotenvPath;
+            $this->setDotenvPath($dotenvPath);
         }
 
         return $this;
     }
 
     /**
+     * @param string $dotenvPath
+     * @return ConfigBuilder
+     */
+    public function setDotenvPath(string $dotenvPath): ConfigBuilder
+    {
+        $this->currentDotenvPaths[pathinfo($dotenvPath, PATHINFO_BASENAME)] = $dotenvPath;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated only used by yaml builder
      * @param array $dynamicVariables
      * @return ConfigBuilder
      */
@@ -87,13 +99,14 @@ class ConfigBuilder
         return $this;
     }
 
-    public function setDynamicVariable($key, $value): ConfigBuilder
+    public function setDynamicVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentDynamicVariables[$key] = $value;
         return $this;
     }
 
     /**
+     * @deprecated only used by yaml builder
      * @param array $constants
      * @return ConfigBuilder
      */
@@ -103,7 +116,7 @@ class ConfigBuilder
         return $this;
     }
 
-    public function setConstVariable($key, $value): ConfigBuilder
+    public function setConstVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentConstants[$key] = $value;
         return $this;

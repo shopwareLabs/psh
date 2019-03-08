@@ -33,6 +33,7 @@
         <xs:choice maxOccurs="unbounded">
             <xs:element name="const" type="var" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="dynamic" type="var" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="dotenv" type="pathvar" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
     </xs:complexType>
 
@@ -40,6 +41,13 @@
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="name" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="pathvar">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
