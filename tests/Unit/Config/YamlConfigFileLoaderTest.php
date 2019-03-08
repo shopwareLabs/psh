@@ -31,14 +31,15 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = $this->createConfigLoader();
 
-        $this->assertTrue($loader->isSupported('fo.yaml'));
-        $this->assertTrue($loader->isSupported('fo.yml'));
-        $this->assertTrue($loader->isSupported('fo.yml.dist'));
-        $this->assertTrue($loader->isSupported('fo.yaml.dist'));
-        $this->assertTrue($loader->isSupported('fo.yml.override'));
-        $this->assertTrue($loader->isSupported('fo.yaml.override'));
+        $this->assertTrue($loader->isSupported('.psh.yaml'));
+        $this->assertTrue($loader->isSupported('.psh.yml'));
+        $this->assertTrue($loader->isSupported('.psh.yml.dist'));
+        $this->assertTrue($loader->isSupported('.psh.yaml.dist'));
+        $this->assertTrue($loader->isSupported('.psh.yml.override'));
+        $this->assertTrue($loader->isSupported('.psh.yaml.override'));
 
         $this->assertFalse($loader->isSupported('fo.txt'));
+        $this->assertFalse($loader->isSupported('fo.yml'));
         $this->assertFalse($loader->isSupported('fo.yaml.bar'));
     }
 
@@ -362,6 +363,6 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->expectException(\InvalidArgumentException::class);
 
-        $method->invoke($loader, 'absoluteOrRelativePath', 'baseFile');
+        $method->invoke($loader, __DIR__, 'absoluteOrRelativePath', 'baseFile');
     }
 }

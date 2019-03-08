@@ -48,18 +48,28 @@ class ConfigFileFinder
             return $globResult;
         }
 
-        $overrideFile = array_filter($globResult, function (string $file) {
+        $overrideFiles = array_filter($globResult, function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'override';
         });
 
-        $configFile = array_filter($globResult, function (string $file) {
+        $distFiles = array_filter($globResult, function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
-            return $extension !== 'override';
+            return $extension === 'dist';
         });
-                
-        return array_merge([$configFile[0]], $overrideFile);
+
+        $configFiles = array_filter($globResult, function (string $file) {
+            $extension = pathinfo($file, PATHINFO_EXTENSION);
+
+            return $extension !== 'override' && $extension !== 'dist';
+        });
+
+        if ($configFiles) {
+            return array_merge($configFiles, $overrideFiles);
+        }
+
+        return array_merge($distFiles, $overrideFiles);
     }
 }

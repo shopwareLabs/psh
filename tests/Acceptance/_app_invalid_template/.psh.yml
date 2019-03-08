@@ -1,8 +1,0 @@
-header: |
-  SHOPWARE PHP-SH
-
-templates:
-  - source: templates/testa.tpl
-    destination: result.txt
-paths:
-  - scripts/
