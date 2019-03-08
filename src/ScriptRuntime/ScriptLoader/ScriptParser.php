@@ -15,5 +15,5 @@ interface ScriptParser
      * @param Script $script
      * @return Command[]
      */
-    public function parseContent(string $content, Script $script): array;
+    public function parseContent(string $content, Script $script, ScriptLoader $loader): array;
 }

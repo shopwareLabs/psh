@@ -55,10 +55,10 @@ class PshScriptParser implements ScriptParser
     /**
      * {@inheritdoc}
      */
-    public function parseContent(string $content, Script $script): array
+    public function parseContent(string $content, Script $script, ScriptLoader $loader): array
     {
         $lines = $this->splitIntoLines($content);
-        $tokenHandler = $this->createTokenHandler();
+        $tokenHandler = $this->createTokenHandler($loader);
 
         foreach ($lines as $lineNumber => $currentLine) {
             foreach ($tokenHandler as $token => $handler) {
@@ -75,24 +75,24 @@ class PshScriptParser implements ScriptParser
         return $this->commandBuilder->getAll();
     }
 
-    private function createTokenHandler(): array
+    private function createTokenHandler(ScriptLoader $loader): array
     {
         return [
-            self::TOKEN_ACTION => function (string $currentLine): string {
+            self::TOKEN_ACTION => function (string $currentLine) use ($loader): string {
                 $scriptName = $this->removeFromStart(self::TOKEN_ACTION, $currentLine);
                 $actionScript = $this->scriptFinder->findScriptByName($scriptName);
 
-                $commands = $this->loadScript($actionScript);
+                $commands = $loader->loadScript($actionScript);
                 $this->commandBuilder->replaceCommands($commands);
 
                 return '';
             },
 
-            self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script): string {
+            self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script) use ($loader): string {
                 $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
                 $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
 
-                $commands = $this->parseContent($this->loadFileContents($includeScript->getPath()), $includeScript);
+                $commands = $loader->loadScript($includeScript);
                 $this->commandBuilder->replaceCommands($commands);
 
                 return '';

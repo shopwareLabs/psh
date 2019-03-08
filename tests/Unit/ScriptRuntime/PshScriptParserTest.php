@@ -7,6 +7,7 @@ use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\Command;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
@@ -91,7 +92,7 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 
     public function test_action_with_local_commands()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'local_include.sh'), [
+        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'local_action.sh'), [
             new ScriptsPath(__DIR__ . '/_scripts/'),
             new ScriptsPath(__DIR__ . '/_scripts/', 'env'),
         ]);
@@ -142,7 +143,10 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
      */
     public function createCommands(Script $script, array $availableSubScripts = []): array
     {
-        return (new PshScriptParser(new CommandBuilder(), new ScriptFinder($availableSubScripts, new DescriptionReader())))
-            ->parseContent(file_get_contents($script->getPath()), $script);
+        $scriptLoader = new ScriptLoader(
+            new PshScriptParser(new CommandBuilder(), new ScriptFinder($availableSubScripts, new DescriptionReader()))
+        );
+
+        return $scriptLoader->loadScript($script);
     }
 }

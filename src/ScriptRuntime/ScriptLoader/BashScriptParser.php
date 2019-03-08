@@ -14,7 +14,7 @@ class BashScriptParser implements ScriptParser
     /**
      * {@inheritdoc}
      */
-    public function parseContent(string $content, Script $script): array
+    public function parseContent(string $content, Script $script, ScriptLoader $loader): array
     {
         $this->testContentContainsMarker($content);
         $this->testScriptFileFitsRequirements($script);

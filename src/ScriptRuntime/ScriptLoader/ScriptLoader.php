@@ -34,7 +34,7 @@ class ScriptLoader
 
         foreach ($this->parsers as $parser) {
             try {
-                return $parser->parseContent($content, $script);
+                return $parser->parseContent($content, $script, $this);
             } catch (ScriptNotSupportedByParser $e) {
                 //nth
             }
