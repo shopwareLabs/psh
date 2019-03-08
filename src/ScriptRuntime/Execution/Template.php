@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\ScriptRuntime;
+namespace Shopware\Psh\ScriptRuntime\Execution;
 
 /**
  * Access template content and write the content to the target destination

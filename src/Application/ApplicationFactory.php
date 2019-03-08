@@ -12,13 +12,15 @@ use Shopware\Psh\Config\YamlConfigFileLoader;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
-use Shopware\Psh\ScriptRuntime\ProcessCommand;
-use Shopware\Psh\ScriptRuntime\CommandBuilder;
-use Shopware\Psh\ScriptRuntime\Logger;
-use Shopware\Psh\ScriptRuntime\ProcessEnvironment;
-use Shopware\Psh\ScriptRuntime\ProcessExecutor;
-use Shopware\Psh\ScriptRuntime\ScriptLoader;
-use Shopware\Psh\ScriptRuntime\TemplateEngine;
+use Shopware\Psh\ScriptRuntime\Command;
+use Shopware\Psh\ScriptRuntime\Execution\Logger;
+use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
+use Shopware\Psh\ScriptRuntime\Execution\ProcessExecutor;
+use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\BashScriptParser;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Symfony\Component\Yaml\Parser;
 
 /**
@@ -101,11 +103,14 @@ class ApplicationFactory
      * @param Script $script
      * @param ScriptFinder $scriptFinder
      *
-     * @return ProcessCommand[]
+     * @return Command[]
      */
     public function createCommands(Script $script, ScriptFinder $scriptFinder): array
     {
-        $scriptLoader = new ScriptLoader(new CommandBuilder(), $scriptFinder);
+        $scriptLoader = new ScriptLoader(
+            new BashScriptParser(),
+            new PshScriptParser(new CommandBuilder(), $scriptFinder)
+        );
         return $scriptLoader->loadScript($script);
     }
 

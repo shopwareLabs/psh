@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\ScriptRuntime;
+namespace Shopware\Psh\ScriptRuntime\Execution;
 
 use Shopware\Psh\Listing\Script;
 
@@ -45,4 +45,10 @@ interface Logger
     public function logSuccess();
 
     public function LogFailure();
+
+    /**
+     * @param string $message
+     * @return mixed
+     */
+    public function warn(string $message);
 }

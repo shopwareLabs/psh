@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Shopware\Psh\ScriptRuntime;
+namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
 use function pathinfo;
 use const PATHINFO_BASENAME;
@@ -12,7 +12,7 @@ use Shopware\Psh\Listing\ScriptFinder;
 /**
  * Load scripts and parse it into commands
  */
-class ScriptLoader
+class PshScriptParser implements ScriptParser
 {
     const TOKEN_MODIFIER_TTY = 'TTY: ';
 
@@ -53,12 +53,10 @@ class ScriptLoader
     }
 
     /**
-     * @param Script $script
-     * @return Command[]
+     * {@inheritdoc}
      */
-    public function loadScript(Script $script): array
+    public function parseContent(string $content, Script $script): array
     {
-        $content = $this->loadFileContents($script->getPath());
         $lines = $this->splitIntoLines($content);
         $tokenHandler = $this->createTokenHandler();
 
@@ -77,7 +75,7 @@ class ScriptLoader
         return $this->commandBuilder->getAll();
     }
 
-    public function createTokenHandler(): array
+    private function createTokenHandler(): array
     {
         return [
             self::TOKEN_ACTION => function (string $currentLine): string {
@@ -94,7 +92,7 @@ class ScriptLoader
                 $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
                 $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
 
-                $commands = $this->loadScript($includeScript);
+                $commands = $this->parseContent($this->loadFileContents($includeScript->getPath()), $includeScript);
                 $this->commandBuilder->replaceCommands($commands);
 
                 return '';
