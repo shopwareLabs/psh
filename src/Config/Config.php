@@ -103,7 +103,7 @@ class Config
     }
 
     /**
-     * @param string|null $environmentString
+     * @param string|null $environment
      *
      * @return ScriptPath[]
      */

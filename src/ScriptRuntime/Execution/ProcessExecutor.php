@@ -265,7 +265,7 @@ class ProcessExecutor
 
     /**
      * @param Process $process
-     * @param bool $ignoreError
+     * @param ProcessCommand $command
      * @return bool
      */
     private function isProcessResultValid(Process $process, ProcessCommand $command): bool

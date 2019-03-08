@@ -33,7 +33,6 @@ class DeferredProcessCommand implements ProcessCommand, ParsableCommand
      * @param int $lineNumber
      * @param bool $ignoreError
      * @param bool $tty
-     * @param bool $deferred
      */
     public function __construct(
         string $shellCommand,

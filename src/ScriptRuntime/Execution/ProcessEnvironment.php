@@ -40,7 +40,7 @@ class ProcessEnvironment
      * @param array $constants
      * @param array $variables
      * @param array $templates
-     * @param array $dotenvPaths
+     * @param ScriptPath[] $dotenvPaths
      */
     public function __construct(array $constants, array $variables, array $templates, array $dotenvPaths)
     {

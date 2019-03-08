@@ -153,7 +153,11 @@ class ApplicationFactory
         return $reformattedParams;
     }
 
-    public function getConfigFiles($directory): array
+    /**
+     * @param $directory
+     * @return array
+     */
+    public function getConfigFiles(string $directory): array
     {
         return  (new ConfigFileFinder())->discoverFiles($directory);
     }
