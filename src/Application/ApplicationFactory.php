@@ -70,7 +70,7 @@ class ApplicationFactory
      */
     public function createScriptFinder(Config $config): ScriptFinder
     {
-        return new ScriptFinder($config->getAllScriptPaths(), new DescriptionReader());
+        return new ScriptFinder($config->getAllScriptsPaths(), new DescriptionReader());
     }
 
     /**

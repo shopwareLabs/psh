@@ -8,10 +8,9 @@
     <placeholder>
         <const name="ENV">prod</const>
         <const name="TEST">prod</const>
-        <const name="HOST">http://www.selfish.de</const>
-        <const name="NUMBER">1701</const>
         <dynamic name="ID">id</dynamic>
         <dynamic name="LL">ls -ahl</dynamic>
+        <dotenv>.env</dotenv>
     </placeholder>
     <environment name="test">
         <path>envpath/</path>

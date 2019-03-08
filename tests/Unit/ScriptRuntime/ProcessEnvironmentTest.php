@@ -3,7 +3,8 @@
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
-use Shopware\Psh\Config\ScriptPath;
+use Shopware\Psh\Config\DotenvFile;
+use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\Execution\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\Execution\Template;
@@ -63,7 +64,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     {
         putenv('FOO=baz');
         $env = new ProcessEnvironment([], [], [], [
-            new ScriptPath(__DIR__ . '/_dotenv/simple.env')
+            new DotenvFile(__DIR__ . '/_dotenv/simple.env')
         ]);
 
         $this->assertSame('baz', $env->getAllValues()['FOO']->getValue());
@@ -72,7 +73,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     public function test_dotenv_file_variables()
     {
         $env = new ProcessEnvironment([], [], [], [
-            new ScriptPath(__DIR__ . '/_dotenv/simple.env')
+            new DotenvFile(__DIR__ . '/_dotenv/simple.env')
         ]);
 
         $this->assertCount(1, $env->getAllValues());

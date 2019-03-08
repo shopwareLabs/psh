@@ -2,16 +2,14 @@
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
-use Shopware\Psh\Config\ScriptPath;
+use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\Command;
 use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
-use Shopware\Psh\ScriptRuntime\ScriptLoader\BashScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
-use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\TemplateCommand;
 
 class PshScriptParserTest extends \PHPUnit_Framework_TestCase
@@ -94,8 +92,8 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
     public function test_action_with_local_commands()
     {
         $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'local_include.sh'), [
-            new ScriptPath(__DIR__ . '/_scripts/'),
-            new ScriptPath(__DIR__ . '/_scripts/', 'env'),
+            new ScriptsPath(__DIR__ . '/_scripts/'),
+            new ScriptsPath(__DIR__ . '/_scripts/', 'env'),
         ]);
 
         $this->assertCount(8, $commands);

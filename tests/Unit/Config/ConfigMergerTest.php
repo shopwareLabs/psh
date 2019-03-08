@@ -75,7 +75,7 @@ class ConfigMergerTest extends TestCase
         $result = $merger->merge($config, $override);
 
         $this->assertInstanceOf(Config::class, $result);
-        $this->assertEquals('actions', $result->getAllScriptPaths()[0]->getPath());
+        $this->assertEquals('actions', $result->getAllScriptsPaths()[0]->getPath());
     }
 
     public function test_it_should_override_environment_paths()
@@ -91,7 +91,7 @@ class ConfigMergerTest extends TestCase
         $result = $merger->merge($config, $override);
 
         $this->assertInstanceOf(Config::class, $result);
-        $this->assertEquals('override/actions', $result->getAllScriptPaths()[0]->getPath());
+        $this->assertEquals('override/actions', $result->getAllScriptsPaths()[0]->getPath());
     }
 
     public function test_it_should_override_environment_dynamic_values()

@@ -57,7 +57,7 @@ class ConfigEnvironment
     /**
      * @return array
      */
-    public function getAllScriptPaths(): array
+    public function getAllScriptsPaths(): array
     {
         return $this->commandPaths;
     }

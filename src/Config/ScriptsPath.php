@@ -2,7 +2,7 @@
 
 namespace Shopware\Psh\Config;
 
-class ScriptPath
+class ScriptsPath
 {
     /**
      * @var string

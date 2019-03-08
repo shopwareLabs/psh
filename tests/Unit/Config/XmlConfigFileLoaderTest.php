@@ -5,7 +5,7 @@ namespace Shopware\Psh\Test\Unit\Config;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigLoader;
-use Shopware\Psh\Config\ScriptPath;
+use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Config\XmlConfigFileLoader;
 
 class XmlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
@@ -106,8 +106,8 @@ EOD
 
         $config = $loader->load(self::TEMP_FILE, []);
 
-        $scripts = $config->getAllScriptPaths();
-        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $scripts = $config->getAllScriptsPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
         $this->assertCount(2, $scripts);
         $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
         $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
@@ -184,8 +184,8 @@ EOD
             'FOO' => 'bar',
         ], $config->getConstants());
 
-        $scripts = $config->getAllScriptPaths();
-        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $scripts = $config->getAllScriptsPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
         $this->assertCount(2, $scripts);
         $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
         $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
@@ -221,8 +221,8 @@ EOD
             'FOO' => 'bar',
         ], $config->getConstants('namespace'));
 
-        $scripts = $config->getAllScriptPaths();
-        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $scripts = $config->getAllScriptsPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
         $this->assertCount(2, $scripts);
         $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
         $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
@@ -264,8 +264,8 @@ EOD
             'booh' => 'hah'
         ], $config->getConstants('namespace'));
 
-        $scripts = $config->getAllScriptPaths();
-        $this->assertContainsOnlyInstancesOf(ScriptPath::class, $scripts);
+        $scripts = $config->getAllScriptsPaths();
+        $this->assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
         $this->assertCount(2, $scripts);
         $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
         $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());

@@ -41,9 +41,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNoErrorExitCode($exitCode);
         $this->assertContains('ls -al', MockWriter::$content);
         $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('(1/3) Starting', MockWriter::$content);
-        $this->assertContains('(2/3) Starting', MockWriter::$content);
-        $this->assertContains('(3/3) Deferring', MockWriter::$content);
+        $this->assertContains('(1/4) Starting', MockWriter::$content);
+        $this->assertContains('(2/4) Starting', MockWriter::$content);
+        $this->assertContains('(3/4) Starting', MockWriter::$content);
+        $this->assertContains('(4/4) Deferring', MockWriter::$content);
         $this->assertContains('WAITING...', MockWriter::$content);
         $this->assertContains('(1/1) Output from', MockWriter::$content);
         $this->assertContains(' echo "prod"', MockWriter::$content);
@@ -62,9 +63,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNoErrorExitCode($exitCode);
         $this->assertContains('ls -al', MockWriter::$content);
         $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('(1/3) Starting', MockWriter::$content);
-        $this->assertContains('(2/3) Starting', MockWriter::$content);
-        $this->assertContains('(3/3) Deferring', MockWriter::$content);
+        $this->assertContains('(1/4) Starting', MockWriter::$content);
+        $this->assertContains('(2/4) Starting', MockWriter::$content);
+        $this->assertContains('(3/4) Starting', MockWriter::$content);
+        $this->assertContains('(4/4) Deferring', MockWriter::$content);
         $this->assertContains(' echo "test"', MockWriter::$content);
         $this->assertContains('All commands successfully executed!', MockWriter::$content);
         $this->assertContains('Duration:', MockWriter::$content);

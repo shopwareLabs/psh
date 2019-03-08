@@ -8,7 +8,8 @@ use Dotenv\Environment\DotenvFactory;
 use function pathinfo;
 use const PATHINFO_BASENAME;
 use const PATHINFO_DIRNAME;
-use Shopware\Psh\Config\ScriptPath;
+use Shopware\Psh\Config\DotenvFile;
+use Shopware\Psh\Config\ScriptsPath;
 use Symfony\Component\Process\Process;
 
 /**
@@ -40,7 +41,7 @@ class ProcessEnvironment
      * @param array $constants
      * @param array $variables
      * @param array $templates
-     * @param ScriptPath[] $dotenvPaths
+     * @param ScriptsPath[] $dotenvPaths
      */
     public function __construct(array $constants, array $variables, array $templates, array $dotenvPaths)
     {
@@ -80,7 +81,7 @@ class ProcessEnvironment
     }
 
     /**
-     * @param ScriptPath[] $dotenvPaths
+     * @param ScriptsPath[] $dotenvPaths
      * @return ValueProvider[]
      */
     private function initializeDotenvVariables(array $dotenvPaths): array
@@ -142,11 +143,10 @@ class ProcessEnvironment
     }
 
     /**
-     * @param ScriptPath $dotenvPath
-     *
+     * @param DotenvFile $dotenvPath
      * @return array
      */
-    private function loadDotenvVariables(ScriptPath $dotenvPath): array
+    private function loadDotenvVariables(DotenvFile $dotenvPath): array
     {
         $dotenvFactory = new DotenvFactory();
 
@@ -155,11 +155,11 @@ class ProcessEnvironment
     }
 
     /**
-     * @param ScriptPath $dotenvPath
+     * @param DotenvFile $dotenvPath
      * @param DotenvFactory $dotenvFactory
      * @return array
      */
-    private function loadDotenvFile(ScriptPath $dotenvPath, DotenvFactory $dotenvFactory): array
+    private function loadDotenvFile(DotenvFile $dotenvPath, DotenvFactory $dotenvFactory): array
     {
         $filePath = $dotenvPath->getPath();
         $dotenv = Dotenv::create(
