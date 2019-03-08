@@ -317,7 +317,7 @@ class ProcessExecutor
     private function logDeferedStart(DeferredProcessCommand $command, int $index, int $totalCount, string $parsedCommand)
     {
         $this->logger->logStart(
-            'Defering',
+            'Deferring',
             $parsedCommand,
             $command->getLineNumber(),
             $command->isIgnoreError(),

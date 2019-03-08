@@ -93,15 +93,13 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 
     public function test_action_with_local_commands()
     {
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([
+        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'local_include.sh'), [
             new ScriptPath(__DIR__ . '/_scripts/'),
             new ScriptPath(__DIR__ . '/_scripts/', 'env'),
-        ], new DescriptionReader()));
-
-        $commands = $loader->loadScript(new Script(__DIR__ . '/_scripts', 'local_action.sh'));
+        ]);
 
         $this->assertCount(8, $commands);
-        $this->assertContainsOnlyInstancesOf(ProcessCommand::class, $commands);
+        $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
 
         $this->assertEquals(2, $commands[0]->getLineNumber());
         $this->assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
@@ -115,9 +113,8 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 
     public function test_action_throws_exception()
     {
-        $loader = new ScriptLoader(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()));
         $this->expectException(\RuntimeException::class);
-        $loader->loadScript(new Script(__DIR__ . '/_scripts', 'exception_action.sh'));
+        $this->createCommands(new Script(__DIR__ . '/_scripts', 'exception_action.sh'));
     }
 
     public function test_renders_templates_on_demand()
@@ -145,9 +142,9 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
      * @param Script $script
      * @return SynchronusProcessCommand[]
      */
-    public function createCommands(Script $script): array
+    public function createCommands(Script $script, array $availableSubScripts = []): array
     {
-        return (new PshScriptParser(new CommandBuilder()))
+        return (new PshScriptParser(new CommandBuilder(), new ScriptFinder($availableSubScripts, new DescriptionReader())))
             ->parseContent(file_get_contents($script->getPath()), $script);
     }
 }

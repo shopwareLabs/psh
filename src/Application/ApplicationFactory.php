@@ -12,6 +12,7 @@ use Shopware\Psh\Config\YamlConfigFileLoader;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
+use Shopware\Psh\ScriptRuntime\Command;
 use Shopware\Psh\ScriptRuntime\Execution\Logger;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessExecutor;
@@ -102,14 +103,13 @@ class ApplicationFactory
      * @param Script $script
      * @param ScriptFinder $scriptFinder
      *
-     * @return ProcessCommand[]
+     * @return Command[]
      */
     public function createCommands(Script $script, ScriptFinder $scriptFinder): array
     {
         $scriptLoader = new ScriptLoader(
             new BashScriptParser(),
-            new PshScriptParser(new CommandBuilder()),
-            $scriptFinder
+            new PshScriptParser(new CommandBuilder(), $scriptFinder)
         );
         return $scriptLoader->loadScript($script);
     }

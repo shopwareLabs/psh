@@ -41,8 +41,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], [], []),
-            new TemplateEngine(),
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -60,8 +60,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], [], []),
-            new TemplateEngine(),
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -86,7 +86,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
                 'destination' => __DIR__ . '/_test__VAR__.tpl'
             ]
             ], []),
-            new TemplateEngine(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -103,8 +103,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], [], []),
-            new TemplateEngine(),
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -142,8 +142,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($commands[0]->hasWarning());
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], []),
-            new TemplateEngine(),
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -165,8 +165,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($commands[0]->hasWarning());
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], []),
-            new TemplateEngine(),
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -190,8 +190,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], [], []),
-            new TemplateEngine(),
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -229,8 +229,8 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([], [], [], []),
-            new TemplateEngine(),
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
             $logger,
             __DIR__
         );
@@ -280,9 +280,24 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     {
         $loader = new ScriptLoader(
             new BashScriptParser(),
-            new PshScriptParser(new CommandBuilder()),
-            new ScriptFinder([], new DescriptionReader())
+            new PshScriptParser(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()))
         );
         return $loader->loadScript($script);
+    }
+
+    /**
+     * @return ProcessEnvironment
+     */
+    private function createProcessEnvironment(): ProcessEnvironment
+    {
+        return new ProcessEnvironment([], [], [], []);
+    }
+
+    /**
+     * @return TemplateEngine
+     */
+    private function createTemplateEngine(): TemplateEngine
+    {
+        return new TemplateEngine();
     }
 }
