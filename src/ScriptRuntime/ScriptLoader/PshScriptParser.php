@@ -204,15 +204,6 @@ class PshScriptParser implements ScriptParser
     }
 
     /**
-     * @param string $file
-     * @return string
-     */
-    protected function loadFileContents(string $file): string
-    {
-        return file_get_contents($file);
-    }
-
-    /**
      * @param string $contents
      * @return string[]
      */
