@@ -173,7 +173,7 @@ class Config
      */
     private function getEnvironment(string $name = null): ConfigEnvironment
     {
-        if (!$name) {
+        if ($name === null) {
             return $this->environments[$this->defaultEnvironment];
         }
 
