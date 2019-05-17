@@ -103,7 +103,7 @@ class Application
             return self::RESULT_ERROR;
         }
 
-        $this->showListing($scriptFinder->getAllScripts());
+        $this->showListing($scriptFinder->getAllVisibleScripts());
 
         return self::RESULT_SUCCESS;
     }
@@ -245,7 +245,7 @@ class Application
         $scriptFinder = $this->applicationFactory
             ->createScriptFinder($config);
 
-        $scripts = $scriptFinder->getAllScripts();
+        $scripts = $scriptFinder->getAllVisibleScripts();
 
         $commands = array_map(function (Script $script) {
             return $script->getName();
