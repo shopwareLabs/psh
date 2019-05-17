@@ -49,10 +49,6 @@ class ScriptFinder
             }
 
             foreach (scandir($path->getPath(), SCANDIR_SORT_ASCENDING) as $fileName) {
-                if (strpos($fileName, '.') === 0) {
-                    continue;
-                }
-
                 $extension = pathinfo($fileName, PATHINFO_EXTENSION);
 
                 if (!in_array($extension, self::VALID_EXTENSIONS, true)) {
@@ -70,13 +66,20 @@ class ScriptFinder
         return $scripts;
     }
 
+    public function getAllVisibleScripts(): array
+    {
+        return array_filter($this->getAllScripts(), function (Script $script): bool {
+            return !$script->isHidden();
+        });
+    }
+
     /**
      * @param string $query
      * @return array
      */
     public function findScriptsByPartialName(string $query): array
     {
-        $scripts = $this->getAllScripts();
+        $scripts = $this->getAllVisibleScripts();
 
         return array_filter($scripts, function ($key) use ($query) {
             return strpos($key, $query) > -1 || levenshtein($key, $query) < 3;

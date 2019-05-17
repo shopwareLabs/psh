@@ -34,8 +34,12 @@ class Script
      * @param string $environment
      * @param string $description
      */
-    public function __construct(string $directory, string $scriptName, string $environment = null, $description = '')
-    {
+    public function __construct(
+        string $directory,
+        string $scriptName,
+        string $environment = null,
+        $description = ''
+    ) {
         $this->directory = $directory;
         $this->scriptName = $scriptName;
         $this->environment = $environment;
@@ -95,5 +99,13 @@ class Script
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return strpos($this->scriptName, '.') === 0;
     }
 }

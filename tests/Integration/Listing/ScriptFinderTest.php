@@ -36,9 +36,13 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
             new DescriptionReader()
         );
 
+        $scripts = $finder->getAllScripts();
         $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertCount(5, $finder->getAllScripts());
+        $this->assertCount(6, $scripts);
         $this->assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
+
+        $this->assertFalse($scripts['test']->isHidden());
+        $this->assertTrue($scripts['.hidden']->isHidden());
     }
 
     public function test_script_finder_finds_script_by_name_if_two_directories_are_passed_and_filters_noise()
