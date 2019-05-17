@@ -41,7 +41,6 @@ class ParameterParser
         return $reformattedParams;
     }
 
-
     /**
      * @param $key
      */
