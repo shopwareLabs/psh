@@ -14,6 +14,6 @@ class ScriptLoaderTest extends TestCase
         $loader = new ScriptLoader();
 
         $this->expectException(ScriptNotSupportedByParser::class);
-        $loader->loadScript(new Script(__DIR__ . '/_scripts', 'empty.txt', ''));
+        $loader->loadScript(new Script(__DIR__ . '/_scripts', 'empty.txt', false, ''));
     }
 }

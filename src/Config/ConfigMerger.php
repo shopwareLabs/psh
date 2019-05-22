@@ -46,6 +46,7 @@ class ConfigMerger
             $originalConfigEnv = $config->getEnvironments()[$name];
 
             $environments[$name] = new ConfigEnvironment(
+                $this->overrideHidden($originalConfigEnv, $overrideEnv),
                 $this->overrideScriptsPaths($originalConfigEnv, $overrideEnv),
                 $this->mergeDynamicVariables($config->getEnvironments()[$name], $overrideEnv),
                 $this->mergeConstants($config->getEnvironments()[$name], $overrideEnv),
@@ -113,5 +114,14 @@ class ConfigMerger
         }
 
         return $configEnvironment->getTemplates();
+    }
+
+    private function overrideHidden(ConfigEnvironment $originalConfigEnv, ConfigEnvironment $overrideEnv): bool
+    {
+        if ($overrideEnv->isHidden()) {
+            return true;
+        }
+
+        return $originalConfigEnv->isHidden();
     }
 }

@@ -90,7 +90,7 @@ class PshScriptParser implements ScriptParser
 
             self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script) use ($loader): string {
                 $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
-                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME));
+                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME), false);
 
                 $commands = $loader->loadScript($includeScript);
                 $this->commandBuilder->replaceCommands($commands);

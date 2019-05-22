@@ -192,6 +192,27 @@ EOD
         $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
+    public function test_environment_hidden_get_loaded()
+    {
+        $dir = __DIR__;
+
+        $this->writeTempFile(<<<EOD
+<path>$dir/_foo</path>
+<environment name="namespace" hidden="true">
+    <path>$dir/_bar</path>
+</environment>
+EOD
+);
+
+        $loader =$this->createConfigLoader();
+        $config = $loader->load(self::TEMP_FILE, []);
+
+        $this->assertTrue($config->getEnvironments()['namespace']->isHidden());
+
+        $this->assertFalse($config->getAllScriptsPaths()[0]->isHidden());
+        $this->assertTrue($config->getAllScriptsPaths()[1]->isHidden());
+    }
+
     public function test_it_loads_environment_paths()
     {
         $dir = __DIR__;
@@ -227,6 +248,7 @@ EOD
         $this->assertEquals(__DIR__ . '/_foo', $scripts[0]->getPath());
         $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
         $this->assertEquals('namespace', $scripts[1]->getNamespace());
+        $this->assertFalse($config->getEnvironments()['namespace']->isHidden());
     }
 
     public function test_it_loads_environments_with_vars()
