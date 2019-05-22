@@ -36,7 +36,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_environment_and_export_work()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'environment.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'environment.sh');
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
@@ -55,7 +55,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_root_dir_is_application_directory()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'root-dir.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'root-dir.sh');
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
@@ -74,7 +74,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_template_engine_works_with_template_destinations()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'root-dir.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'root-dir.sh');
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
@@ -98,7 +98,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_executor_recognises_template_commands()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'template.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'template.sh');
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
@@ -116,7 +116,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_non_executable_bash_commands_throw()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'bash-non-executable.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'bash-non-executable.sh');
 
         $this->expectException(\RuntimeException::class);
         $this->loadCommands($script);
@@ -125,7 +125,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     public function test_non_writable_bash_commands_throw()
     {
         chmod(__DIR__ . '/_non_writable', 0555);
-        $script = new Script(__DIR__ . '/_non_writable', 'bash.sh');
+        $script = $this->createScript(__DIR__ . '/_non_writable', 'bash.sh');
 
         $this->expectException(\RuntimeException::class);
         $this->loadCommands($script);
@@ -133,7 +133,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_executor_recognises_bash_commands()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'bash.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'bash.sh');
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
@@ -156,7 +156,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_executor_recognises_secure_bash_commands()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'better_bash.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'better_bash.sh');
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
@@ -180,7 +180,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_executor_recognises_defered_commands()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'deferred.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'deferred.sh');
         $commands = $this->loadCommands($script);
 
         $this->assertCount(5, $commands);
@@ -220,7 +220,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
 
     public function test_deferred_commands_get_executed_even_with_error_in_between()
     {
-        $script = new Script(__DIR__ . '/_scripts', 'deferred_with_error.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'deferred_with_error.sh');
         $commands = $this->loadCommands($script);
 
         $this->assertCount(4, $commands);
@@ -299,5 +299,10 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     private function createTemplateEngine(): TemplateEngine
     {
         return new TemplateEngine();
+    }
+
+    private function createScript(string $directory, string $scriptName): Script
+    {
+        return new Script($directory, $scriptName, false);
     }
 }

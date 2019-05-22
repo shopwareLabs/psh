@@ -27,6 +27,8 @@ class ConfigBuilder
 
     private $currentConstants;
 
+    private $hidden;
+
     /**
      * @param string|null $header
      * @return ConfigBuilder
@@ -49,6 +51,16 @@ class ConfigBuilder
         }
 
         $this->currentEnvironment = $environment;
+        return $this;
+    }
+
+    /**
+     * @param bool $set
+     * @return ConfigBuilder
+     */
+    public function setHidden(bool $set): ConfigBuilder
+    {
+        $this->hidden = $set;
         return $this;
     }
 
@@ -146,6 +158,7 @@ class ConfigBuilder
     {
         if ($this->currentEnvironment) {
             $this->environments[$this->currentEnvironment] = new ConfigEnvironment(
+                $this->hidden,
                 $this->currentCommandPaths,
                 $this->currentDynamicVariables,
                 $this->currentConstants,
@@ -159,5 +172,6 @@ class ConfigBuilder
         $this->currentDynamicVariables = [];
         $this->currentConstants = [];
         $this->templates = [];
+        $this->hidden = false;
     }
 }

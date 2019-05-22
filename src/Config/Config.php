@@ -55,9 +55,9 @@ class Config
         foreach ($this->environments as $name => $environmentConfig) {
             foreach ($environmentConfig->getAllScriptsPaths() as $path) {
                 if ($name !== $this->defaultEnvironment) {
-                    $paths[] = new ScriptsPath($path, $name);
+                    $paths[] = new ScriptsPath($path, $environmentConfig->isHidden(), $name);
                 } else {
-                    $paths[] = new ScriptsPath($path);
+                    $paths[] = new ScriptsPath($path, false);
                 }
             }
         }

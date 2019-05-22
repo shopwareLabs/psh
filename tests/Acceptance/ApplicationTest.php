@@ -62,6 +62,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertSimpleScript($exitCode, 'test');
     }
 
+    public function test_hidden_environment_application_execution()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'hidden:env']);
+
+        $this->assertSimpleScript($exitCode, 'hidden');
+    }
+
     public function test_environment_deferred_application_execution()
     {
         $application = new Application(__DIR__ . '/_app');
