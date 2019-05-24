@@ -9,6 +9,11 @@ namespace Shopware\Psh\Config;
 class ConfigEnvironment
 {
     /**
+     * @var bool
+     */
+    private $hidden;
+
+    /**
      * @var array
      */
     private $commandPaths;
@@ -39,19 +44,30 @@ class ConfigEnvironment
      * @param array $constants
      * @param array $templates
      * @param array $dotenvPaths
+     * @param bool $hidden
      */
     public function __construct(
+        bool $hidden,
         array $commandPaths = [],
         array $dynamicVariables = [],
         array $constants = [],
         array $templates = [],
         array $dotenvPaths = []
     ) {
+        $this->hidden = $hidden;
         $this->commandPaths = $commandPaths;
         $this->dynamicVariables = $dynamicVariables;
         $this->constants = $constants;
         $this->templates = $templates;
         $this->dotenvPaths = $dotenvPaths;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->hidden;
     }
 
     /**

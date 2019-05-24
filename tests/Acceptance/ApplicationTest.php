@@ -29,6 +29,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('test:env2', MockWriter::$content);
         $this->assertContains('6 script(s) available', MockWriter::$content);
         $this->assertNotContains('Duration:', MockWriter::$content);
+        $this->assertNotContains('test:.hidden', MockWriter::$content);
+    }
+
+    public function test_hidden_execution()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'test:.hidden']);
+
+        $this->assertSimpleScript($exitCode, 'test');
     }
 
     public function test_application_execution()
@@ -38,19 +49,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $exitCode = $application->run(['', 'simple']);
 
-        $this->assertNoErrorExitCode($exitCode);
-        $this->assertContains('ls -al', MockWriter::$content);
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('(1/4) Starting', MockWriter::$content);
-        $this->assertContains('(2/4) Starting', MockWriter::$content);
-        $this->assertContains('(3/4) Starting', MockWriter::$content);
-        $this->assertContains('(4/4) Deferring', MockWriter::$content);
-        $this->assertContains('WAITING...', MockWriter::$content);
-        $this->assertContains('(1/1) Output from', MockWriter::$content);
-        $this->assertContains(' echo "prod"', MockWriter::$content);
-        $this->assertContains('All commands successfully executed!', MockWriter::$content);
-        $this->assertContains('Duration:', MockWriter::$content);
-        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'prod');
+        $this->assertSimpleScript($exitCode, 'prod');
     }
 
     public function test_environment_application_execution()
@@ -60,17 +59,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $exitCode = $application->run(['', 'test:env']);
 
-        $this->assertNoErrorExitCode($exitCode);
-        $this->assertContains('ls -al', MockWriter::$content);
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('(1/4) Starting', MockWriter::$content);
-        $this->assertContains('(2/4) Starting', MockWriter::$content);
-        $this->assertContains('(3/4) Starting', MockWriter::$content);
-        $this->assertContains('(4/4) Deferring', MockWriter::$content);
-        $this->assertContains(' echo "test"', MockWriter::$content);
-        $this->assertContains('All commands successfully executed!', MockWriter::$content);
-        $this->assertContains('Duration:', MockWriter::$content);
-        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
+        $this->assertSimpleScript($exitCode, 'test');
+    }
+
+    public function test_hidden_environment_application_execution()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'hidden:env']);
+
+        $this->assertSimpleScript($exitCode, 'hidden');
     }
 
     public function test_environment_deferred_application_execution()
@@ -244,5 +243,23 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     private function assertNoErrorExitCode(int $exitCode)
     {
         $this->assertEquals(0, $exitCode, 'Application errored unexpextedly: ' . MockWriter::$content);
+    }
+
+    private function assertSimpleScript(int $exitCode, string $envName)
+    {
+        $this->assertNoErrorExitCode($exitCode);
+        $this->assertContains('ls -al', MockWriter::$content);
+        $this->assertContains('Using .psh.xml', MockWriter::$content);
+        $this->assertContains('(1/4) Starting', MockWriter::$content);
+        $this->assertContains('(2/4) Starting', MockWriter::$content);
+        $this->assertContains('(3/4) Starting', MockWriter::$content);
+        $this->assertContains('(4/4) Deferring', MockWriter::$content);
+        $this->assertContains('WAITING...', MockWriter::$content);
+        $this->assertContains('(1/1) Output from', MockWriter::$content);
+        $this->assertContains(' echo "' . $envName . '"', MockWriter::$content);
+        $this->assertContains('All commands successfully executed!', MockWriter::$content);
+        $this->assertContains('Duration:', MockWriter::$content);
+
+        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', $envName);
     }
 }
