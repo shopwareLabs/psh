@@ -117,6 +117,7 @@ class ProcessExecutor
             case $command instanceof SynchronusProcessCommand:
                 $parsedCommand = $this->getParsedShellCommand($command);
                 $process = $this->environment->createProcess($parsedCommand);
+
                 $this->setProcessDefaults($process, $command);
                 $this->logSynchronousProcessStart($command, $index, $totalCount, $parsedCommand);
                 $this->runProcess($process);
@@ -126,6 +127,7 @@ class ProcessExecutor
             case $command instanceof DeferredProcessCommand:
                 $parsedCommand = $this->getParsedShellCommand($command);
                 $process = $this->environment->createProcess($parsedCommand);
+
                 $this->setProcessDefaults($process, $command);
                 $this->logDeferedStart($command, $index, $totalCount, $parsedCommand);
                 $this->deferProcess($parsedCommand, $command, $process);
@@ -133,6 +135,7 @@ class ProcessExecutor
                 break;
             case $command instanceof TemplateCommand:
                 $template = $command->createTemplate();
+
                 $this->logTemplateStart($command, $index, $totalCount, $template);
                 $this->renderTemplate($template);
 

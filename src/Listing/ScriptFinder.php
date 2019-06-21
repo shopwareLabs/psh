@@ -44,19 +44,14 @@ class ScriptFinder
         $scripts = [];
 
         foreach ($this->scriptsPaths as $path) {
-            if (!is_dir($path->getPath())) {
-                throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
-            }
+            $this->testPathValidity($path);
 
             foreach (scandir($path->getPath(), SCANDIR_SORT_ASCENDING) as $fileName) {
-                $extension = pathinfo($fileName, PATHINFO_EXTENSION);
-
-                if (!in_array($extension, self::VALID_EXTENSIONS, true)) {
+                if (!$this->isValidScript($fileName)) {
                     continue;
                 }
 
                 $description = $this->scriptDescriptionReader->read($path->getPath() . '/' . $fileName);
-
                 $newScript = new Script($path->getPath(), $fileName, $path->isHidden(), $path->getNamespace(), $description);
 
                 $scripts[$newScript->getName()] = $newScript;
@@ -100,5 +95,26 @@ class ScriptFinder
         }
 
         throw (new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"'))->setScriptName($scriptName);
+    }
+
+    /**
+     * @param $fileName
+     * @return bool
+     */
+    private function isValidScript(string $fileName): bool
+    {
+        $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        return in_array($extension, self::VALID_EXTENSIONS, true);
+    }
+
+    /**
+     * @param ScriptsPath $path
+     */
+    private function testPathValidity(ScriptsPath $path)
+    {
+        if (!$path->isValid()) {
+            throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
+        }
     }
 }

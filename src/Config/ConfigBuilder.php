@@ -46,7 +46,7 @@ class ConfigBuilder
     public function start(string $environment = null): ConfigBuilder
     {
         $this->reset();
-        if (!$environment) {
+        if ($environment === null) {
             $environment = self::DEFAULT_ENV;
         }
 

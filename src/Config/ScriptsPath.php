@@ -24,8 +24,11 @@ class ScriptsPath
      * @param bool $hidden
      * @param string $namespace
      */
-    public function __construct(string $path, bool $hidden, string $namespace = null)
-    {
+    public function __construct(
+        string $path,
+        bool $hidden,
+        string $namespace = null
+    ) {
         $this->namespace = $namespace;
         $this->hidden = $hidden;
         $this->path = $path;
@@ -53,5 +56,13 @@ class ScriptsPath
     public function isHidden(): bool
     {
         return $this->hidden;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        return is_dir($this->path);
     }
 }

@@ -28,7 +28,7 @@ class ConfigFileFinder
         do {
             $globResult = glob($currentDirectory . '/' . self::VALID_FILE_NAME_GLOB);
 
-            if ($globResult) {
+            if (is_array($globResult) && count($globResult) > 0) {
                 return $globResult;
             }
 
@@ -66,7 +66,7 @@ class ConfigFileFinder
             return $extension !== 'override' && $extension !== 'dist';
         });
 
-        if ($configFiles) {
+        if (count($configFiles) > 0) {
             return array_merge($configFiles, $overrideFiles);
         }
 
