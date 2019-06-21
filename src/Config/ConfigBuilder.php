@@ -29,6 +29,8 @@ class ConfigBuilder
 
     private $hidden;
 
+    private $currentPlaceholdersInProcessEnvironment;
+
     /**
      * @param string|null $header
      * @return ConfigBuilder
@@ -163,7 +165,8 @@ class ConfigBuilder
                 $this->currentDynamicVariables,
                 $this->currentConstants,
                 $this->templates,
-                $this->currentDotenvPaths
+                $this->currentDotenvPaths,
+                $this->currentPlaceholdersInProcessEnvironment
             );
         }
 
@@ -173,5 +176,13 @@ class ConfigBuilder
         $this->currentConstants = [];
         $this->templates = [];
         $this->hidden = false;
+        $this->currentPlaceholdersInProcessEnvironment = [];
+    }
+
+    public function setPlaceholdersInProcessEnvironment(string $name): ConfigBuilder
+    {
+        $this->currentPlaceholdersInProcessEnvironment[] = $name;
+
+        return $this;
     }
 }

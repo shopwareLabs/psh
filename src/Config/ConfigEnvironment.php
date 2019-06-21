@@ -37,6 +37,10 @@ class ConfigEnvironment
      * @var array
      */
     private $dotenvPaths;
+    /**
+     * @var array
+     */
+    private $placeholdersInProcessEnvironment;
 
     /**
      * @param array $commandPaths
@@ -52,7 +56,8 @@ class ConfigEnvironment
         array $dynamicVariables = [],
         array $constants = [],
         array $templates = [],
-        array $dotenvPaths = []
+        array $dotenvPaths = [],
+        array $placeholdersInProcessEnvironment = []
     ) {
         $this->hidden = $hidden;
         $this->commandPaths = $commandPaths;
@@ -60,6 +65,7 @@ class ConfigEnvironment
         $this->constants = $constants;
         $this->templates = $templates;
         $this->dotenvPaths = $dotenvPaths;
+        $this->placeholdersInProcessEnvironment = $placeholdersInProcessEnvironment;
     }
 
     /**

@@ -175,11 +175,21 @@ class XmlConfigFileLoader extends ConfigFileLoader
     private function extractPlaceholders(string $file, DOMElement $placeholder)
     {
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DYNAMIC, $placeholder) as $dynamic) {
-            $this->configBuilder->setDynamicVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);
+            $name = $dynamic->getAttribute('name');
+            $this->configBuilder->setDynamicVariable($name, $dynamic->nodeValue);
+
+            if ($dynamic->getAttribute('envVar') === 'true') {
+                $this->configBuilder->setPlaceholdersInProcessEnvironment($name);
+            }
         }
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_CONST, $placeholder) as $const) {
-            $this->configBuilder->setConstVariable($const->getAttribute('name'), $const->nodeValue);
+            $name = $const->getAttribute('name');
+            $this->configBuilder->setConstVariable($name, $const->nodeValue);
+
+            if ($const->getAttribute('envVar') === 'true') {
+                $this->configBuilder->setPlaceholdersInProcessEnvironment($name);
+            }
         }
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DOTENV, $placeholder) as $dotenv) {
