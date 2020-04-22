@@ -16,9 +16,9 @@ class ClimateLogger implements Logger
     const WARNING_TEMPLATE = <<<EOD
 <yellow>
 ##############################################################################################################
-               <bold>WARNING</bold>                               
+               <bold>WARNING</bold>
   %s
-                                                                  
+
 ##############################################################################################################
 </yellow>
 EOD;
@@ -133,7 +133,7 @@ EOD;
         $this->cliMate->green()->bold()->out('Executed Successfully');
     }
 
-    public function LogFailure()
+    public function logFailure()
     {
         $this->cliMate->green()->red()->out('Executed with failure');
     }

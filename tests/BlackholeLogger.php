@@ -63,7 +63,7 @@ class BlackholeLogger implements Logger
     {
     }
 
-    public function LogFailure()
+    public function logFailure()
     {
     }
 
