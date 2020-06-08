@@ -44,7 +44,7 @@ interface Logger
 
     public function logSuccess();
 
-    public function LogFailure();
+    public function logFailure();
 
     /**
      * @param string $message
