@@ -20,14 +20,14 @@
         "symfony/process": "^4.4",
         "symfony/filesystem": "^4.4",
         "symfony/yaml": "^4.4",
-        "league/climate": "^3.6",<
+        "league/climate": "^3.6",
         "khill/php-duration": "^1.0",
         "vlucas/phpdotenv": "^5.2",
         "symfony/config": "^4.4"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2",
-        "phpunit/phpunit": "^5.4"
+        "phpunit/phpunit": "^8"
     },
     "license": "MIT",
     "authors": [

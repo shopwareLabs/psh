@@ -37,7 +37,7 @@ class ProcessExecutorTest extends TestCase
         __DIR__ . '/4.json',
     ];
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         foreach (self::DEFERED_FILES as $file) {
             @unlink($file);

@@ -15,7 +15,7 @@ class ScriptFinderTest extends TestCase
     {
         $finder = new ScriptFinder([], new DescriptionReader());
         $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertInternalType('array', $finder->getAllScripts());
+        $this->assertIsArray($finder->getAllScripts());
     }
 
     public function test_script_finder_finds_scripts_if_one_directory_is_passed()

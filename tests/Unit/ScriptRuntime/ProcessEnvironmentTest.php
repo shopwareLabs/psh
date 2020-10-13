@@ -14,7 +14,7 @@ use function trim;
 
 class ProcessEnvironmentTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         putenv('FOO');
     }

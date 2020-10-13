@@ -27,7 +27,7 @@ EOD;
 
     const TEMP_FILE = __DIR__ . '/xml_test_file';
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         @unlink(self::TEMP_FILE);
     }

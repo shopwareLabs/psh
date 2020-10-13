@@ -12,3 +12,4 @@ bin
 
 #externals
 .php_cs.cache
+.phpunit.result.cache
