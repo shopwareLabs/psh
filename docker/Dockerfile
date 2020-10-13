@@ -1,4 +1,4 @@
-FROM php:7.0-cli
+FROM php:7.2-cli
 
 ENV COMPOSER_CACHE_DIR=/.composer/cache
 
