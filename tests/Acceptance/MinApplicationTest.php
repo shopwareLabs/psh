@@ -1,11 +1,12 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Acceptance;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Application\Application;
+use function mb_strpos;
 
-class MinApplicationTest extends \PHPUnit_Framework_TestCase
+class MinApplicationTest extends TestCase
 {
     public function test_application_listing()
     {
@@ -14,6 +15,6 @@ class MinApplicationTest extends \PHPUnit_Framework_TestCase
 
         $application->run([]);
 
-        $this->assertNotFalse(strpos(MockWriter::$content, '1 script(s) available'));
+        $this->assertNotFalse(mb_strpos(MockWriter::$content, '1 script(s) available'));
     }
 }

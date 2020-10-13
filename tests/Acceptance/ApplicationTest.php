@@ -1,11 +1,12 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Acceptance;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Application\Application;
+use function unlink;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
     /**
      * @before
@@ -220,7 +221,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched()
     {
-        $application = new Application(__DIR__.'/_app_invalid_template');
+        $application = new Application(__DIR__ . '/_app_invalid_template');
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run(['', 'simple']);
@@ -231,7 +232,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_throws_exception_InvalidParameterException_and_it_is_catched()
     {
-        $application = new Application(__DIR__.'/_app');
+        $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run(['', 'simple', '-param']);

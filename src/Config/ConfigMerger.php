@@ -1,14 +1,11 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
 
+use function array_merge;
+
 class ConfigMerger
 {
-    /**
-     * @param Config $config
-     * @param Config|null $override
-     * @return Config
-     */
     public function merge(Config $config, Config $override = null): Config
     {
         if ($override === null) {
@@ -34,11 +31,6 @@ class ConfigMerger
         return new Config($header, $defaultEnvironment, $environments, $config->getParams());
     }
 
-    /**
-     * @param Config $config
-     * @param Config $override
-     * @return array
-     */
     private function mergeConfigEnvironments(Config $config, Config $override): array
     {
         $environments = [];
@@ -77,19 +69,12 @@ class ConfigMerger
         );
     }
 
-    /**
-     * @param ConfigEnvironment $configEnvironment
-     * @param ConfigEnvironment $overrideEnv
-     * @return array
-     */
     private function mergeDynamicVariables(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideEnv): array
     {
         return array_merge($configEnvironment->getDynamicVariables(), $overrideEnv->getDynamicVariables());
     }
 
     /**
-     * @param ConfigEnvironment $configEnvironment
-     * @param ConfigEnvironment $overrideConfigEnv
      * @return ScriptsPath[]
      */
     private function mergeDotenvPaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
@@ -98,8 +83,6 @@ class ConfigMerger
     }
 
     /**
-     * @param ConfigEnvironment $configEnvironment
-     * @param ConfigEnvironment $overrideConfigEnv
      * @return ScriptsPath[]
      */
     private function overrideScriptsPaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
@@ -111,20 +94,13 @@ class ConfigMerger
         return $configEnvironment->getAllScriptsPaths();
     }
 
-    /**
-     * @param ConfigEnvironment $configEnvironment
-     * @param ConfigEnvironment $overrideConfigEnv
-     * @return array
-     */
     private function mergeConstants(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
         return array_merge($configEnvironment->getConstants(), $overrideConfigEnv->getConstants());
     }
 
     /**
-     * @param ConfigEnvironment $configEnvironment
      * @param $overrideConfigEnv
-     * @return array
      */
     private function overrideTemplates(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {

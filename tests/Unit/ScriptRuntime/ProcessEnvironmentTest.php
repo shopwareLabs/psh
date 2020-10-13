@@ -1,17 +1,18 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Config\DotenvFile;
-use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\Execution\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\Execution\Template;
 use Shopware\Psh\ScriptRuntime\Execution\ValueProvider;
 use Symfony\Component\Process\Process;
+use function putenv;
+use function trim;
 
-class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
+class ProcessEnvironmentTest extends TestCase
 {
     protected function tearDown()
     {
@@ -35,7 +36,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     {
         $env = new ProcessEnvironment([], [
             'FOO' => 'ls',
-            'BAR' => 'echo "HEY"'
+            'BAR' => 'echo "HEY"',
         ], [], []);
 
         $resolvedValues = $env->getAllValues();
@@ -51,7 +52,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     public function test_it_creates_templates()
     {
         $env = new ProcessEnvironment([], [], [
-            ['source' => __DIR__ . '_foo.tpl', 'destination' => 'bar.txt']
+            ['source' => __DIR__ . '_foo.tpl', 'destination' => 'bar.txt'],
         ], []);
 
         $templates = $env->getTemplates();
@@ -64,7 +65,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     {
         putenv('FOO=baz');
         $env = new ProcessEnvironment([], [], [], [
-            new DotenvFile(__DIR__ . '/_dotenv/simple.env')
+            new DotenvFile(__DIR__ . '/_dotenv/simple.env'),
         ]);
 
         $this->assertSame('baz', $env->getAllValues()['FOO']->getValue());
@@ -73,7 +74,7 @@ class ProcessEnvironmentTest extends \PHPUnit_Framework_TestCase
     public function test_dotenv_file_variables()
     {
         $env = new ProcessEnvironment([], [], [], [
-            new DotenvFile(__DIR__ . '/_dotenv/simple.env')
+            new DotenvFile(__DIR__ . '/_dotenv/simple.env'),
         ]);
 
         $this->assertCount(1, $env->getAllValues());

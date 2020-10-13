@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
 
@@ -8,6 +8,7 @@ class ScriptsPath
      * @var string
      */
     private $namespace;
+
 
     /**
      * @var bool
@@ -20,8 +21,6 @@ class ScriptsPath
     private $path;
 
     /**
-     * @param string $path
-     * @param bool $hidden
      * @param string $namespace
      */
     public function __construct(
@@ -42,9 +41,6 @@ class ScriptsPath
         return $this->namespace;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;

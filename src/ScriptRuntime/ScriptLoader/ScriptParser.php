@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
@@ -11,8 +11,6 @@ use Shopware\Psh\ScriptRuntime\Command;
 interface ScriptParser
 {
     /**
-     * @param string $content
-     * @param Script $script
      * @return Command[]
      */
     public function parseContent(string $content, Script $script, ScriptLoader $loader): array;

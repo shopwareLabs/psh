@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime;
 
@@ -21,11 +21,6 @@ class TemplateCommand implements Command
      */
     private $lineNumber;
 
-    /**
-     * @param string $source
-     * @param string $destination
-     * @param int $lineNumber
-     */
     public function __construct(
         string $source,
         string $destination,
@@ -36,17 +31,11 @@ class TemplateCommand implements Command
         $this->lineNumber = $lineNumber;
     }
 
-    /**
-     * @return int
-     */
     public function getLineNumber(): int
     {
         return $this->lineNumber;
     }
 
-    /**
-     * @return Template
-     */
     public function createTemplate(): Template
     {
         return new Template(

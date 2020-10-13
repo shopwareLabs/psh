@@ -1,5 +1,4 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
 
@@ -38,14 +37,6 @@ class ConfigEnvironment
      */
     private $dotenvPaths;
 
-    /**
-     * @param array $commandPaths
-     * @param array $dynamicVariables
-     * @param array $constants
-     * @param array $templates
-     * @param array $dotenvPaths
-     * @param bool $hidden
-     */
     public function __construct(
         bool $hidden,
         array $commandPaths = [],
@@ -62,49 +53,31 @@ class ConfigEnvironment
         $this->dotenvPaths = $dotenvPaths;
     }
 
-    /**
-     * @return bool
-     */
     public function isHidden(): bool
     {
         return $this->hidden;
     }
 
-    /**
-     * @return array
-     */
     public function getAllScriptsPaths(): array
     {
         return $this->commandPaths;
     }
 
-    /**
-     * @return array
-     */
     public function getDynamicVariables(): array
     {
         return $this->dynamicVariables;
     }
 
-    /**
-     * @return array
-     */
     public function getConstants(): array
     {
         return $this->constants;
     }
 
-    /**
-     * @return array
-     */
     public function getTemplates(): array
     {
         return $this->templates;
     }
 
-    /**
-     * @return array
-     */
     public function getDotenvPaths(): array
     {
         return $this->dotenvPaths;

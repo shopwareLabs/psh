@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
@@ -27,11 +27,6 @@ class DeferredProcess
      */
     private $log = [];
 
-    /**
-     * @param string $parsedCommand
-     * @param DeferredProcessCommand $command
-     * @param Process $process
-     */
     public function __construct(string $parsedCommand, DeferredProcessCommand $command, Process $process)
     {
         $this->command = $command;
@@ -39,33 +34,21 @@ class DeferredProcess
         $this->parsedCommand = $parsedCommand;
     }
 
-    /**
-     * @return string
-     */
     public function getParsedCommand(): string
     {
         return $this->parsedCommand;
     }
 
-    /**
-     * @return DeferredProcessCommand
-     */
     public function getCommand(): DeferredProcessCommand
     {
         return $this->command;
     }
 
-    /**
-     * @return Process
-     */
     public function getProcess(): Process
     {
         return $this->process;
     }
 
-    /**
-     * @param LogMessage $logMessage
-     */
     public function log(LogMessage $logMessage)
     {
         $this->log[] = $logMessage;

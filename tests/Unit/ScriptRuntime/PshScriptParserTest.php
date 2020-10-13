@@ -1,19 +1,23 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\Command;
-use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
-use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
+use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
 use Shopware\Psh\ScriptRuntime\TemplateCommand;
+use function array_pop;
+use function file_get_contents;
 
-class PshScriptParserTest extends \PHPUnit_Framework_TestCase
+class PshScriptParserTest extends TestCase
 {
     public function test_it_loads_all_simple_commands_from_a_script()
     {
@@ -138,7 +142,6 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Script $script
      * @return SynchronusProcessCommand[]
      */
     public function createCommands(Script $script, array $availableSubScripts = []): array

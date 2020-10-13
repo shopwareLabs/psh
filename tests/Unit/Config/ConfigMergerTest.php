@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Config;
 
@@ -125,7 +125,7 @@ class ConfigMergerTest extends TestCase
         $result = $merger->merge($config, $override);
 
         $this->assertEquals([
-            'DYNAMIC_VAR' => 'dynamic value override'
+            'DYNAMIC_VAR' => 'dynamic value override',
         ], $result->getDynamicVariables(self::DEFAULT_ENV));
     }
 
@@ -144,7 +144,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals([
             'DYNAMIC_VAR' => 'dynamic value override',
             'DYNAMIC_VAR2' => 'dynamic value 2',
-            'DYNAMIC_OVERRIDE_VAR' => 'dynamic override value'
+            'DYNAMIC_OVERRIDE_VAR' => 'dynamic override value',
         ], $result->getDynamicVariables(self::DEFAULT_ENV));
     }
 
@@ -153,15 +153,15 @@ class ConfigMergerTest extends TestCase
         $envs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [
                 'CONST' => 'constant value',
-                'ORIGINAL_CONST' => 'original constant value'
-            ])
+                'ORIGINAL_CONST' => 'original constant value',
+            ]),
         ];
 
         $overrideEnvs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [
                 'CONST' => 'override constant value',
-                'ADDED_CONST' => 'override constant'
-            ])
+                'ADDED_CONST' => 'override constant',
+            ]),
         ];
 
         $config = new Config('', self::DEFAULT_ENV, $envs, []);
@@ -173,7 +173,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals([
             'CONST' => 'override constant value',
             'ORIGINAL_CONST' => 'original constant value',
-            'ADDED_CONST' => 'override constant'
+            'ADDED_CONST' => 'override constant',
         ], $result->getConstants(self::DEFAULT_ENV));
     }
 
@@ -182,13 +182,13 @@ class ConfigMergerTest extends TestCase
         $envs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [
                 [ 'source' => '/tmp/template.tpl', 'destination' => '/tmp/template.php' ]
-            ])
+            ]),
         ];
 
         $overrideEnvs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [
                 [ 'source' => '/tmp/override.tpl', 'destination' => '/tmp/override.php' ]
-            ])
+            ]),
         ];
 
         $config = new Config('', self::DEFAULT_ENV, $envs, []);
@@ -198,7 +198,7 @@ class ConfigMergerTest extends TestCase
         $result = $merger->merge($config, $overrideConfig);
 
         $this->assertEquals(
-            [ 'source' => '/tmp/override.tpl', 'destination' => '/tmp/override.php' ],
+            ['source' => '/tmp/override.tpl', 'destination' => '/tmp/override.php'],
             $result->getEnvironments()[self::DEFAULT_ENV]->getTemplates()[0]
         );
     }
@@ -210,13 +210,13 @@ class ConfigMergerTest extends TestCase
                 self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [
                     '.a' => 'first/.a',
                     '.b' => 'first/.b',
-                ])
+                ]),
             ], []),
             new Config('', self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [
                     '.a' => 'overwrite/.a',
                     '.c' => 'overwrite/.c',
-                ])
+                ]),
             ], [])
         );
 

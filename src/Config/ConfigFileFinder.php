@@ -1,7 +1,14 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
+
+use RuntimeException;
+use function array_filter;
+use function array_merge;
+use function count;
+use function dirname;
+use function glob;
+use function pathinfo;
 
 /**
  * Resolve the path to the config file
@@ -17,10 +24,6 @@ class ConfigFileFinder
         return $this->determineResultInDirectory($files);
     }
 
-    /**
-     * @param string $fromDirectory
-     * @return array
-     */
     public function findFirstDirectoryWithConfigFile(string $fromDirectory): array
     {
         $currentDirectory = $fromDirectory;
@@ -35,13 +38,9 @@ class ConfigFileFinder
             $currentDirectory = dirname($currentDirectory);
         } while ($currentDirectory !== '/');
 
-        throw new \RuntimeException('No config file found, make sure you have created a .psh file');
+        throw new RuntimeException('No config file found, make sure you have created a .psh file');
     }
 
-    /**
-     * @param array $globResult
-     * @return array
-     */
     public function determineResultInDirectory(array $globResult): array
     {
         if (count($globResult) === 1) {

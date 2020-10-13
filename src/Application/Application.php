@@ -1,5 +1,4 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Application;
 
@@ -11,6 +10,14 @@ use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\Listing\ScriptNotFoundException;
 use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
+use function array_map;
+use function array_merge;
+use function count;
+use function explode;
+use function implode;
+use function mb_strlen;
+use function sprintf;
+use function str_replace;
 
 /**
  * Main application entry point. moves the requested data around and outputs user information.
@@ -43,9 +50,6 @@ class Application
      */
     private $duration;
 
-    /**
-     * @param string $rootDirectory
-     */
     public function __construct(string $rootDirectory)
     {
         $this->rootDirectory = $rootDirectory;
@@ -57,7 +61,6 @@ class Application
     /**
      * Main entry point to execute the application.
      *
-     * @param array $inputArgs
      * @return int exit code
      */
     public function run(array $inputArgs): int
@@ -67,14 +70,17 @@ class Application
                 ->createConfig($this->rootDirectory, $inputArgs);
         } catch (InvalidParameterException $e) {
             $this->notifyError($e->getMessage() . "\n");
+
             return self::RESULT_ERROR;
         } catch (InvalidArgumentException $e) {
             $this->notifyError("\n" . $e->getMessage() . "\n");
+
             return self::RESULT_ERROR;
         }
 
         if (count($inputArgs) > 1 && $inputArgs[1] === 'bash_autocompletion_dump') {
             $this->showAutocompleteListing($config);
+
             return self::RESULT_SUCCESS;
         }
 
@@ -100,6 +106,7 @@ class Application
             }
         } catch (ScriptNotFoundException $e) {
             $this->showScriptNotFoundListing($e, $scriptNames, $scriptFinder);
+
             return self::RESULT_ERROR;
         }
 
@@ -138,10 +145,6 @@ class Application
         $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");
     }
 
-    /**
-     * @param array $inputArgs
-     * @return array
-     */
     protected function extractScriptNames(array $inputArgs): array
     {
         if (!isset($inputArgs[1])) {
@@ -151,13 +154,6 @@ class Application
         return explode(',', $inputArgs[1]);
     }
 
-    /**
-     * @param Script $script
-     * @param Config $config
-     * @param ScriptFinder $scriptFinder
-     *
-     * @return int
-     */
     protected function execute(Script $script, Config $config, ScriptFinder $scriptFinder): int
     {
         $commands = $this->applicationFactory
@@ -171,6 +167,7 @@ class Application
             $executor->execute($script, $commands);
         } catch (ExecutionErrorException $e) {
             $this->notifyError("\nExecution aborted, a subcommand failed!\n");
+
             return self::RESULT_ERROR;
         }
 
@@ -211,11 +208,12 @@ class Application
     {
         $countConfigFiles = count($configFiles);
         for ($i = 0; $i < $countConfigFiles; $i++) {
-            $configFiles[$i] = str_replace($this->rootDirectory."/", "", $configFiles[$i]);
+            $configFiles[$i] = str_replace($this->rootDirectory . '/', '', $configFiles[$i]);
         }
 
-        if (count($configFiles) == 1) {
+        if (count($configFiles) === 1) {
             $this->cliMate->yellow()->out(sprintf("Using %s \n", $configFiles[0]));
+
             return;
         }
 
@@ -224,16 +222,16 @@ class Application
 
     /**
      * @param Script[] $scripts
-     * @return Int
      */
-    private function getPaddingSize(array $scripts): Int
+    private function getPaddingSize(array $scripts): int
     {
         $maxScriptNameLength = 0;
         foreach ($scripts as $script) {
-            if (strlen($script->getName()) > $maxScriptNameLength) {
-                $maxScriptNameLength = strlen($script->getName());
+            if (mb_strlen($script->getName()) > $maxScriptNameLength) {
+                $maxScriptNameLength = mb_strlen($script->getName());
             }
         }
+
         return $maxScriptNameLength + self::MIN_PADDING_SIZE;
     }
 
@@ -254,11 +252,6 @@ class Application
         $this->cliMate->out(implode(' ', $commands));
     }
 
-    /**
-     * @param ScriptNotFoundException $ex
-     * @param array $scriptNames
-     * @param ScriptFinder $scriptFinder
-     */
     private function showScriptNotFoundListing(ScriptNotFoundException $ex, array $scriptNames, ScriptFinder $scriptFinder)
     {
         $this->notifyError("Script with name {$ex->getScriptName()} not found\n");

@@ -1,12 +1,14 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Shopware\Psh\ScriptRuntime\Execution\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
+use function preg_match_all;
 
-class TemplateEngineTest extends \PHPUnit_Framework_TestCase
+class TemplateEngineTest extends TestCase
 {
     private $fixtures = [
         'mysql -u __USER__ -p__PASSWORD__ __DATABASE__' => 3,
@@ -24,7 +26,6 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
             $this->assertCount($expectedOccurrences, $matches[0]);
         }
     }
-
 
     public function test_it_renders_successfully_with_no_placeholders()
     {
@@ -63,7 +64,7 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
     {
         $engine = new TemplateEngine();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $engine->render('foo __BAR__, __BUZ__', ['BAR' => new SimpleValueProvider('baz')]);
     }
 
@@ -78,7 +79,7 @@ class TemplateEngineTest extends \PHPUnit_Framework_TestCase
                 [
                     'user' => new SimpleValueProvider('foo'),
                     'password' => new SimpleValueProvider('foo'),
-                    'database' => new SimpleValueProvider('th_db')
+                    'database' => new SimpleValueProvider('th_db'),
                 ]
             )
         );

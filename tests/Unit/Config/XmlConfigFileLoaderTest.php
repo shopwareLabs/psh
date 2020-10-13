@@ -1,14 +1,20 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Config;
 
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigLoader;
 use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Config\XmlConfigFileLoader;
+use function file_put_contents;
+use function print_r;
+use function sprintf;
+use function unlink;
 
-class XmlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
+class XmlConfigFileLoaderTest extends TestCase
 {
     const CONFIG_TEMPLATE = <<<EOD
 <?xml version="1.0" encoding="UTF-8"?>
@@ -87,7 +93,7 @@ EOD
         $loader = $this->createConfigLoader();
 
         $config = $loader->load(self::TEMP_FILE, []);
-        $this->assertEquals([ 'FOO' => 'bar'], $config->getConstants());
+        $this->assertEquals(['FOO' => 'bar'], $config->getConstants());
     }
 
     public function test_it_works_if_no_consts_are_present()
@@ -154,7 +160,6 @@ EOD
         $this->assertInstanceOf(Config::class, $config);
     }
 
-
     public function test_environment_paths_do_not_influence_default_environment()
     {
         $dir = __DIR__;
@@ -171,7 +176,7 @@ EOD
 EOD
 );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
 
         $this->assertInstanceOf(Config::class, $config);
@@ -229,7 +234,7 @@ EOD
 EOD
 );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
 
         $this->assertInstanceOf(Config::class, $config);
@@ -271,19 +276,19 @@ EOD
 EOD
         );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
 
         $this->assertInstanceOf(Config::class, $config);
 
         $this->assertEquals([
             'filesystem' => 'ls -al',
-            'booh' => 'bar'
+            'booh' => 'bar',
         ], $config->getDynamicVariables('namespace'));
 
         $this->assertEquals([
             'FOO' => 'bar',
-            'booh' => 'hah'
+            'booh' => 'hah',
         ], $config->getConstants('namespace'));
 
         $scripts = $config->getAllScriptsPaths();
@@ -301,13 +306,13 @@ EOD
 EOD
 );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
 
         $this->assertInstanceOf(Config::class, $config);
 
         $this->assertEquals([
-            ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt']
+            ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt'],
         ], $config->getTemplates());
     }
 
@@ -318,9 +323,9 @@ EOD
 EOD
 );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $loader->load(self::TEMP_FILE, []);
     }
 
@@ -336,7 +341,7 @@ EOD
 EOD
 );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
         $this->assertCount(2, $config->getConstants());
     }
@@ -349,7 +354,7 @@ EOD
 EOD
 );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
         $this->assertSame('YES', $config->getHeader());
     }
@@ -364,7 +369,7 @@ EOD
 EOD
         );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
         $this->assertCount(2, $config->getDotenvPaths(), print_r($config->getDotenvPaths(), true));
         $this->assertEquals(__DIR__ . '/.fiz', $config->getDotenvPaths()['.fiz']->getPath());
@@ -387,7 +392,7 @@ EOD
 EOD
         );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
 
         $this->assertCount(3, $config->getDotenvPaths('env'));

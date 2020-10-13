@@ -1,10 +1,15 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
 
 use DOMElement;
+use DOMNodeList;
 use DOMXPath;
 use Symfony\Component\Config\Util\XmlUtils;
+use function array_map;
+use function count;
+use function in_array;
+use function pathinfo;
 
 /**
  * Load the config data from an xml file
@@ -41,27 +46,17 @@ class XmlConfigFileLoader extends ConfigFileLoader
      */
     private $applicationRootDirectory;
 
-    /**
-     * @param ConfigBuilder $configBuilder
-     * @param string $applicationRootDirectory
-     */
     public function __construct(ConfigBuilder $configBuilder, string $applicationRootDirectory)
     {
         $this->configBuilder = $configBuilder;
         $this->applicationRootDirectory = $applicationRootDirectory;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isSupported(string $file): bool
     {
         return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.xml', '.psh.xml.dist', '.psh.xml.override'], true);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function load(string $file, array $params): Config
     {
         $pshConfigNode = $this->loadXmlRoot($file);
@@ -89,7 +84,6 @@ class XmlConfigFileLoader extends ConfigFileLoader
     }
 
     /**
-     * @param string $file
      * @param array $pshConfigNode
      */
     private function setConfigData(string $file, DOMElement $pshConfigNode)
@@ -110,8 +104,6 @@ class XmlConfigFileLoader extends ConfigFileLoader
     }
 
     /**
-     * @param string $key
-     * @param DOMElement $parent
      * @return DOMElement[]
      */
     private function extractNodes(string $key, DOMElement $parent): array
@@ -132,9 +124,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
     }
 
     /**
-     * @param string $file
      * @param $pshConfigNode
-     * @return array
      */
     private function extractCommandPaths(string $file, DOMElement $pshConfigNode): array
     {
@@ -146,9 +136,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
     }
 
     /**
-     * @param string $file
      * @param array $pshConfigNodes
-     * @return array
      */
     private function extractTemplates(string $file, DOMElement $pshConfigNodes): array
     {
@@ -164,14 +152,11 @@ class XmlConfigFileLoader extends ConfigFileLoader
                 'destination' => $this->makeAbsolutePath(
                     $file,
                     $template->getAttribute(self::NODE_TEMPLATE_DESTINATION)
-                )
+                ),
             ];
         }, $templates);
     }
 
-    /**
-     * @param DOMElement $placeholder
-     */
     private function extractPlaceholders(string $file, DOMElement $placeholder)
     {
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DYNAMIC, $placeholder) as $dynamic) {
@@ -187,16 +172,12 @@ class XmlConfigFileLoader extends ConfigFileLoader
         }
     }
 
-    /**
-     * @param string $file
-     * @return DOMElement
-     */
     private function loadXmlRoot(string $file): DOMElement
     {
         $xml = XmlUtils::loadFile($file, __DIR__ . '/../../resource/config.xsd');
         $xPath = new DOMXPath($xml);
 
-        /** @var \DOMNodeList $pshConfigNodes */
+        /** @var DOMNodeList $pshConfigNodes */
         $pshConfigNodes = $xPath->query('//psh');
 
         return $pshConfigNodes[0];

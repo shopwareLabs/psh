@@ -1,8 +1,9 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
 use Symfony\Component\Process\Process;
+use function trim;
 
 /**
  * Enables lazy initialization of variables

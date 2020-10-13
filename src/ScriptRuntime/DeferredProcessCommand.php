@@ -1,5 +1,4 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime;
 
@@ -28,12 +27,6 @@ class DeferredProcessCommand implements ProcessCommand, ParsableCommand
      */
     private $tty;
 
-    /**
-     * @param string $shellCommand
-     * @param int $lineNumber
-     * @param bool $ignoreError
-     * @param bool $tty
-     */
     public function __construct(
         string $shellCommand,
         int $lineNumber,
@@ -46,33 +39,21 @@ class DeferredProcessCommand implements ProcessCommand, ParsableCommand
         $this->tty = $tty;
     }
 
-    /**
-     * @return string
-     */
     public function getShellCommand(): string
     {
         return $this->shellCommand;
     }
 
-    /**
-     * @return boolean
-     */
     public function isIgnoreError(): bool
     {
         return $this->ignoreError;
     }
 
-    /**
-     * @return int
-     */
     public function getLineNumber(): int
     {
         return $this->lineNumber;
     }
 
-    /**
-     * @return bool
-     */
     public function isTTy(): bool
     {
         return $this->tty;

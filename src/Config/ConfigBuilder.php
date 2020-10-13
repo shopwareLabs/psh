@@ -1,6 +1,8 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
+
+use function pathinfo;
 
 /**
  * Builder pattern
@@ -29,20 +31,13 @@ class ConfigBuilder
 
     private $hidden;
 
-    /**
-     * @param string|null $header
-     * @return ConfigBuilder
-     */
     public function setHeader(string $header = null): ConfigBuilder
     {
         $this->header = $header;
+
         return $this;
     }
 
-    /**
-     * @param string|null $environment
-     * @return ConfigBuilder
-     */
     public function start(string $environment = null): ConfigBuilder
     {
         $this->reset();
@@ -51,33 +46,23 @@ class ConfigBuilder
         }
 
         $this->currentEnvironment = $environment;
+
         return $this;
     }
 
-    /**
-     * @param bool $set
-     * @return ConfigBuilder
-     */
     public function setHidden(bool $set): ConfigBuilder
     {
         $this->hidden = $set;
         return $this;
     }
 
-    /**
-     * @param array $commandPaths
-     * @return ConfigBuilder
-     */
     public function setCommandPaths(array $commandPaths): ConfigBuilder
     {
         $this->currentCommandPaths = $commandPaths;
+
         return $this;
     }
 
-    /**
-     * @param array $dotenvPaths
-     * @return ConfigBuilder
-     */
     public function setDotenvPaths(array $dotenvPaths): ConfigBuilder
     {
         $this->currentDotenvPaths = [];
@@ -89,10 +74,6 @@ class ConfigBuilder
         return $this;
     }
 
-    /**
-     * @param string $dotenvPath
-     * @return ConfigBuilder
-     */
     public function setDotenvPath(string $dotenvPath): ConfigBuilder
     {
         $this->currentDotenvPaths[pathinfo($dotenvPath, PATHINFO_BASENAME)] = $dotenvPath;
@@ -102,51 +83,45 @@ class ConfigBuilder
 
     /**
      * @deprecated only used by yaml builder
-     * @param array $dynamicVariables
-     * @return ConfigBuilder
      */
     public function setDynamicVariables(array $dynamicVariables): ConfigBuilder
     {
         $this->currentDynamicVariables = $dynamicVariables;
+
         return $this;
     }
 
     public function setDynamicVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentDynamicVariables[$key] = $value;
+
         return $this;
     }
 
     /**
      * @deprecated only used by yaml builder
-     * @param array $constants
-     * @return ConfigBuilder
      */
     public function setConstants(array $constants): ConfigBuilder
     {
         $this->currentConstants = $constants;
+
         return $this;
     }
 
     public function setConstVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentConstants[$key] = $value;
+
         return $this;
     }
 
-    /**
-     * @param array $templates
-     * @return ConfigBuilder
-     */
     public function setTemplates(array $templates): ConfigBuilder
     {
         $this->templates = $templates;
+
         return $this;
     }
 
-    /**
-     * @return Config
-     */
     public function create(array $params): Config
     {
         $this->reset();

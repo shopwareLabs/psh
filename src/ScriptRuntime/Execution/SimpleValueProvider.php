@@ -1,5 +1,4 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
@@ -13,17 +12,11 @@ class SimpleValueProvider implements ValueProvider
      */
     private $value;
 
-    /**
-     * @param string $value
-     */
     public function __construct(string $value)
     {
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return  $this->value;

@@ -1,12 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Application;
 
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
+use RuntimeException;
 use Shopware\Psh\Application\ApplicationFactory;
 use Shopware\Psh\Application\ParameterParser;
 use Shopware\Psh\Config\Config;
 
-class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
+class ApplicationFactoryTest extends TestCase
 {
     public function test_createConfig()
     {
@@ -32,12 +37,12 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $testParams = [
             './psh',
-            'unit'
+            'unit',
         ];
 
         $factory = $this->getApplicationFactory();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $factory->createConfig(
             __DIR__ . '/_fixtures_with_invalid_config_files/config/.psh.not-supported',
@@ -49,7 +54,7 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $paramParser = new ParameterParser();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $paramParser->parseParams(['./psh', 'unit', 'someFalseParameter']);
     }
 

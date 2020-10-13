@@ -1,15 +1,15 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Integration\Listing;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Config\ScriptsPath;
-use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\DescriptionReader;
+use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\Listing\ScriptPathNotValidException;
 
-class ScriptFinderTest extends \PHPUnit_Framework_TestCase
+class ScriptFinderTest extends TestCase
 {
     public function test_script_finder_holds_contract_if_no_paths_present()
     {
@@ -77,7 +77,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
             [$this->createScriptsPath(__DIR__ . '/_scripts_not_valid_directory')],
             new DescriptionReader()
         );
-        
+
         $this->expectException(ScriptPathNotValidException::class);
         $finder->getAllScripts();
     }

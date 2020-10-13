@@ -1,6 +1,8 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
+
+use function array_map;
 
 /**
  * Represents the global configuration consisting of multiple environments
@@ -28,10 +30,7 @@ class Config
     private $params;
 
     /**
-     * @param string|null $header
-     * @param string $defaultEnvironment
      * @param ConfigEnvironment[] $environments
-     * @param array $params
      */
     public function __construct(
         string $header = null,
@@ -65,10 +64,6 @@ class Config
         return $paths;
     }
 
-    /**
-     * @param string|null $environment
-     * @return array
-     */
     public function getTemplates(string $environment = null): array
     {
         return $this->createResult(
@@ -77,10 +72,6 @@ class Config
         );
     }
 
-    /**
-     * @param string|null $environment
-     * @return array
-     */
     public function getDynamicVariables(string $environment = null): array
     {
         return $this->createResult(
@@ -89,10 +80,6 @@ class Config
         );
     }
 
-    /**
-     * @param string|null $environment
-     * @return array
-     */
     public function getConstants(string $environment = null): array
     {
         return $this->createResult(
@@ -103,7 +90,6 @@ class Config
     }
 
     /**
-     * @param string|null $environment
      * @return DotenvFile[]
      */
     public function getDotenvPaths(string $environment = null): array
@@ -134,25 +120,18 @@ class Config
         return $this->environments;
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultEnvironment(): string
     {
         return $this->defaultEnvironment;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams() : array
+    public function getParams(): array
     {
         return $this->params;
     }
 
     /**
      * @param callable[] ...$valueProviders
-     * @return array
      */
     private function createResult(callable ...$valueProviders): array
     {
@@ -167,10 +146,6 @@ class Config
         return $mergedKeyValues;
     }
 
-    /**
-     * @param string|null $name
-     * @return ConfigEnvironment
-     */
     private function getEnvironment(string $name = null): ConfigEnvironment
     {
         if ($name === null) {

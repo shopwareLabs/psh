@@ -1,5 +1,4 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
@@ -13,6 +12,11 @@ use Shopware\Psh\ScriptRuntime\SynchronusProcessCommand;
 use Shopware\Psh\ScriptRuntime\TemplateCommand;
 use Shopware\Psh\ScriptRuntime\WaitCommand;
 use Symfony\Component\Process\Process;
+use function chmod;
+use function count;
+use function file_get_contents;
+use function file_put_contents;
+use function unlink;
 
 /**
  * Execute a command in a separate process
@@ -46,10 +50,6 @@ class ProcessExecutor
 
     /**
      * ProcessExecutor constructor.
-     * @param ProcessEnvironment $environment
-     * @param TemplateEngine $templateEngine
-     * @param Logger $logger
-     * @param string $applicationDirectory
      */
     public function __construct(
         ProcessEnvironment $environment,
@@ -64,7 +64,6 @@ class ProcessExecutor
     }
 
     /**
-     * @param Script $script
      * @param Command[] $commands
      */
     public function execute(Script $script, array $commands)
@@ -84,11 +83,6 @@ class ProcessExecutor
         $this->logger->finishScript($script);
     }
 
-    /**
-     * @param Command $command
-     * @param int $index
-     * @param int $totalCount
-     */
     private function executeCommand(Command $command, int $index, int $totalCount)
     {
         switch (true) {
@@ -155,10 +149,6 @@ class ProcessExecutor
         }
     }
 
-    /**
-     * @param ParsableCommand $command
-     * @return string
-     */
     private function getParsedShellCommand(ParsableCommand $command): string
     {
         $rawShellCommand = $command->getShellCommand();
@@ -171,10 +161,6 @@ class ProcessExecutor
         return $parsedCommand;
     }
 
-    /**
-     * @param Process $process
-     * @param ProcessCommand $command
-     */
     private function setProcessDefaults(Process $process, ProcessCommand $command)
     {
         $process->setWorkingDirectory($this->applicationDirectory);
@@ -182,9 +168,6 @@ class ProcessExecutor
         $process->setTty($command->isTTy());
     }
 
-    /**
-     * @param Process $process
-     */
     private function runProcess(Process $process)
     {
         $process->run(function ($type, $response) {
@@ -192,10 +175,6 @@ class ProcessExecutor
         });
     }
 
-    /**
-     * @param Process $process
-     * @param ProcessCommand $command
-     */
     private function testProcessResultValid(Process $process, ProcessCommand $command)
     {
         if (!$this->isProcessResultValid($process, $command)) {
@@ -250,11 +229,6 @@ class ProcessExecutor
         $this->deferredProcesses = [];
     }
 
-    /**
-     * @param string $parsedCommand
-     * @param DeferredProcessCommand $command
-     * @param Process $process
-     */
     private function deferProcess(string $parsedCommand, DeferredProcessCommand $command, Process $process)
     {
         $deferredProcess = new DeferredProcess($parsedCommand, $command, $process);
@@ -266,21 +240,11 @@ class ProcessExecutor
         $this->deferredProcesses[] = $deferredProcess;
     }
 
-    /**
-     * @param Process $process
-     * @param ProcessCommand $command
-     * @return bool
-     */
     private function isProcessResultValid(Process $process, ProcessCommand $command): bool
     {
         return $command->isIgnoreError() || $process->isSuccessful();
     }
 
-    /**
-     * @param WaitCommand $command
-     * @param int $index
-     * @param int $totalCount
-     */
     private function logWaitStart(WaitCommand $command, int $index, int $totalCount)
     {
         $this->logger->logStart(
@@ -293,12 +257,6 @@ class ProcessExecutor
         );
     }
 
-    /**
-     * @param TemplateCommand $command
-     * @param int $index
-     * @param int $totalCount
-     * @param Template $template
-     */
     private function logTemplateStart(TemplateCommand $command, int $index, int $totalCount, Template $template)
     {
         $this->logger->logStart(
@@ -311,12 +269,6 @@ class ProcessExecutor
         );
     }
 
-    /**
-     * @param DeferredProcessCommand $command
-     * @param int $index
-     * @param int $totalCount
-     * @param string $parsedCommand
-     */
     private function logDeferedStart(DeferredProcessCommand $command, int $index, int $totalCount, string $parsedCommand)
     {
         $this->logger->logStart(
@@ -329,12 +281,6 @@ class ProcessExecutor
         );
     }
 
-    /**
-     * @param ProcessCommand $command
-     * @param int $index
-     * @param int $totalCount
-     * @param string $parsedCommand
-     */
     private function logSynchronousProcessStart(ProcessCommand $command, int $index, int $totalCount, string $parsedCommand)
     {
         $this->logger->logStart(
@@ -347,11 +293,6 @@ class ProcessExecutor
         );
     }
 
-    /**
-     * @param BashCommand $command
-     * @param int $index
-     * @param int $totalCount
-     */
     private function logBashStart(BashCommand $command, int $index, int $totalCount)
     {
         $this->logger->logStart(
@@ -365,7 +306,6 @@ class ProcessExecutor
     }
 
     /**
-     * @param DeferredProcess $deferredProcess
      * @param $index
      */
     private function logDeferredOutputStart(DeferredProcess $deferredProcess, $index)

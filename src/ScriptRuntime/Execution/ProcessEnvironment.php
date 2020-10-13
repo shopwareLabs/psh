@@ -1,20 +1,16 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
+use Dotenv\Dotenv;
 use Dotenv\Repository\Adapter\MultiReader;
 use Dotenv\Repository\Adapter\PutenvAdapter;
 use Dotenv\Repository\Adapter\ServerConstAdapter;
-use Dotenv\Repository\RepositoryBuilder;
-use Dotenv\Repository\RepositoryInterface;
-use function array_merge;
-use Dotenv\Dotenv;
-use Dotenv\Environment\DotenvFactory;
-use function pathinfo;
-use const PATHINFO_BASENAME;
-use const PATHINFO_DIRNAME;
 use Shopware\Psh\Config\DotenvFile;
 use Symfony\Component\Process\Process;
+use function array_keys;
+use function array_merge;
+use function pathinfo;
 
 /**
  * Create representation of the current environment variables and constants
@@ -56,7 +52,6 @@ class ProcessEnvironment
     }
 
     /**
-     * @param array $constants
      * @return ValueProvider[]
      */
     private function initializeConstants(array $constants): array
@@ -70,7 +65,6 @@ class ProcessEnvironment
     }
 
     /**
-     * @param array $variables
      * @return ValueProvider[]
      */
     private function initializeVariables(array $variables): array
@@ -104,7 +98,6 @@ class ProcessEnvironment
     }
 
     /**
-     * @param array $templates
      * @return Template[]
      */
     private function initializeTemplates(array $templates): array
@@ -137,47 +130,30 @@ class ProcessEnvironment
         return $this->templates;
     }
 
-    /**
-     * @param string $shellCommand
-     * @return Process
-     */
     public function createProcess(string $shellCommand): Process
     {
         return new Process($shellCommand);
     }
 
-    /**
-     * @param DotenvFile $dotenvPath
-     * @return array
-     */
     private function loadDotenvVariables(DotenvFile $dotenvPath): array
     {
         $fileData = $this->loadEnvVarsFromDotenvFile($dotenvPath);
+
         return $this->diffDotenvVarsWithCurrentApplicationEnv($fileData);
     }
 
-    /**
-     * @param DotenvFile $dotenvPath
-     * @param DotenvFactory $dotenvFactory
-     * @return array
-     */
     private function loadEnvVarsFromDotenvFile(DotenvFile $dotenvPath): array
     {
         $filePath = $dotenvPath->getPath();
 
         $dotenv = Dotenv::createArrayBacked(
-            pathinfo($filePath, PATHINFO_DIRNAME),
-            pathinfo($filePath, PATHINFO_BASENAME),
+            pathinfo($filePath, \PATHINFO_DIRNAME),
+            pathinfo($filePath, \PATHINFO_BASENAME),
         );
 
         return $dotenv->load();
     }
 
-    /**
-     * @param array $fileData
-     * @param DotenvFactory $dotenvFactory
-     * @return array
-     */
     private function diffDotenvVarsWithCurrentApplicationEnv(array $fileData): array
     {
         $fileKeys = array_keys($fileData);
@@ -185,18 +161,18 @@ class ProcessEnvironment
 
         $reader = new MultiReader([
             PutenvAdapter::create()->get(),
-            ServerConstAdapter::create()->get()
+            ServerConstAdapter::create()->get(),
         ]);
 
         foreach ($fileKeys as $key) {
-            $option =  $reader->read($key);
+            $option = $reader->read($key);
 
             if ($option->isEmpty()) {
                 $result[$key] = $fileData[$key];
                 continue;
             }
 
-            $result[$key] =  $option->get();
+            $result[$key] = $option->get();
         }
 
         return $result;

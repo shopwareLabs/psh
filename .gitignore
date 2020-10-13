@@ -11,4 +11,4 @@ vendor
 bin
 
 #externals
-humbuglog.txt
+.php_cs.cache

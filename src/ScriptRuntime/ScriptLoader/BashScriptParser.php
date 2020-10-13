@@ -1,15 +1,20 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
+use RuntimeException;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\BashCommand;
+use function explode;
+use function is_executable;
+use function is_writable;
+use function mb_strpos;
 
 class BashScriptParser implements ScriptParser
 {
     const TYPE_DIRECT_EXECUTE = '<PSH_EXECUTE_THROUGH_CMD>';
 
-    const SHOULD_BE_PRESENT = "set -euo pipefail";
+    const SHOULD_BE_PRESENT = 'set -euo pipefail';
 
     /**
      * {@inheritdoc}
@@ -29,34 +34,24 @@ class BashScriptParser implements ScriptParser
         return [new BashCommand($script, $warning)];
     }
 
-    /**
-     * @param Script $script
-     */
     private function testScriptFileFitsRequirements(Script $script)
     {
         if (!is_executable($script->getPath())) {
-            throw new \RuntimeException('Bash scripts can only be executed if they are executable please execute <bold>chmod +x ' . $script->getPath() . '</bold>');
+            throw new RuntimeException('Bash scripts can only be executed if they are executable please execute <bold>chmod +x ' . $script->getPath() . '</bold>');
         }
 
         if (!is_writable($script->getDirectory())) {
-            throw new \RuntimeException('Bash scripts can only be executed if they are in a writable directory please execute <bold>chmod +w ' . $script->getDirectory() . '</bold>');
+            throw new RuntimeException('Bash scripts can only be executed if they are in a writable directory please execute <bold>chmod +w ' . $script->getDirectory() . '</bold>');
         }
     }
 
-    /**
-     * @param string $content
-     */
     private function testContentContainsMarker(string $content)
     {
-        if (strpos($content, self::TYPE_DIRECT_EXECUTE) === false) {
+        if (mb_strpos($content, self::TYPE_DIRECT_EXECUTE) === false) {
             throw new ScriptNotSupportedByParser('Marker for execution missing');
         }
     }
 
-    /**
-     * @param string $content
-     * @return bool
-     */
     private function shouldWarnAboutBestPractice(string $content): bool
     {
         $firstLines = explode("\n", $content, 5);

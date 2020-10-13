@@ -1,11 +1,13 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
-use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\Listing\ScriptFinder;
+use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
 use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
@@ -17,8 +19,16 @@ use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Shopware\Psh\ScriptRuntime\WaitCommand;
 use Shopware\Psh\Test\BlackholeLogger;
+use function chmod;
+use function count;
+use function file_get_contents;
+use function implode;
+use function json_decode;
+use function microtime;
+use function trim;
+use function unlink;
 
-class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
+class ProcessExecutorTest extends TestCase
 {
     const DEFERED_FILES = [
         __DIR__ . '/1.json',
@@ -81,10 +91,10 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         $executor = new ProcessExecutor(
             new ProcessEnvironment([
                 'VAR' => 'value',
-            ], [], [ [
+            ], [], [[
                 'source' => __DIR__ . '/_test_read.tpl',
-                'destination' => __DIR__ . '/_test__VAR__.tpl'
-            ]
+                'destination' => __DIR__ . '/_test__VAR__.tpl',
+            ],
             ], []),
             $this->createTemplateEngine(),
             $logger,
@@ -118,7 +128,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'bash-non-executable.sh');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->loadCommands($script);
     }
 
@@ -127,7 +137,7 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         chmod(__DIR__ . '/_non_writable', 0555);
         $script = $this->createScript(__DIR__ . '/_non_writable', 'bash.sh');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->loadCommands($script);
     }
 
@@ -272,30 +282,21 @@ class ProcessExecutorTest extends \PHPUnit_Framework_TestCase
         @unlink(__DIR__ . '/_testvalue.tpl');
     }
 
-    /**
-     * @param Script $script
-     * @return mixed
-     */
     private function loadCommands(Script $script)
     {
         $loader = new ScriptLoader(
             new BashScriptParser(),
             new PshScriptParser(new CommandBuilder(), new ScriptFinder([], new DescriptionReader()))
         );
+
         return $loader->loadScript($script);
     }
 
-    /**
-     * @return ProcessEnvironment
-     */
     private function createProcessEnvironment(): ProcessEnvironment
     {
         return new ProcessEnvironment([], [], [], []);
     }
 
-    /**
-     * @return TemplateEngine
-     */
     private function createTemplateEngine(): TemplateEngine
     {
         return new TemplateEngine();

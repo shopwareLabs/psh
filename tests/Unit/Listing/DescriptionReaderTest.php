@@ -1,10 +1,11 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Listing;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Listing\DescriptionReader;
 
-class DescriptionReaderTest extends \PHPUnit_Framework_TestCase
+class DescriptionReaderTest extends TestCase
 {
     public function test_it_can_be_created()
     {

@@ -1,24 +1,26 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Listing;
+
+use function file;
+use function mb_strlen;
+use function mb_strpos;
+use function mb_substr;
+use function trim;
 
 class DescriptionReader
 {
     const KEY_WORD = 'DESCRIPTION:';
 
-    /**
-     * @param String $filePath
-     * @return string
-     */
-    public function read(String $filePath): String
+    public function read(string $filePath): string
     {
         foreach (file($filePath) as $line) {
             if (
-                strpos($line, self::KEY_WORD) !== false &&
-                strpos($line, '#') !== false
+                mb_strpos($line, self::KEY_WORD) !== false &&
+                mb_strpos($line, '#') !== false
             ) {
-                $result = substr($line, strlen(self::KEY_WORD) + strpos($line, self::KEY_WORD));
+                $result = mb_substr($line, mb_strlen(self::KEY_WORD) + mb_strpos($line, self::KEY_WORD));
+
                 return trim($result);
             }
         }

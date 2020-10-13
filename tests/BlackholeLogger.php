@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test;
 
@@ -9,20 +9,13 @@ use Shopware\Psh\ScriptRuntime\Execution\LogMessage;
 class BlackholeLogger implements Logger
 {
     public $errors = [];
+
     public $output = [];
 
-
-    /**
-     * @param Script $script
-     */
     public function startScript(Script $script)
     {
     }
 
-
-    /**
-     * @param Script $script
-     */
     public function finishScript(Script $script)
     {
     }
@@ -34,22 +27,10 @@ class BlackholeLogger implements Logger
     {
     }
 
-    /**
-     * @param string $headline
-     * @param string $subject
-     * @param int $line
-     * @param bool $isIgnoreError
-     * @param int $index
-     * @param int $max
-     */
     public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
     {
     }
 
-    /**
-     * @param LogMessage $logMessage
-     * @return mixed
-     */
     public function log(LogMessage $logMessage)
     {
         if ($logMessage->isError()) {
@@ -67,10 +48,6 @@ class BlackholeLogger implements Logger
     {
     }
 
-    /**
-     * @param string $message
-     * @return mixed
-     */
     public function warn(string $message)
     {
         // TODO: Implement warn() method.

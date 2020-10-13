@@ -1,4 +1,4 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
@@ -7,8 +7,5 @@ namespace Shopware\Psh\ScriptRuntime\Execution;
  */
 interface ValueProvider
 {
-    /**
-     * @return string
-     */
     public function getValue(): string;
 }

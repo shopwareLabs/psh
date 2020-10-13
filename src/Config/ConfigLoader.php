@@ -1,5 +1,4 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Config;
 
@@ -8,16 +7,7 @@ namespace Shopware\Psh\Config;
  */
 interface ConfigLoader
 {
-    /**
-     * @param string $file
-     * @return bool
-     */
     public function isSupported(string $file): bool;
 
-    /**
-     * @param string $file
-     * @param array $params
-     * @return Config
-     */
     public function load(string $file, array $params): Config;
 }

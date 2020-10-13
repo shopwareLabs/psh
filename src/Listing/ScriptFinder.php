@@ -1,9 +1,15 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Listing;
 
 use Shopware\Psh\Config\ScriptsPath;
+use function array_filter;
+use function in_array;
+use function is_dir;
+use function levenshtein;
+use function mb_strpos;
+use function pathinfo;
+use function scandir;
 
 /**
  * Load all scripts from all the supplied paths and create an array of scripts
@@ -12,7 +18,7 @@ class ScriptFinder
 {
     const VALID_EXTENSIONS = [
         'sh',
-        'psh'
+        'psh',
     ];
 
     /**
@@ -27,7 +33,6 @@ class ScriptFinder
 
     /**
      * @param ScriptsPath[] $scriptsPaths
-     * @param DescriptionReader $scriptDescriptionReader
      */
     public function __construct(array $scriptsPaths, DescriptionReader $scriptDescriptionReader)
     {
@@ -36,8 +41,8 @@ class ScriptFinder
     }
 
     /**
-     * @return Script[]
      * @throws ScriptPathNotValidException
+     * @return Script[]
      */
     public function getAllScripts(): array
     {
@@ -77,13 +82,11 @@ class ScriptFinder
         $scripts = $this->getAllVisibleScripts();
 
         return array_filter($scripts, function ($key) use ($query) {
-            return strpos($key, $query) > -1 || levenshtein($key, $query) < 3;
+            return mb_strpos($key, $query) > -1 || levenshtein($key, $query) < 3;
         }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
-     * @param string $scriptName
-     * @return Script
      * @throws ScriptNotFoundException
      */
     public function findScriptByName(string $scriptName): Script

@@ -1,7 +1,10 @@
-<?php declare (strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Config;
 
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigLoader;
@@ -9,7 +12,7 @@ use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Config\YamlConfigFileLoader;
 use Symfony\Component\Yaml\Parser;
 
-class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
+class YamlConfigFileLoaderTest extends TestCase
 {
     private function createConfigLoader(Parser $parser = null)
     {
@@ -76,7 +79,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = $this->createConfigLoader($yamlMock->reveal());
 
         $config = $loader->load(__DIR__ . '/_test.txt', []);
-        $this->assertEquals([ 'FOO' => 'bar'], $config->getConstants());
+        $this->assertEquals(['FOO' => 'bar'], $config->getConstants());
     }
 
     public function test_it_works_if_no_consts_are_present()
@@ -119,7 +122,6 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-
         $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
 
@@ -149,19 +151,18 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Config::class, $config);
     }
 
-
     public function test_environment_paths_do_not_influence_default_environment()
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
             'paths' => [
-                __DIR__ . '/_foo'
+                __DIR__ . '/_foo',
             ],
             'environments' => [
                 'namespace' => [
                     'paths' => [
                         __DIR__ . '/_bar',
-                    ]
+                    ],
                 ],
             ],
             'dynamic' => [
@@ -172,7 +173,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
 
         $this->assertInstanceOf(Config::class, $config);
@@ -198,13 +199,13 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
             'paths' => [
-                __DIR__ . '/_foo'
+                __DIR__ . '/_foo',
             ],
             'environments' => [
                 'namespace' => [
                     'paths' => [
                         __DIR__ . '/_bar',
-                    ]
+                    ],
                 ],
             ],
             'dynamic' => [
@@ -215,7 +216,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
 
         $this->assertInstanceOf(Config::class, $config);
@@ -241,7 +242,7 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
             'paths' => [
-                __DIR__ . '/_foo'
+                __DIR__ . '/_foo',
             ],
             'environments' => [
                 'namespace' => [
@@ -249,11 +250,11 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
                         __DIR__ . '/_bar',
                     ],
                     'dynamic' => [
-                        'booh' => 'bar'
+                        'booh' => 'bar',
                     ],
                     'const' => [
                         'booh' => 'hah',
-                    ]
+                    ],
                 ],
             ],
             'dynamic' => [
@@ -264,19 +265,19 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
 
         $this->assertInstanceOf(Config::class, $config);
 
         $this->assertEquals([
             'filesystem' => 'ls -al',
-            'booh' => 'bar'
+            'booh' => 'bar',
         ], $config->getDynamicVariables('namespace'));
 
         $this->assertEquals([
             'FOO' => 'bar',
-            'booh' => 'hah'
+            'booh' => 'hah',
         ], $config->getConstants('namespace'));
 
         $scripts = $config->getAllScriptsPaths();
@@ -294,17 +295,17 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             'paths' => [
             ],
             'templates' => [
-                ['source' => '_the_template.tpl', 'destination' => 'the_destination.txt']
-            ]
+                ['source' => '_the_template.tpl', 'destination' => 'the_destination.txt'],
+            ],
         ]);
 
-        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
 
         $this->assertInstanceOf(Config::class, $config);
 
         $this->assertEquals([
-            ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt']
+            ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt'],
         ], $config->getTemplates());
     }
 
@@ -316,10 +317,10 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
             'dotenv' => [
                 '.fiz',
                 '.baz',
-            ]
+            ],
         ]);
 
-        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
 
         $this->assertCount(2, $config->getDotenvPaths());
@@ -340,12 +341,12 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
                 'env' => [
                     'dotenv' => [
                         '_foo/.fiz',
-                        '_foo/.buz'
-                    ]
-            ]]
+                        '_foo/.buz',
+                    ],
+            ], ],
         ]);
 
-        $loader =$this->createConfigLoader($yamlMock->reveal());
+        $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
 
         $this->assertCount(3, $config->getDotenvPaths('env'));
@@ -358,10 +359,10 @@ class YamlConfigFileLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = $this->createConfigLoader();
 
-        $method = new \ReflectionMethod(YamlConfigFileLoader::class, 'fixPath');
+        $method = new ReflectionMethod(YamlConfigFileLoader::class, 'fixPath');
         $method->setAccessible(true);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $method->invoke($loader, __DIR__, 'absoluteOrRelativePath', 'baseFile');
     }

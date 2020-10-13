@@ -1,8 +1,8 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Application;
 
+use RuntimeException;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileFinder;
@@ -22,6 +22,14 @@ use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Symfony\Component\Yaml\Parser;
+use function count;
+use function explode;
+use function implode;
+use function mb_strpos;
+use function mb_strtoupper;
+use function mb_substr;
+use function sprintf;
+use function str_replace;
 
 /**
  * Create the various interdependent objects for the application.
@@ -29,10 +37,7 @@ use Symfony\Component\Yaml\Parser;
 class ApplicationFactory
 {
     /**
-     * @param string $rootDirectory
-     * @param array $params
-     * @return Config
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function createConfig(string $rootDirectory, array $params): Config
     {
@@ -57,30 +62,19 @@ class ApplicationFactory
         }
 
         if (count($configs) === 0) {
-            throw new \RuntimeException('Unable to read any configuration from "' . implode(', ', $configFiles) . '"');
+            throw new RuntimeException('Unable to read any configuration from "' . implode(', ', $configFiles) . '"');
         }
 
         $merger = new ConfigMerger();
-        
+
         return $merger->merge(...$configs);
     }
 
-    /**
-     * @param Config $config
-     * @return ScriptFinder
-     */
     public function createScriptFinder(Config $config): ScriptFinder
     {
         return new ScriptFinder($config->getAllScriptsPaths(), new DescriptionReader());
     }
 
-    /**
-     * @param Script $script
-     * @param Config $config
-     * @param Logger $logger
-     * @param string $rootDirectory
-     * @return ProcessExecutor
-     */
     public function createProcessExecutor(
         Script $script,
         Config $config,
@@ -101,9 +95,6 @@ class ApplicationFactory
     }
 
     /**
-     * @param Script $script
-     * @param ScriptFinder $scriptFinder
-     *
      * @return Command[]
      */
     public function createCommands(Script $script, ScriptFinder $scriptFinder): array
@@ -112,12 +103,12 @@ class ApplicationFactory
             new BashScriptParser(),
             new PshScriptParser(new CommandBuilder(), $scriptFinder)
         );
+
         return $scriptLoader->loadScript($script);
     }
 
     /**
      * @param $directory
-     * @return array
      */
     public function getConfigFiles(string $directory): array
     {

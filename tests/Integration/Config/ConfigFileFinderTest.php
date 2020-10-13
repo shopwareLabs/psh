@@ -1,17 +1,19 @@
-<?php declare (strict_types=1);
-
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Integration\Config;
 
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Shopware\Psh\Config\ConfigFileFinder;
+use function sys_get_temp_dir;
 
-class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
+class ConfigFileFinderTest extends TestCase
 {
     public function test_config_loader_throw_when_it_cant_find_a_psh_file()
     {
         $loader = new ConfigFileFinder();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $loader->discoverFiles(sys_get_temp_dir());
     }
 
@@ -47,7 +49,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([
             __DIR__ . '/_configFileFinderFixtures/override/.psh.xml',
-            __DIR__ . '/_configFileFinderFixtures/override/.psh.xml.override'
+            __DIR__ . '/_configFileFinderFixtures/override/.psh.xml.override',
         ], $files);
     }
 
@@ -58,8 +60,8 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override_and_dist');
 
         $this->assertEquals([
-            __DIR__ .'/_configFileFinderFixtures/override_and_dist/.psh.xml.dist',
-            __DIR__ .'/_configFileFinderFixtures/override_and_dist/.psh.xml.override',
+            __DIR__ . '/_configFileFinderFixtures/override_and_dist/.psh.xml.dist',
+            __DIR__ . '/_configFileFinderFixtures/override_and_dist/.psh.xml.override',
         ], $files);
     }
 
@@ -70,8 +72,8 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override_yml_and_dist_xml');
 
         $this->assertEquals([
-            __DIR__ .'/_configFileFinderFixtures/override_yml_and_dist_xml/.psh.xml.dist',
-            __DIR__ .'/_configFileFinderFixtures/override_yml_and_dist_xml/.psh.yaml.override',
+            __DIR__ . '/_configFileFinderFixtures/override_yml_and_dist_xml/.psh.xml.dist',
+            __DIR__ . '/_configFileFinderFixtures/override_yml_and_dist_xml/.psh.yaml.override',
         ], $files);
     }
 }
