@@ -1,6 +1,5 @@
 {
   "alias": "psh.phar",
-  "chmod": "0755",
   "directories": [
     "src",
     "resource",
@@ -9,7 +8,5 @@
   "files": [
     "psh"
   ],
-  "main": "psh",
-  "output": "psh.phar",
   "stub": true
 }

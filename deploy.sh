@@ -20,13 +20,9 @@ git checkout -b gh-pages deploy/gh-pages
 mv build/psh.phar psh.phar
 sha1sum psh.phar > psh.phar.version
 
-mv build/psh56.phar psh56.phar
-sha1sum psh56.phar > psh56.phar.version
-
-git add psh.phar psh.phar.version psh56.phar psh56.phar.version
+git add psh.phar psh.phar.version
 
 git status
-
 
 # Commit and push
 git commit -m 'Rebuilt phar'

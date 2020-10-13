@@ -84,7 +84,6 @@ Download `psh.phar` to your local environment.
 
 ```sh
 wget https://shopwarelabs.github.io/psh/psh.phar # PHP7 Version
-# OR wget https://shopwarelabs.github.io/psh/psh56.phar for the PHP5.6 Version
 chmod +x psh.phar
 ```
 
@@ -109,8 +108,7 @@ composer install # assuming you have composer installed globally
 ./psh build 
 ```
 
-This will create a release phar in the `build/psh.phar` directory. Although the project itself requires PHP7 a PHP 5.6 
-compatible version is currently created with it `build/psh56.phar`. 
+This will create a release phar in the `build/psh.phar` directory. The project itself requires PHP7.2+. 
 
 Usage
 ------------

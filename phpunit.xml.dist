@@ -29,6 +29,7 @@
             <exclude>
                 <directory>tests</directory>
                 <directory>vendor</directory>
+                <directory>vendor-bin</directory>
                 <directory>bin</directory>
             </exclude>
         </whitelist>
