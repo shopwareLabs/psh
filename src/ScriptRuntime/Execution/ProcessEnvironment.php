@@ -2,6 +2,11 @@
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
+use Dotenv\Repository\Adapter\MultiReader;
+use Dotenv\Repository\Adapter\PutenvAdapter;
+use Dotenv\Repository\Adapter\ServerConstAdapter;
+use Dotenv\Repository\RepositoryBuilder;
+use Dotenv\Repository\RepositoryInterface;
 use function array_merge;
 use Dotenv\Dotenv;
 use Dotenv\Environment\DotenvFactory;
@@ -147,10 +152,8 @@ class ProcessEnvironment
      */
     private function loadDotenvVariables(DotenvFile $dotenvPath): array
     {
-        $dotenvFactory = new DotenvFactory();
-
-        $fileData = $this->loadDotenvFile($dotenvPath, $dotenvFactory);
-        return $this->diffDotenvVarsWithEnv($fileData, $dotenvFactory);
+        $fileData = $this->loadEnvVarsFromDotenvFile($dotenvPath);
+        return $this->diffDotenvVarsWithCurrentApplicationEnv($fileData);
     }
 
     /**
@@ -158,13 +161,13 @@ class ProcessEnvironment
      * @param DotenvFactory $dotenvFactory
      * @return array
      */
-    private function loadDotenvFile(DotenvFile $dotenvPath, DotenvFactory $dotenvFactory): array
+    private function loadEnvVarsFromDotenvFile(DotenvFile $dotenvPath): array
     {
         $filePath = $dotenvPath->getPath();
-        $dotenv = Dotenv::create(
+
+        $dotenv = Dotenv::createArrayBacked(
             pathinfo($filePath, PATHINFO_DIRNAME),
             pathinfo($filePath, PATHINFO_BASENAME),
-            $dotenvFactory
         );
 
         return $dotenv->load();
@@ -175,14 +178,25 @@ class ProcessEnvironment
      * @param DotenvFactory $dotenvFactory
      * @return array
      */
-    private function diffDotenvVarsWithEnv(array $fileData, DotenvFactory $dotenvFactory): array
+    private function diffDotenvVarsWithCurrentApplicationEnv(array $fileData): array
     {
         $fileKeys = array_keys($fileData);
         $result = [];
 
-        $existingVariables = $dotenvFactory->createImmutable();
+        $reader = new MultiReader([
+            PutenvAdapter::create()->get(),
+            ServerConstAdapter::create()->get()
+        ]);
+
         foreach ($fileKeys as $key) {
-            $result[$key] = $existingVariables->get($key);
+            $option =  $reader->read($key);
+
+            if ($option->isEmpty()) {
+                $result[$key] = $fileData[$key];
+                continue;
+            }
+
+            $result[$key] =  $option->get();
         }
 
         return $result;
