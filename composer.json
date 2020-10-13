@@ -38,11 +38,7 @@
         }
     ],
     "config": {
-        "bin-dir": "bin",
-        "platform": {
-            "php": "7.2"
-        }
-
+        "bin-dir": "bin"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
