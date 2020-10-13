@@ -148,7 +148,7 @@ class ProcessEnvironment
 
         $dotenv = Dotenv::createArrayBacked(
             pathinfo($filePath, \PATHINFO_DIRNAME),
-            pathinfo($filePath, \PATHINFO_BASENAME),
+            pathinfo($filePath, \PATHINFO_BASENAME)
         );
 
         return $dotenv->load();
