@@ -66,19 +66,20 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_add_environment_from_override()
     {
-        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(['actions'])];
-        $newEnv = ['newEnv' => new ConfigEnvironment(['actions'])];
+        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'], [], ['foo' => 'bar'])];
+        $newEnv = ['newEnv' => new ConfigEnvironment(false, ['actions'])];
 
-        $config = new Config('', '', $envs, []);
+        $config = new Config('', self::DEFAULT_ENV, $envs, []);
         $override = new Config('', '', $newEnv, []);
 
         $merger = new ConfigMerger();
-        $result = $merger->merge($config, $override);
+        $mergedConfig = $merger->merge($config, $override);
 
-        $this->assertInstanceOf(Config::class, $result);
+        $this->assertInstanceOf(Config::class, $mergedConfig);
 
-        $this->assertArrayHasKey(self::DEFAULT_ENV, $result->getEnvironments());
-        $this->assertArrayHasKey('newEnv', $result->getEnvironments());
+        $this->assertArrayHasKey(self::DEFAULT_ENV, $mergedConfig->getEnvironments());
+        $this->assertArrayHasKey('newEnv', $mergedConfig->getEnvironments());
+        $this->assertEquals(['foo' => 'bar'], $mergedConfig->getConstants());
     }
 
     public function test_it_should_use_original_environments()

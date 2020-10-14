@@ -47,25 +47,34 @@ class ConfigMerger
 
         foreach ($foundEnvironments as $name) {
             if (!isset($override->getEnvironments()[$name])) {
-                $environments[$name] = $config->getEnvironments();
+                $environments[$name] = $config->getEnvironments()[$name];
 
                 continue;
             }
 
-            $overrideEnv = $override->getEnvironments()[$name];
-            $originalConfigEnv = $config->getEnvironments()[$name] ?? new ConfigEnvironment();
+            if (!isset($config->getEnvironments()[$name])) {
+                $environments[$name] = $override->getEnvironments()[$name];
 
-            $environments[$name] = new ConfigEnvironment(
-                $this->overrideHidden($originalConfigEnv, $overrideEnv),
-                $this->overrideScriptsPaths($originalConfigEnv, $overrideEnv),
-                $this->mergeDynamicVariables($originalConfigEnv, $overrideEnv),
-                $this->mergeConstants($originalConfigEnv, $overrideEnv),
-                $this->overrideTemplates($originalConfigEnv, $overrideEnv),
-                $this->mergeDotenvPaths($originalConfigEnv, $overrideEnv)
-            );
+                continue;
+            }
+
+            $environments[$name] = $this
+                ->mergeEnvironments($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
         }
 
         return $environments;
+    }
+
+    private function mergeEnvironments(ConfigEnvironment $original, ConfigEnvironment $override): ConfigEnvironment
+    {
+        return new ConfigEnvironment(
+            $this->overrideHidden($original, $override),
+            $this->overrideScriptsPaths($original, $override),
+            $this->mergeDynamicVariables($original, $override),
+            $this->mergeConstants($original, $override),
+            $this->overrideTemplates($original, $override),
+            $this->mergeDotenvPaths($original, $override)
+        );
     }
 
     /**
