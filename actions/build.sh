@@ -9,6 +9,7 @@ cp composer.json build/php56
 cp box.json build/php56
 cp box.phar build/php56
 cp -R vendor build/php56
+cp -R resource build/php56
 bin/php-version-transpiler src/ build/php56/src
 
 cd build/php56 && php box.phar build
