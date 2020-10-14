@@ -21,7 +21,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_finds_scripts_if_one_directory_is_passed()
     {
         $finder = new ScriptFinder(
-            [new ScriptsPath(__DIR__ . '/_scripts')],
+            [$this->createScriptsPath(__DIR__ . '/_scripts')],
             new DescriptionReader()
         );
 
@@ -32,19 +32,23 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_finds_scripts_if_two_directories_are_passed_and_filters_noise()
     {
         $finder = new ScriptFinder(
-            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
+            [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
             new DescriptionReader()
         );
 
+        $scripts = $finder->getAllScripts();
         $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertCount(5, $finder->getAllScripts());
+        $this->assertCount(6, $scripts);
         $this->assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
+
+        $this->assertFalse($scripts['test']->isHidden());
+        $this->assertTrue($scripts['.hidden']->isHidden());
     }
 
     public function test_script_finder_finds_script_by_name_if_two_directories_are_passed_and_filters_noise()
     {
         $finder = new ScriptFinder(
-            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
+            [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
             new DescriptionReader()
         );
         $this->assertInstanceOf(ScriptFinder::class, $finder);
@@ -57,7 +61,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_prefixes_script_names_with_namespace_if_present()
     {
         $finder = new ScriptFinder(
-            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff', 'biz')],
+            [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff', 'biz')],
             new DescriptionReader()
         );
         $this->assertInstanceOf(ScriptFinder::class, $finder);
@@ -70,7 +74,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_throws_exception_if_path_is_not_valid()
     {
         $finder = new ScriptFinder(
-            [new ScriptsPath(__DIR__ . '/_scripts_not_valid_directory')],
+            [$this->createScriptsPath(__DIR__ . '/_scripts_not_valid_directory')],
             new DescriptionReader()
         );
         
@@ -81,7 +85,7 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_adds_description_to_script()
     {
         $finder = new ScriptFinder(
-            [new ScriptsPath(__DIR__ . '/_scripts')],
+            [$this->createScriptsPath(__DIR__ . '/_scripts')],
             new DescriptionReader()
         );
 
@@ -92,12 +96,17 @@ class ScriptFinderTest extends \PHPUnit_Framework_TestCase
     public function test_script_finder_finds_partial_name()
     {
         $finder = new ScriptFinder(
-            [new ScriptsPath(__DIR__ . '/_scripts'), new ScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
+            [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
             new DescriptionReader()
         );
 
         $this->assertInstanceOf(ScriptFinder::class, $finder);
         $this->assertCount(2, $finder->findScriptsByPartialName('test'));
         $this->assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
+    }
+
+    private function createScriptsPath(string $path, string $namespace = null): ScriptsPath
+    {
+        return new ScriptsPath($path, false, $namespace);
     }
 }

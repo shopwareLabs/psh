@@ -36,6 +36,7 @@ class ApplicationFactory
      */
     public function createConfig(string $rootDirectory, array $params): Config
     {
+        $overwrittenConsts = (new ParameterParser())->parseParams($params);
         $configFinder = new ConfigFileFinder();
         $configFiles = $configFinder->discoverFiles($rootDirectory);
 
@@ -51,7 +52,7 @@ class ApplicationFactory
                     continue;
                 }
 
-                $configs[] = $configLoader->load($configFile, $this->reformatParams($params));
+                $configs[] = $configLoader->load($configFile, $overwrittenConsts);
             }
         }
 
@@ -112,45 +113,6 @@ class ApplicationFactory
             new PshScriptParser(new CommandBuilder(), $scriptFinder)
         );
         return $scriptLoader->loadScript($script);
-    }
-
-    /**
-     * @param array $params
-     * @return array
-     */
-    private function reformatParams(array $params): array
-    {
-        if (count($params) < 2) {
-            return [];
-        }
-
-        $reformattedParams = [];
-        $paramsCount = count($params);
-        for ($i = 2; $i < $paramsCount; $i++) {
-            $key = $params[$i];
-
-            if (strpos($key, '--') !== 0) {
-                throw new InvalidParameterException(
-                    sprintf('Unable to parse parameter %s. Use -- for correct usage', $key)
-                );
-            }
-
-            if (strpos($key, '=')) {
-                list($key, $value) = explode('=', $key, 2);
-
-                if (strpos($value, '"') === 0) {
-                    $value = substr($value, 1, -1);
-                }
-            } else {
-                $i++;
-                $value = $params[$i];
-            }
-
-            $key = str_replace('--', '', $key);
-            $reformattedParams[strtoupper($key)] = $value;
-        }
-
-        return $reformattedParams;
     }
 
     /**

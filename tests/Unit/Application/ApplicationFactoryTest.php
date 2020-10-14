@@ -3,6 +3,7 @@
 namespace Shopware\Psh\Test\Unit\Application;
 
 use Shopware\Psh\Application\ApplicationFactory;
+use Shopware\Psh\Application\ParameterParser;
 use Shopware\Psh\Config\Config;
 
 class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
@@ -16,19 +17,15 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
             '--filter aaaa',
         ];
 
-        $factory = $this->getApplicationFactory();
+        $factory = new ParameterParser();
 
-        $result = $factory->createConfig(__DIR__ . '/_fixtures/config/.psh.yaml', $testParams);
-
-        $property = $this->getPrivateProperty(Config::class, 'params');
-        $result2 = $property->getValue($result);
+        $parsedParams = $factory->parseParams($testParams);
 
         $expectedResult = [
             'FILTER' => '--filter aaaa',
         ];
 
-        $this->assertInstanceOf(Config::class, $result);
-        $this->assertEquals($expectedResult, $result2);
+        $this->assertEquals($expectedResult, $parsedParams);
     }
 
     public function test_createConfig_with_invalid_config_file()
@@ -50,15 +47,15 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function test_reformatParams_expects_exception()
     {
-        $factory = $this->getApplicationFactory();
-        $method = $this->getPrivateMethod(ApplicationFactory::class, 'reformatParams');
+        $paramParser = new ParameterParser();
 
         $this->expectException(\RuntimeException::class);
-        $method->invokeArgs($factory, [['./psh', 'unit', 'someFalseParameter']]);
+        $paramParser->parseParams(['./psh', 'unit', 'someFalseParameter']);
     }
 
     public function test_reformatParams_expects_array()
     {
+        $paramParser = new ParameterParser();
         $testParams = [
             './psh',
             'unit',
@@ -71,10 +68,8 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
             '--env6="gh""t=tg"',
         ];
 
-        $factory = $this->getApplicationFactory();
-        $method = $this->getPrivateMethod(ApplicationFactory::class, 'reformatParams');
 
-        $result = $method->invokeArgs($factory, [$testParams]);
+        $result = $paramParser->parseParams($testParams);
 
         $expectedResult = [
             'ENV1' => 'dev',
@@ -86,34 +81,6 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($expectedResult, $result);
-    }
-
-    /**
-     * @param string $class
-     * @param string $method
-     * @return \ReflectionMethod
-     */
-    private function getPrivateMethod(string $class, string $method): \ReflectionMethod
-    {
-        $reflectionClass = new \ReflectionClass($class);
-        $method = $reflectionClass->getMethod($method);
-        $method->setAccessible(true);
-
-        return $method;
-    }
-
-    /**
-     * @param string $class
-     * @param string $property
-     * @return \ReflectionProperty
-     */
-    private function getPrivateProperty(string $class, string $property): \ReflectionProperty
-    {
-        $reflectionClass = new \ReflectionClass($class);
-        $property = $reflectionClass->getProperty($property);
-        $property->setAccessible(true);
-
-        return $property;
     }
 
     /**

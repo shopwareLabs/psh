@@ -17,7 +17,7 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 {
     public function test_it_loads_all_simple_commands_from_a_script()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'simple.sh'));
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'simple.sh'));
 
         $this->assertCount(3, $commands);
         $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
@@ -30,7 +30,7 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_concatenates_commands()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'concatenate.sh'));
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'concatenate.sh'));
 
         $this->assertCount(2, $commands);
         $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
@@ -43,7 +43,7 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_sets_ignore_error()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'ignore_error.sh'));
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'ignore_error.sh'));
 
         $this->assertCount(3, $commands);
         $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
@@ -56,7 +56,7 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_sets_tty()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'tty.sh'));
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'tty.sh'));
 
         $this->assertCount(1, $commands);
         $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
@@ -69,7 +69,7 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
 
     public function test_includes_with_local_commands()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'local_include.sh'));
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'local_include.sh'));
 
         $this->assertCount(8, $commands);
         $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
@@ -87,14 +87,14 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
     public function test_include_throws_exception()
     {
         $this->expectException(\RuntimeException::class);
-        $this->createCommands(new Script(__DIR__ . '/_scripts', 'exception_include.sh'));
+        $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_include.sh'));
     }
 
     public function test_action_with_local_commands()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'local_action.sh'), [
-            new ScriptsPath(__DIR__ . '/_scripts/'),
-            new ScriptsPath(__DIR__ . '/_scripts/', 'env'),
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'local_action.sh'), [
+            new ScriptsPath(__DIR__ . '/_scripts/', false),
+            new ScriptsPath(__DIR__ . '/_scripts/', false, 'env'),
         ]);
 
         $this->assertCount(8, $commands);
@@ -113,12 +113,12 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
     public function test_action_throws_exception()
     {
         $this->expectException(\RuntimeException::class);
-        $this->createCommands(new Script(__DIR__ . '/_scripts', 'exception_action.sh'));
+        $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_action.sh'));
     }
 
     public function test_renders_templates_on_demand()
     {
-        $commands = $this->createCommands(new Script(__DIR__ . '/_scripts', 'template.sh'));
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'template.sh'));
 
         $this->assertCount(3, $commands);
         $this->assertContainsOnlyInstancesOf(Command::class, $commands);
@@ -148,5 +148,10 @@ class PshScriptParserTest extends \PHPUnit_Framework_TestCase
         );
 
         return $scriptLoader->loadScript($script);
+    }
+
+    private function createScript(string $directory, string $scriptName): Script
+    {
+        return new Script($directory, $scriptName, false);
     }
 }

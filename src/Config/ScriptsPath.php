@@ -8,18 +8,29 @@ class ScriptsPath
      * @var string
      */
     private $namespace;
+
+    /**
+     * @var bool
+     */
+    private $hidden;
+
     /**
      * @var string
      */
     private $path;
 
     /**
-     * @param string $namespace
      * @param string $path
+     * @param bool $hidden
+     * @param string $namespace
      */
-    public function __construct(string $path, string $namespace = null)
-    {
+    public function __construct(
+        string $path,
+        bool $hidden,
+        string $namespace = null
+    ) {
         $this->namespace = $namespace;
+        $this->hidden = $hidden;
         $this->path = $path;
     }
 
@@ -37,5 +48,21 @@ class ScriptsPath
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        return is_dir($this->path);
     }
 }

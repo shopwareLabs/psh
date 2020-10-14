@@ -42,19 +42,39 @@ class ConfigMerger
     private function mergeConfigEnvironments(Config $config, Config $override): array
     {
         $environments = [];
-        foreach ($override->getEnvironments() as $name => $overrideEnv) {
-            $originalConfigEnv = $config->getEnvironments()[$name];
 
-            $environments[$name] = new ConfigEnvironment(
-                $this->overrideScriptsPaths($originalConfigEnv, $overrideEnv),
-                $this->mergeDynamicVariables($config->getEnvironments()[$name], $overrideEnv),
-                $this->mergeConstants($config->getEnvironments()[$name], $overrideEnv),
-                $this->overrideTemplates($config->getEnvironments()[$name], $overrideEnv),
-                $this->mergeDotenvPaths($originalConfigEnv, $overrideEnv)
-            );
+        $foundEnvironments = array_keys(array_merge($config->getEnvironments(), $override->getEnvironments()));
+
+        foreach ($foundEnvironments as $name) {
+            if (!isset($override->getEnvironments()[$name])) {
+                $environments[$name] = $config->getEnvironments()[$name];
+
+                continue;
+            }
+
+            if (!isset($config->getEnvironments()[$name])) {
+                $environments[$name] = $override->getEnvironments()[$name];
+
+                continue;
+            }
+
+            $environments[$name] = $this
+                ->mergeEnvironments($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
         }
 
         return $environments;
+    }
+
+    private function mergeEnvironments(ConfigEnvironment $original, ConfigEnvironment $override): ConfigEnvironment
+    {
+        return new ConfigEnvironment(
+            $this->overrideHidden($original, $override),
+            $this->overrideScriptsPaths($original, $override),
+            $this->mergeDynamicVariables($original, $override),
+            $this->mergeConstants($original, $override),
+            $this->overrideTemplates($original, $override),
+            $this->mergeDotenvPaths($original, $override)
+        );
     }
 
     /**
@@ -113,5 +133,14 @@ class ConfigMerger
         }
 
         return $configEnvironment->getTemplates();
+    }
+
+    private function overrideHidden(ConfigEnvironment $originalConfigEnv, ConfigEnvironment $overrideEnv): bool
+    {
+        if ($overrideEnv->isHidden()) {
+            return true;
+        }
+
+        return $originalConfigEnv->isHidden();
     }
 }

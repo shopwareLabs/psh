@@ -44,24 +44,15 @@ class ScriptFinder
         $scripts = [];
 
         foreach ($this->scriptsPaths as $path) {
-            if (!is_dir($path->getPath())) {
-                throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
-            }
+            $this->testPathValidity($path);
 
             foreach (scandir($path->getPath(), SCANDIR_SORT_ASCENDING) as $fileName) {
-                if (strpos($fileName, '.') === 0) {
-                    continue;
-                }
-
-                $extension = pathinfo($fileName, PATHINFO_EXTENSION);
-
-                if (!in_array($extension, self::VALID_EXTENSIONS, true)) {
+                if (!$this->isValidScript($fileName)) {
                     continue;
                 }
 
                 $description = $this->scriptDescriptionReader->read($path->getPath() . '/' . $fileName);
-
-                $newScript = new Script($path->getPath(), $fileName, $path->getNamespace(), $description);
+                $newScript = new Script($path->getPath(), $fileName, $path->isHidden(), $path->getNamespace(), $description);
 
                 $scripts[$newScript->getName()] = $newScript;
             }
@@ -70,13 +61,20 @@ class ScriptFinder
         return $scripts;
     }
 
+    public function getAllVisibleScripts(): array
+    {
+        return array_filter($this->getAllScripts(), function (Script $script): bool {
+            return !$script->isHidden();
+        });
+    }
+
     /**
      * @param string $query
      * @return array
      */
     public function findScriptsByPartialName(string $query): array
     {
-        $scripts = $this->getAllScripts();
+        $scripts = $this->getAllVisibleScripts();
 
         return array_filter($scripts, function ($key) use ($query) {
             return strpos($key, $query) > -1 || levenshtein($key, $query) < 3;
@@ -97,5 +95,26 @@ class ScriptFinder
         }
 
         throw (new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"'))->setScriptName($scriptName);
+    }
+
+    /**
+     * @param $fileName
+     * @return bool
+     */
+    private function isValidScript(string $fileName): bool
+    {
+        $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        return in_array($extension, self::VALID_EXTENSIONS, true);
+    }
+
+    /**
+     * @param ScriptsPath $path
+     */
+    private function testPathValidity(ScriptsPath $path)
+    {
+        if (!$path->isValid()) {
+            throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
+        }
     }
 }

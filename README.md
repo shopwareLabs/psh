@@ -144,6 +144,8 @@ In order to use psh as a script executor, you need to define the locations in wh
 
 PSH will then search in all these locations for `*.sh` files. These scripts can then be executed through PSH.
 
+> Notice: If the script name starts with a dot (`.`) it will be excluded from the listing, but is callable like any other script. `> psh.phar .hidden-action`
+
 #### Placeholders
 
 Placeholders in your scripts looks like this:
@@ -276,6 +278,15 @@ A environment called `foo` may look like this:
 This environment loads all scripts from `foo/sh/scripts` and `bar/sh/scripts`, adds a constant `TEST` and a variable `ID`. 
 If you want to call a script in this environment you have to prefix your call with `foo:`.
 
+In order to exclude a whole environment from the listing add the `hidden` attribute to the environment tag and set it to `true`, like this: 
+
+```xml
+<environment name="internal" hidden="true">
+    <path>internal/only/scripts</path>
+</environment>
+```
+
+These scripts can be executed like any regular script, they will just not be shown in the listing.
 
 #### Headers
 

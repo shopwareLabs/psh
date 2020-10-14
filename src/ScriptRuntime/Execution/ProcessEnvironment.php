@@ -9,7 +9,6 @@ use function pathinfo;
 use const PATHINFO_BASENAME;
 use const PATHINFO_DIRNAME;
 use Shopware\Psh\Config\DotenvFile;
-use Shopware\Psh\Config\ScriptsPath;
 use Symfony\Component\Process\Process;
 
 /**
@@ -41,7 +40,7 @@ class ProcessEnvironment
      * @param array $constants
      * @param array $variables
      * @param array $templates
-     * @param ScriptsPath[] $dotenvPaths
+     * @param DotenvFile[] $dotenvPaths
      */
     public function __construct(array $constants, array $variables, array $templates, array $dotenvPaths)
     {

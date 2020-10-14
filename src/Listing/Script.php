@@ -29,17 +29,29 @@ class Script
     public $description;
 
     /**
+     * @var bool
+     */
+    private $inHiddenPath;
+
+    /**
      * @param string $directory
      * @param string $scriptName
+     * @param bool $inHiddenPath
      * @param string $environment
      * @param string $description
      */
-    public function __construct(string $directory, string $scriptName, string $environment = null, $description = '')
-    {
+    public function __construct(
+        string $directory,
+        string $scriptName,
+        bool $inHiddenPath,
+        string $environment = null,
+        $description = ''
+    ) {
         $this->directory = $directory;
         $this->scriptName = $scriptName;
         $this->environment = $environment;
         $this->description = $description;
+        $this->inHiddenPath = $inHiddenPath;
     }
 
     /**
@@ -95,5 +107,13 @@ class Script
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->inHiddenPath || strpos($this->scriptName, '.') === 0;
     }
 }

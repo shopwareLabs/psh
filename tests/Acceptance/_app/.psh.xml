@@ -19,4 +19,11 @@
             <const name="ENV">test</const>
         </placeholder>
     </environment>
+    <environment name="hidden" hidden="true">
+        <path>envpath/</path>
+        <path>envpath2/</path>
+        <placeholder>
+            <const name="ENV">hidden</const>
+        </placeholder>
+    </environment>
 </psh>
