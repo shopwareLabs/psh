@@ -64,6 +64,23 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals([self::DEFAULT_ENV => new ConfigEnvironment(false)], $result->getEnvironments());
     }
 
+    public function test_it_should_add_environment_from_override()
+    {
+        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(['actions'])];
+        $newEnv = ['newEnv' => new ConfigEnvironment(['actions'])];
+
+        $config = new Config('', '', $envs, []);
+        $override = new Config('', '', $newEnv, []);
+
+        $merger = new ConfigMerger();
+        $result = $merger->merge($config, $override);
+
+        $this->assertInstanceOf(Config::class, $result);
+
+        $this->assertArrayHasKey(self::DEFAULT_ENV, $result->getEnvironments());
+        $this->assertArrayHasKey('newEnv', $result->getEnvironments());
+    }
+
     public function test_it_should_use_original_environments()
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'])];
