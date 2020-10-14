@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\Config;
 
+use function array_keys;
 use function array_merge;
 
 class ConfigMerger

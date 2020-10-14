@@ -23,13 +23,7 @@ use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Symfony\Component\Yaml\Parser;
 use function count;
-use function explode;
 use function implode;
-use function mb_strpos;
-use function mb_strtoupper;
-use function mb_substr;
-use function sprintf;
-use function str_replace;
 
 /**
  * Create the various interdependent objects for the application.

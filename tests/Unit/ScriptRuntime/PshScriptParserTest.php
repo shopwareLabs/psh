@@ -90,7 +90,7 @@ class PshScriptParserTest extends TestCase
 
     public function test_include_throws_exception()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_include.sh'));
     }
 
@@ -116,7 +116,7 @@ class PshScriptParserTest extends TestCase
 
     public function test_action_throws_exception()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_action.sh'));
     }
 

@@ -209,7 +209,7 @@ EOD
 EOD
 );
 
-        $loader =$this->createConfigLoader();
+        $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
 
         $this->assertTrue($config->getEnvironments()['namespace']->isHidden());

@@ -181,13 +181,13 @@ class ConfigMergerTest extends TestCase
     {
         $envs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [
-                [ 'source' => '/tmp/template.tpl', 'destination' => '/tmp/template.php' ]
+                ['source' => '/tmp/template.tpl', 'destination' => '/tmp/template.php'],
             ]),
         ];
 
         $overrideEnvs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [
-                [ 'source' => '/tmp/override.tpl', 'destination' => '/tmp/override.php' ]
+                ['source' => '/tmp/override.tpl', 'destination' => '/tmp/override.php'],
             ]),
         ];
 
@@ -233,10 +233,10 @@ class ConfigMergerTest extends TestCase
     {
         $configMerge = (new ConfigMerger())->merge(
             new Config('', self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(false)
+                self::DEFAULT_ENV => new ConfigEnvironment(false),
             ], []),
             new Config('', self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(false)
+                self::DEFAULT_ENV => new ConfigEnvironment(false),
             ], [])
         );
 
@@ -247,10 +247,10 @@ class ConfigMergerTest extends TestCase
     {
         $configMerge = (new ConfigMerger())->merge(
             new Config('', self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(true)
+                self::DEFAULT_ENV => new ConfigEnvironment(true),
             ], []),
             new Config('', self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(false)
+                self::DEFAULT_ENV => new ConfigEnvironment(false),
             ], [])
         );
 
@@ -261,10 +261,10 @@ class ConfigMergerTest extends TestCase
     {
         $configMerge = (new ConfigMerger())->merge(
             new Config('', self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(false)
+                self::DEFAULT_ENV => new ConfigEnvironment(false),
             ], []),
             new Config('', self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(true)
+                self::DEFAULT_ENV => new ConfigEnvironment(true),
             ], [])
         );
 

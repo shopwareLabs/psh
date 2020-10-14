@@ -5,7 +5,6 @@ namespace Shopware\Psh\Listing;
 use Shopware\Psh\Config\ScriptsPath;
 use function array_filter;
 use function in_array;
-use function is_dir;
 use function levenshtein;
 use function mb_strpos;
 use function pathinfo;
@@ -73,10 +72,6 @@ class ScriptFinder
         });
     }
 
-    /**
-     * @param string $query
-     * @return array
-     */
     public function findScriptsByPartialName(string $query): array
     {
         $scripts = $this->getAllVisibleScripts();
@@ -102,7 +97,6 @@ class ScriptFinder
 
     /**
      * @param $fileName
-     * @return bool
      */
     private function isValidScript(string $fileName): bool
     {
@@ -111,9 +105,6 @@ class ScriptFinder
         return in_array($extension, self::VALID_EXTENSIONS, true);
     }
 
-    /**
-     * @param ScriptsPath $path
-     */
     private function testPathValidity(ScriptsPath $path)
     {
         if (!$path->isValid()) {

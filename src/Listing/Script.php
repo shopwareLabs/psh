@@ -3,6 +3,7 @@
 namespace Shopware\Psh\Listing;
 
 use function getmypid;
+use function mb_strpos;
 use function pathinfo;
 
 /**
@@ -94,6 +95,6 @@ class Script
 
     public function isHidden(): bool
     {
-        return $this->inHiddenPath || strpos($this->scriptName, '.') === 0;
+        return $this->inHiddenPath || mb_strpos($this->scriptName, '.') === 0;
     }
 }

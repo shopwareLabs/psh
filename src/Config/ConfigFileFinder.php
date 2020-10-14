@@ -8,6 +8,7 @@ use function array_merge;
 use function count;
 use function dirname;
 use function glob;
+use function is_array;
 use function pathinfo;
 
 /**

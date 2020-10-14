@@ -53,6 +53,7 @@ class ConfigBuilder
     public function setHidden(bool $set): ConfigBuilder
     {
         $this->hidden = $set;
+
         return $this;
     }
 

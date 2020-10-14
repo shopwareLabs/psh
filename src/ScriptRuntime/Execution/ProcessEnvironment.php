@@ -38,9 +38,6 @@ class ProcessEnvironment
     private $dotenvVariables;
 
     /**
-     * @param array $constants
-     * @param array $variables
-     * @param array $templates
      * @param DotenvFile[] $dotenvPaths
      */
     public function __construct(array $constants, array $variables, array $templates, array $dotenvPaths)

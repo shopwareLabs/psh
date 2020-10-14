@@ -3,13 +3,9 @@
 namespace Shopware\Psh\Test\Unit\Application;
 
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
 use RuntimeException;
 use Shopware\Psh\Application\ApplicationFactory;
 use Shopware\Psh\Application\ParameterParser;
-use Shopware\Psh\Config\Config;
 
 class ApplicationFactoryTest extends TestCase
 {
@@ -73,7 +69,6 @@ class ApplicationFactoryTest extends TestCase
             '--env6="gh""t=tg"',
         ];
 
-
         $result = $paramParser->parseParams($testParams);
 
         $expectedResult = [
@@ -88,9 +83,6 @@ class ApplicationFactoryTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return ApplicationFactory
-     */
     private function getApplicationFactory(): ApplicationFactory
     {
         return new ApplicationFactory();
