@@ -3,12 +3,18 @@
 namespace Shopware\Psh\Config;
 
 use function array_map;
+use function array_merge;
 
 /**
  * Represents the global configuration consisting of multiple environments
  */
 class Config
 {
+    /**
+     * @var EnvironmentResolver
+     */
+    private $resolver;
+
     /**
      * @var string
      */
@@ -33,11 +39,13 @@ class Config
      * @param ConfigEnvironment[] $environments
      */
     public function __construct(
+//        EnvironmentResolver $resolver,
         string $header = null,
         string $defaultEnvironment,
         array $environments,
         array $params
     ) {
+        $this->resolver = new EnvironmentResolver();
         $this->header = $header;
         $this->defaultEnvironment = $defaultEnvironment;
         $this->environments = $environments;
@@ -66,27 +74,64 @@ class Config
 
     public function getTemplates(string $environment = null): array
     {
-        return $this->createResult(
+        return $this->resolver->resolveTemplates($this->createResult(
             [$this->getEnvironment(), 'getTemplates'],
             [$this->getEnvironment($environment), 'getTemplates']
-        );
+        ));
     }
 
     public function getDynamicVariables(string $environment = null): array
     {
-        return $this->createResult(
+        return $this->resolver->resolveVariables($this->createResult(
             [$this->getEnvironment(), 'getDynamicVariables'],
             [$this->getEnvironment($environment), 'getDynamicVariables']
-        );
+        ));
     }
 
     public function getConstants(string $environment = null): array
     {
-        return $this->createResult(
+        return $this->resolver->resolveConstants($this->createResult(
             [$this->getEnvironment(), 'getConstants'],
             [$this->getEnvironment($environment), 'getConstants'],
             [$this, 'getParams']
+        ));
+    }
+
+    public function getAllPlaceholders(string $environment = null): array
+    {
+        return array_merge(
+            $this->getConstants($environment),
+            $this->getDotenvVariables($environment),
+            $this->getDynamicVariables($environment)
         );
+    }
+
+    /**
+     * @return ValueProvider[]
+     */
+    public function getDotenvVariables(string $environment = null): array
+    {
+        $paths = $this->getDotenvPaths($environment);
+
+        return $this->resolver->resolveDotenvVariables($paths);
+    }
+
+    /**
+     * @return RequiredValue[]
+     */
+    public function getRequiredVariables(string $environment = null): array
+    {
+        $requiredValues = $this->createResult(
+            [$this->getEnvironment(), 'getRequiredVariables'],
+            [$this->getEnvironment($environment), 'getRequiredVariables']
+        );
+
+        $result = [];
+        foreach ($requiredValues as $name => $description) {
+            $result[$name] = new RequiredValue($name, $description);
+        }
+
+        return $result;
     }
 
     /**

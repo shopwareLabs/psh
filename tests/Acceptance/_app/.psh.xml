@@ -11,6 +11,9 @@
         <dynamic name="ID">id</dynamic>
         <dynamic name="LL">ls -ahl</dynamic>
         <dotenv>.env</dotenv>
+        <require name="DOTENV" description="The env var is missing"/>
+        <require name="TEST" description="The test var is missing"/>
+        <require name="ID"/>
     </placeholder>
     <environment name="test">
         <path>envpath/</path>

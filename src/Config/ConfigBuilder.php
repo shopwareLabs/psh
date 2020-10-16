@@ -31,6 +31,8 @@ class ConfigBuilder
 
     private $hidden;
 
+    private $currentRequiredVariables;
+
     public function setHeader(string $header = null): ConfigBuilder
     {
         $this->header = $header;
@@ -64,6 +66,9 @@ class ConfigBuilder
         return $this;
     }
 
+    /**
+     * @deprecated only used by yaml builder
+     */
     public function setDotenvPaths(array $dotenvPaths): ConfigBuilder
     {
         $this->currentDotenvPaths = [];
@@ -78,6 +83,13 @@ class ConfigBuilder
     public function setDotenvPath(string $dotenvPath): ConfigBuilder
     {
         $this->currentDotenvPaths[pathinfo($dotenvPath, PATHINFO_BASENAME)] = $dotenvPath;
+
+        return $this;
+    }
+
+    public function setRequirePlaceholder(string $name, string $description = null): ConfigBuilder
+    {
+        $this->currentRequiredVariables[$name] = $description;
 
         return $this;
     }
@@ -139,7 +151,8 @@ class ConfigBuilder
                 $this->currentDynamicVariables,
                 $this->currentConstants,
                 $this->templates,
-                $this->currentDotenvPaths
+                $this->currentDotenvPaths,
+                $this->currentRequiredVariables
             );
         }
 
@@ -149,5 +162,6 @@ class ConfigBuilder
         $this->currentConstants = [];
         $this->templates = [];
         $this->hidden = false;
+        $this->currentRequiredVariables = [];
     }
 }

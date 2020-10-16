@@ -3,6 +3,7 @@
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
 use RuntimeException;
+use Shopware\Psh\Config\ValueProvider;
 use function array_keys;
 use function mb_strtoupper;
 use function mb_substr;

@@ -4,6 +4,7 @@ namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Shopware\Psh\Config\EnvironmentResolver;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
@@ -89,13 +90,12 @@ class ProcessExecutorTest extends TestCase
         $logger = new BlackholeLogger();
 
         $executor = new ProcessExecutor(
-            new ProcessEnvironment([
+            new ProcessEnvironment((new EnvironmentResolver())->resolveConstants([
                 'VAR' => 'value',
-            ], [], [[
+            ]), [], (new EnvironmentResolver())->resolveTemplates([[
                 'source' => __DIR__ . '/_test_read.tpl',
                 'destination' => __DIR__ . '/_test__VAR__.tpl',
-            ],
-            ], []),
+            ]]), []),
             $this->createTemplateEngine(),
             $logger,
             __DIR__

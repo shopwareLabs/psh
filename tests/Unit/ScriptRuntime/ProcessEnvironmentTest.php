@@ -4,10 +4,11 @@ namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Config\DotenvFile;
+use Shopware\Psh\Config\EnvironmentResolver;
+use Shopware\Psh\Config\SimpleValueProvider;
+use Shopware\Psh\Config\Template;
+use Shopware\Psh\Config\ValueProvider;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
-use Shopware\Psh\ScriptRuntime\Execution\SimpleValueProvider;
-use Shopware\Psh\ScriptRuntime\Execution\Template;
-use Shopware\Psh\ScriptRuntime\Execution\ValueProvider;
 use Symfony\Component\Process\Process;
 use function putenv;
 use function trim;
@@ -21,7 +22,7 @@ class ProcessEnvironmentTest extends TestCase
 
     public function test_it_returns_all_passed_constants()
     {
-        $env = new ProcessEnvironment(['FOO' => 'BAR'], [], [], []);
+        $env = new ProcessEnvironment((new EnvironmentResolver())->resolveConstants(['FOO' => 'BAR']), [], [], []);
         $this->assertEquals(['FOO' => new SimpleValueProvider('BAR')], $env->getAllValues());
     }
 
@@ -34,10 +35,10 @@ class ProcessEnvironmentTest extends TestCase
 
     public function test_it_resolves_variables()
     {
-        $env = new ProcessEnvironment([], [
+        $env = new ProcessEnvironment([], (new EnvironmentResolver())->resolveVariables([
             'FOO' => 'ls',
             'BAR' => 'echo "HEY"',
-        ], [], []);
+        ]), [], []);
 
         $resolvedValues = $env->getAllValues();
 
@@ -51,9 +52,9 @@ class ProcessEnvironmentTest extends TestCase
 
     public function test_it_creates_templates()
     {
-        $env = new ProcessEnvironment([], [], [
+        $env = new ProcessEnvironment([], [], (new EnvironmentResolver())->resolveTemplates([
             ['source' => __DIR__ . '_foo.tpl', 'destination' => 'bar.txt'],
-        ], []);
+        ]), []);
 
         $templates = $env->getTemplates();
 
@@ -64,18 +65,18 @@ class ProcessEnvironmentTest extends TestCase
     public function test_dotenv_can_be_overwritten_by_existing_env_vars()
     {
         putenv('FOO=baz');
-        $env = new ProcessEnvironment([], [], [], [
+        $env = new ProcessEnvironment([], [], [], (new EnvironmentResolver())->resolveDotenvVariables([
             new DotenvFile(__DIR__ . '/_dotenv/simple.env'),
-        ]);
+        ]));
 
         $this->assertSame('baz', $env->getAllValues()['FOO']->getValue());
     }
 
     public function test_dotenv_file_variables()
     {
-        $env = new ProcessEnvironment([], [], [], [
+        $env = new ProcessEnvironment([], [], [], (new EnvironmentResolver())->resolveDotenvVariables([
             new DotenvFile(__DIR__ . '/_dotenv/simple.env'),
-        ]);
+        ]));
 
         $this->assertCount(1, $env->getAllValues());
         $this->assertSame('bar', $env->getAllValues()['FOO']->getValue());

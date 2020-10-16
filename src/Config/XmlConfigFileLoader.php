@@ -16,25 +16,27 @@ use function pathinfo;
  */
 class XmlConfigFileLoader extends ConfigFileLoader
 {
-    const NODE_HEADER = 'header';
+    private const NODE_HEADER = 'header';
 
-    const NODE_PLACEHOLDER = 'placeholder';
+    private const NODE_PLACEHOLDER = 'placeholder';
 
-    const NODE_PLACEHOLDER_DYNAMIC = 'dynamic';
+    private const NODE_PLACEHOLDER_DYNAMIC = 'dynamic';
 
-    const NODE_PLACEHOLDER_CONST = 'const';
+    private const NODE_PLACEHOLDER_CONST = 'const';
 
-    const NODE_PLACEHOLDER_DOTENV = 'dotenv';
+    private const NODE_PLACEHOLDER_DOTENV = 'dotenv';
 
-    const NODE_PATH = 'path';
+    private const NODE_PLACEHOLDER_REQUIRE = 'require';
 
-    const NODE_ENVIRONMENT = 'environment';
+    private const NODE_PATH = 'path';
 
-    const NODE_TEMPLATE = 'template';
+    private const NODE_ENVIRONMENT = 'environment';
 
-    const NODE_TEMPLATE_SOURCE = 'source';
+    private const NODE_TEMPLATE = 'template';
 
-    const NODE_TEMPLATE_DESTINATION = 'destination';
+    private const NODE_TEMPLATE_SOURCE = 'source';
+
+    private const NODE_TEMPLATE_DESTINATION = 'destination';
 
     /**
      * @var ConfigBuilder
@@ -169,6 +171,10 @@ class XmlConfigFileLoader extends ConfigFileLoader
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DOTENV, $placeholder) as $dotenv) {
             $this->configBuilder->setDotenvPath($this->fixPath($this->applicationRootDirectory, $dotenv->nodeValue, $file));
+        }
+
+        foreach ($this->extractNodes(self::NODE_PLACEHOLDER_REQUIRE, $placeholder) as $require) {
+            $this->configBuilder->setRequirePlaceholder($require->getAttribute('name'), $require->getAttribute('description'));
         }
     }
 

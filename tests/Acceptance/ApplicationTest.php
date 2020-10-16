@@ -4,6 +4,8 @@ namespace Shopware\Psh\Test\Acceptance;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Application\Application;
+use Shopware\Psh\Application\ExitSignal;
+use function file_get_contents;
 use function unlink;
 
 class ApplicationTest extends TestCase
@@ -15,6 +17,7 @@ class ApplicationTest extends TestCase
     public function clearCreatedResults()
     {
         @unlink(__DIR__ . '/_app/result.txt');
+        @unlink(__DIR__ . '/_app_missing_requirement/result.txt');
     }
 
     public function test_application_listing()
@@ -99,7 +102,7 @@ class ApplicationTest extends TestCase
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'error']);
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
         $this->assertNotEquals(0, $exitCode);
     }
 
@@ -125,7 +128,7 @@ class ApplicationTest extends TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'error,test:env']);
 
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
         $this->assertStringContainsString('Using .psh.xml', MockWriter::$content);
         $this->assertStringNotContainsString(' echo "test"', MockWriter::$content);
         $this->assertStringNotContainsString('All commands successfully executed!', MockWriter::$content);
@@ -138,7 +141,7 @@ class ApplicationTest extends TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run([]);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
         $this->assertStringContainsString('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
         $this->assertStringContainsString('override', MockWriter::$content);
         $this->assertStringContainsString('override-app', MockWriter::$content);
@@ -150,7 +153,7 @@ class ApplicationTest extends TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'override-app', '--external_param', 'foo-content']);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
         $this->assertStringContainsString('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
         $this->assertStringContainsString('override', MockWriter::$content);
         $this->assertStringContainsString('override-app', MockWriter::$content);
@@ -164,7 +167,7 @@ class ApplicationTest extends TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['']);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
 
         $this->assertStringContainsString('Using .psh.xml', MockWriter::$content);
         $this->assertStringContainsString('default:', MockWriter::$content);
@@ -177,7 +180,7 @@ class ApplicationTest extends TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'bash_autocompletion_dump']);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
 
         $this->assertStringNotContainsString('Using .psh.xml', MockWriter::$content);
         $this->assertStringContainsString('error simple test:env test:env2', MockWriter::$content);
@@ -189,7 +192,7 @@ class ApplicationTest extends TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'sümple']);
 
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
 
         $this->assertStringContainsString('Using .psh.xml', MockWriter::$content);
         $this->assertStringContainsString('Have you been looking for this?', MockWriter::$content);
@@ -203,7 +206,7 @@ class ApplicationTest extends TestCase
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'pkdi']);
 
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
 
         $this->assertStringContainsString('Using .psh.xml', MockWriter::$content);
         $this->assertStringContainsString('Script with name pkdi not found', MockWriter::$content);
@@ -227,7 +230,35 @@ class ApplicationTest extends TestCase
         $exitCode = $application->run(['', 'simple']);
 
         $this->assertStringContainsString('Unable to find a file referenced by "templates/testa.tpl', MockWriter::$content);
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
+    }
+
+    public function test_it_exits_early_without_all_requirements_met()
+    {
+        $application = new Application(__DIR__ . '/_app_missing_requirement');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'simple']);
+
+        $this->assertFileNotExists(__DIR__ . '/_app_missing_requirement/result.txt');
+
+        $this->assertStringContainsString('- Missing required const or var named FOO (needs_foo)', MockWriter::$content);
+        $this->assertStringContainsString('- Missing required const or var named BAR', MockWriter::$content);
+        $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
+    }
+
+    public function test_requirements_can_be_overwritten_by_param()
+    {
+        $application = new Application(__DIR__ . '/_app_missing_requirement');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'simple', '--foo=foho', '--bar=bahar']);
+
+        $this->assertFileExists(__DIR__ . '/_app_missing_requirement/result.txt');
+        $this->assertSame('test bahar', file_get_contents(__DIR__ . '/_app_missing_requirement/result.txt'));
+
+        $this->assertStringContainsString('echo "foho"', MockWriter::$content);
+        $this->assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
     }
 
     public function test_it_throws_exception_InvalidParameterException_and_it_is_catched()
@@ -238,7 +269,7 @@ class ApplicationTest extends TestCase
         $exitCode = $application->run(['', 'simple', '-param']);
 
         $this->assertStringContainsString('Unable to parse parameter -param', MockWriter::$content);
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 
     private function assertNoErrorExitCode(int $exitCode)

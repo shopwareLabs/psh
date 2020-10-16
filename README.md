@@ -27,6 +27,8 @@ Table of contents
     * [Placeholders](#placeholders)
     * [Constants](#constants)
     * [Variables](#variables)
+    * [Dotenv](#dotenv)
+    * [Require](#require)
     * [Templates](#templates)
     * [Environments](#environments)
     * [Headers](#headers)
@@ -230,6 +232,18 @@ dev-ops/common/actions/test.sh
 
 echo __TEST__
 ```
+
+#### Require
+
+It may be necessary to require a placeholder to be set, but can't set right away. One such example might be a system dependent path. PSH allows you to communicate this to the user by adding this:
+
+```xml
+<placeholder>
+    <require name="FOO" description="Foo needs to be a reference to bar"/>
+</placeholder>
+```
+
+Now unless foo is set, it is not possible to execute any psh script. The description is optional and can be omitted.
 
 #### Templates
 

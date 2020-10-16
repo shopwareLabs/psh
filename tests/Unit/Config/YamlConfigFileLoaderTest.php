@@ -9,8 +9,10 @@ use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigLoader;
 use Shopware\Psh\Config\ScriptsPath;
+use Shopware\Psh\Config\Template;
 use Shopware\Psh\Config\YamlConfigFileLoader;
 use Symfony\Component\Yaml\Parser;
+use function count;
 
 class YamlConfigFileLoaderTest extends TestCase
 {
@@ -60,7 +62,7 @@ class YamlConfigFileLoaderTest extends TestCase
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
-        $this->assertEquals(['filesystem' => 'ls -al'], $config->getDynamicVariables());
+        $this->assertVariables($config, ['filesystem' => 'ls -al']);
     }
 
     public function test_it_works_if_no_dynamics_are_present()
@@ -79,7 +81,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $loader = $this->createConfigLoader($yamlMock->reveal());
 
         $config = $loader->load(__DIR__ . '/_test.txt', []);
-        $this->assertEquals(['FOO' => 'bar'], $config->getConstants());
+        $this->assertConstants($config, ['FOO' => 'bar']);
     }
 
     public function test_it_works_if_no_consts_are_present()
@@ -178,13 +180,13 @@ class YamlConfigFileLoaderTest extends TestCase
 
         $this->assertInstanceOf(Config::class, $config);
 
-        $this->assertEquals([
+        $this->assertVariables($config, [
             'filesystem' => 'ls -al',
-        ], $config->getDynamicVariables());
+        ]);
 
-        $this->assertEquals([
+        $this->assertConstants($config, [
             'FOO' => 'bar',
-        ], $config->getConstants());
+        ]);
 
         $scripts = $config->getAllScriptsPaths();
         $this->assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
@@ -221,13 +223,13 @@ class YamlConfigFileLoaderTest extends TestCase
 
         $this->assertInstanceOf(Config::class, $config);
 
-        $this->assertEquals([
+        $this->assertVariables($config, [
             'filesystem' => 'ls -al',
-        ], $config->getDynamicVariables('namespace'));
+        ], 'namespace');
 
-        $this->assertEquals([
+        $this->assertConstants($config, [
             'FOO' => 'bar',
-        ], $config->getConstants('namespace'));
+        ], 'namespace');
 
         $scripts = $config->getAllScriptsPaths();
         $this->assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
@@ -270,15 +272,15 @@ class YamlConfigFileLoaderTest extends TestCase
 
         $this->assertInstanceOf(Config::class, $config);
 
-        $this->assertEquals([
+        $this->assertVariables($config, [
             'filesystem' => 'ls -al',
             'booh' => 'bar',
-        ], $config->getDynamicVariables('namespace'));
+        ], 'namespace');
 
-        $this->assertEquals([
+        $this->assertConstants($config, [
             'FOO' => 'bar',
             'booh' => 'hah',
-        ], $config->getConstants('namespace'));
+        ], 'namespace');
 
         $scripts = $config->getAllScriptsPaths();
         $this->assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
@@ -305,7 +307,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertInstanceOf(Config::class, $config);
 
         $this->assertEquals([
-            ['source' => __DIR__ . '/_the_template.tpl', 'destination' => __DIR__ . '/the_destination.txt'],
+            new Template(__DIR__ . '/_the_template.tpl', __DIR__ . '/the_destination.txt'),
         ], $config->getTemplates());
     }
 
@@ -365,5 +367,25 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $method->invoke($loader, __DIR__, 'absoluteOrRelativePath', 'baseFile');
+    }
+
+    private function assertConstants(Config $config, array $keyValues, string $environment = null): void
+    {
+        foreach ($keyValues as $key => $value) {
+            $this->assertArrayHasKey($key, $config->getConstants($environment));
+            $this->assertSame($value, $config->getConstants($environment)[$key]->getValue());
+        }
+
+        $this->assertCount(count($keyValues), $config->getConstants($environment));
+    }
+
+    private function assertVariables(Config $config, array $keyValues, string $environment = null): void
+    {
+        foreach ($keyValues as $key => $value) {
+            $this->assertArrayHasKey($key, $config->getDynamicVariables($environment));
+            $this->assertSame($value, $config->getDynamicVariables($environment)[$key]->getCommand());
+        }
+
+        $this->assertCount(count($keyValues), $config->getDynamicVariables($environment));
     }
 }

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Shopware\Psh\ScriptRuntime\Execution;
+namespace Shopware\Psh\Config;
 
 /**
  * represents a constant environment variable

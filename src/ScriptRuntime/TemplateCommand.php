@@ -2,7 +2,7 @@
 
 namespace Shopware\Psh\ScriptRuntime;
 
-use Shopware\Psh\ScriptRuntime\Execution\Template;
+use Shopware\Psh\Config\Template;
 
 class TemplateCommand implements Command
 {

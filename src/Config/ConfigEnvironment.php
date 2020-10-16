@@ -37,13 +37,19 @@ class ConfigEnvironment
      */
     private $dotenvPaths;
 
+    /**
+     * @var array
+     */
+    private $requiredVariables;
+
     public function __construct(
         bool $hidden,
         array $commandPaths = [],
         array $dynamicVariables = [],
         array $constants = [],
         array $templates = [],
-        array $dotenvPaths = []
+        array $dotenvPaths = [],
+        array $requiredVariables = []
     ) {
         $this->hidden = $hidden;
         $this->commandPaths = $commandPaths;
@@ -51,6 +57,7 @@ class ConfigEnvironment
         $this->constants = $constants;
         $this->templates = $templates;
         $this->dotenvPaths = $dotenvPaths;
+        $this->requiredVariables = $requiredVariables;
     }
 
     public function isHidden(): bool
@@ -81,5 +88,10 @@ class ConfigEnvironment
     public function getDotenvPaths(): array
     {
         return $this->dotenvPaths;
+    }
+
+    public function getRequiredVariables(): array
+    {
+        return $this->requiredVariables;
     }
 }

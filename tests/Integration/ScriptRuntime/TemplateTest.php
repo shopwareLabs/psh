@@ -3,7 +3,7 @@
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Psh\ScriptRuntime\Execution\Template;
+use Shopware\Psh\Config\Template;
 use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValidException;
 use function unlink;
 

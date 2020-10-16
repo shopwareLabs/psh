@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Shopware\Psh\ScriptRuntime\Execution;
+namespace Shopware\Psh\Config;
 
 use Symfony\Component\Process\Process;
 use function trim;
@@ -28,5 +28,10 @@ class ProcessValueProvider implements ValueProvider
         $this->process->mustRun();
 
         return trim($this->process->getOutput());
+    }
+
+    public function getCommand(): string
+    {
+        return $this->process->getCommandLine();
     }
 }

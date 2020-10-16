@@ -80,7 +80,7 @@ class ApplicationFactory
                 $config->getConstants($script->getEnvironment()),
                 $config->getDynamicVariables($script->getEnvironment()),
                 $config->getTemplates($script->getEnvironment()),
-                $config->getDotenvPaths($script->getEnvironment())
+                $config->getDotenvVariables($script->getEnvironment())
             ),
             new TemplateEngine(),
             $logger,

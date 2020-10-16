@@ -4,7 +4,7 @@ namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Shopware\Psh\ScriptRuntime\Execution\SimpleValueProvider;
+use Shopware\Psh\Config\SimpleValueProvider;
 use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
 use function preg_match_all;
 

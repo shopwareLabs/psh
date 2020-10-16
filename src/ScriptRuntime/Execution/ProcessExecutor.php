@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
+use Shopware\Psh\Config\Template;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\ScriptRuntime\Command;

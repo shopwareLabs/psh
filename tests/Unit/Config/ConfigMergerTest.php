@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigEnvironment;
 use Shopware\Psh\Config\ConfigMerger;
+use Shopware\Psh\Config\SimpleValueProvider;
 
 class ConfigMergerTest extends TestCase
 {
@@ -79,7 +80,8 @@ class ConfigMergerTest extends TestCase
 
         $this->assertArrayHasKey(self::DEFAULT_ENV, $mergedConfig->getEnvironments());
         $this->assertArrayHasKey('newEnv', $mergedConfig->getEnvironments());
-        $this->assertEquals(['foo' => 'bar'], $mergedConfig->getConstants());
+        $this->assertArrayHasKey('foo', $mergedConfig->getConstants());
+        $this->assertContainsOnlyInstancesOf(SimpleValueProvider::class, $mergedConfig->getConstants());
     }
 
     public function test_it_should_use_original_environments()
@@ -124,9 +126,8 @@ class ConfigMergerTest extends TestCase
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
 
-        $this->assertEquals([
-            'DYNAMIC_VAR' => 'dynamic value override',
-        ], $result->getDynamicVariables(self::DEFAULT_ENV));
+        $this->assertArrayHasKey('DYNAMIC_VAR', $result->getDynamicVariables(self::DEFAULT_ENV));
+        $this->assertSame('dynamic value override', $result->getDynamicVariables(self::DEFAULT_ENV)['DYNAMIC_VAR']->getCommand());
     }
 
     public function test_it_should_add_dynamic_values()
@@ -141,11 +142,16 @@ class ConfigMergerTest extends TestCase
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
 
-        $this->assertEquals([
-            'DYNAMIC_VAR' => 'dynamic value override',
-            'DYNAMIC_VAR2' => 'dynamic value 2',
-            'DYNAMIC_OVERRIDE_VAR' => 'dynamic override value',
-        ], $result->getDynamicVariables(self::DEFAULT_ENV));
+        $this->assertCount(3, $result->getDynamicVariables(self::DEFAULT_ENV));
+
+        $this->assertArrayHasKey('DYNAMIC_VAR', $result->getDynamicVariables(self::DEFAULT_ENV));
+        $this->assertSame('dynamic value override', $result->getDynamicVariables(self::DEFAULT_ENV)['DYNAMIC_VAR']->getCommand());
+
+        $this->assertArrayHasKey('DYNAMIC_VAR2', $result->getDynamicVariables(self::DEFAULT_ENV));
+        $this->assertSame('dynamic value 2', $result->getDynamicVariables(self::DEFAULT_ENV)['DYNAMIC_VAR2']->getCommand());
+
+        $this->assertArrayHasKey('DYNAMIC_OVERRIDE_VAR', $result->getDynamicVariables(self::DEFAULT_ENV));
+        $this->assertSame('dynamic override value', $result->getDynamicVariables(self::DEFAULT_ENV)['DYNAMIC_OVERRIDE_VAR']->getCommand());
     }
 
     public function test_it_should_add_and_override_constant_values()
@@ -170,11 +176,16 @@ class ConfigMergerTest extends TestCase
         $merger = new ConfigMerger();
         $result = $merger->merge($config, $override);
 
-        $this->assertEquals([
-            'CONST' => 'override constant value',
-            'ORIGINAL_CONST' => 'original constant value',
-            'ADDED_CONST' => 'override constant',
-        ], $result->getConstants(self::DEFAULT_ENV));
+        $this->assertCount(3, $result->getConstants(self::DEFAULT_ENV));
+
+        $this->assertArrayHasKey('CONST', $result->getConstants(self::DEFAULT_ENV));
+        $this->assertSame('override constant value', $result->getConstants(self::DEFAULT_ENV)['CONST']->getValue());
+
+        $this->assertArrayHasKey('ORIGINAL_CONST', $result->getConstants(self::DEFAULT_ENV));
+        $this->assertSame('original constant value', $result->getConstants(self::DEFAULT_ENV)['ORIGINAL_CONST']->getValue());
+
+        $this->assertArrayHasKey('ADDED_CONST', $result->getConstants(self::DEFAULT_ENV));
+        $this->assertSame('override constant', $result->getConstants(self::DEFAULT_ENV)['ADDED_CONST']->getValue());
     }
 
     public function test_it_should_override_templates()

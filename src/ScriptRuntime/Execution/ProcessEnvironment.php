@@ -2,15 +2,11 @@
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
-use Dotenv\Dotenv;
-use Dotenv\Repository\Adapter\MultiReader;
-use Dotenv\Repository\Adapter\PutenvAdapter;
-use Dotenv\Repository\Adapter\ServerConstAdapter;
-use Shopware\Psh\Config\DotenvFile;
+use Shopware\Psh\Config\Template;
+use Shopware\Psh\Config\ValueProvider;
 use Symfony\Component\Process\Process;
-use function array_keys;
+use Webmozart\Assert\Assert;
 use function array_merge;
-use function pathinfo;
 
 /**
  * Create representation of the current environment variables and constants
@@ -33,78 +29,27 @@ class ProcessEnvironment
     private $templates;
 
     /**
-     * @var array
+     * @var ValueProvider[]
      */
     private $dotenvVariables;
 
     /**
-     * @param DotenvFile[] $dotenvPaths
+     * @param ValueProvider[] $constants
+     * @param ValueProvider[] $variables
+     * @param Template[] $templates
+     * @param ValueProvider[] $dotenvVars
      */
-    public function __construct(array $constants, array $variables, array $templates, array $dotenvPaths)
+    public function __construct(array $constants, array $variables, array $templates, array $dotenvVars)
     {
-        $this->constants = $this->initializeConstants($constants);
-        $this->variables = $this->initializeVariables($variables);
-        $this->templates = $this->initializeTemplates($templates);
-        $this->dotenvVariables = $this->initializeDotenvVariables($dotenvPaths);
-    }
+        Assert::allIsInstanceOf($constants, ValueProvider::class);
+        Assert::allIsInstanceOf($variables, ValueProvider::class);
+        Assert::allIsInstanceOf($dotenvVars, ValueProvider::class);
+        Assert::allIsInstanceOf($templates, Template::class);
 
-    /**
-     * @return ValueProvider[]
-     */
-    private function initializeConstants(array $constants): array
-    {
-        $resolvedValues = [];
-        foreach ($constants as $name => $value) {
-            $resolvedValues[$name] = new SimpleValueProvider((string) $value);
-        }
-
-        return $resolvedValues;
-    }
-
-    /**
-     * @return ValueProvider[]
-     */
-    private function initializeVariables(array $variables): array
-    {
-        $resolvedVariables = [];
-        foreach ($variables as $name => $shellCommand) {
-            $process = $this->createProcess($shellCommand);
-            $resolvedVariables[$name] = new ProcessValueProvider($process);
-        }
-
-        return $resolvedVariables;
-    }
-
-    /**
-     * @param DotenvFile[] $dotenvPaths
-     * @return ValueProvider[]
-     */
-    private function initializeDotenvVariables(array $dotenvPaths): array
-    {
-        $variables = [];
-
-        foreach ($dotenvPaths as $dotenvPath) {
-            $dotenvVariables = $this->loadDotenvVariables($dotenvPath);
-
-            foreach ($dotenvVariables as $variableKey => $variableValue) {
-                $variables[$variableKey] = new SimpleValueProvider($variableValue);
-            }
-        }
-
-        return $variables;
-    }
-
-    /**
-     * @return Template[]
-     */
-    private function initializeTemplates(array $templates): array
-    {
-        $resolvedVariables = [];
-        foreach ($templates as $template) {
-            $resolvedVariables[] = new Template($template['source'], $template['destination']);
-        }
-
-        return $resolvedVariables;
+        $this->constants = $constants;
+        $this->variables = $variables;
+        $this->templates = $templates;
+        $this->dotenvVariables = $dotenvVars;
     }
 
     /**
@@ -130,48 +75,5 @@ class ProcessEnvironment
     public function createProcess(string $shellCommand): Process
     {
         return new Process($shellCommand);
-    }
-
-    private function loadDotenvVariables(DotenvFile $dotenvPath): array
-    {
-        $fileData = $this->loadEnvVarsFromDotenvFile($dotenvPath);
-
-        return $this->diffDotenvVarsWithCurrentApplicationEnv($fileData);
-    }
-
-    private function loadEnvVarsFromDotenvFile(DotenvFile $dotenvPath): array
-    {
-        $filePath = $dotenvPath->getPath();
-
-        $dotenv = Dotenv::createArrayBacked(
-            pathinfo($filePath, \PATHINFO_DIRNAME),
-            pathinfo($filePath, \PATHINFO_BASENAME)
-        );
-
-        return $dotenv->load();
-    }
-
-    private function diffDotenvVarsWithCurrentApplicationEnv(array $fileData): array
-    {
-        $fileKeys = array_keys($fileData);
-        $result = [];
-
-        $reader = new MultiReader([
-            PutenvAdapter::create()->get(),
-            ServerConstAdapter::create()->get(),
-        ]);
-
-        foreach ($fileKeys as $key) {
-            $option = $reader->read($key);
-
-            if ($option->isEmpty()) {
-                $result[$key] = $fileData[$key];
-                continue;
-            }
-
-            $result[$key] = $option->get();
-        }
-
-        return $result;
     }
 }
