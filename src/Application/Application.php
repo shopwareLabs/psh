@@ -81,7 +81,7 @@ class Application
     /**
      * @param Script[] $scripts
      */
-    public function showListing(array $scripts)
+    public function showListing(array $scripts): void
     {
         $this->cliMate->green()->bold('Available commands:')->br();
 
@@ -140,7 +140,7 @@ class Application
     /**
      * @param $string
      */
-    public function notifySuccess($string)
+    public function notifySuccess(string $string): void
     {
         $this->cliMate->bold()->green($string);
     }
@@ -148,7 +148,7 @@ class Application
     /**
      * @param $string
      */
-    public function notifyError($string)
+    public function notifyError(string $string): void
     {
         $this->cliMate->bold()->red($string);
     }
@@ -156,7 +156,7 @@ class Application
     /**
      * @param $config
      */
-    protected function printHeader(Config $config)
+    protected function printHeader(Config $config): void
     {
         $this->cliMate->green()->bold()->out("\n###################");
 
@@ -165,7 +165,7 @@ class Application
         }
     }
 
-    protected function printConfigFiles(array $configFiles)
+    protected function printConfigFiles(array $configFiles): void
     {
         $countConfigFiles = count($configFiles);
         for ($i = 0; $i < $countConfigFiles; $i++) {
@@ -193,7 +193,7 @@ class Application
         return $maxScriptNameLength + self::MIN_PADDING_SIZE;
     }
 
-    private function showAutocompleteListing(Config $config)
+    private function showAutocompleteListing(Config $config): void
     {
         $scriptFinder = $this->applicationFactory
             ->createScriptFinder($config);
@@ -207,7 +207,7 @@ class Application
         $this->cliMate->out(implode(' ', $commands));
     }
 
-    private function showScriptNotFoundListing(ScriptNotFoundException $ex, array $scriptNames, ScriptFinder $scriptFinder)
+    private function showScriptNotFoundListing(ScriptNotFoundException $ex, array $scriptNames, ScriptFinder $scriptFinder): void
     {
         $this->notifyError("Script with name {$ex->getScriptName()} not found\n");
 
@@ -231,7 +231,7 @@ class Application
         $this->printConfigFiles($configFiles);
     }
 
-    private function validateConfig(Config $config, string $environment = null)
+    private function validateConfig(Config $config, string $environment = null): void
     {
         $allPlaceholders = $config->getAllPlaceholders($environment);
 

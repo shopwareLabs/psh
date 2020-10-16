@@ -9,7 +9,7 @@ use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptNotSupportedByParser;
 
 class ScriptLoaderTest extends TestCase
 {
-    public function test_no_parser_equals_no_support()
+    public function test_no_parser_equals_no_support(): void
     {
         $loader = new ScriptLoader();
 

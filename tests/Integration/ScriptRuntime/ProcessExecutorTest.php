@@ -45,7 +45,7 @@ class ProcessExecutorTest extends TestCase
         }
     }
 
-    public function test_environment_and_export_work()
+    public function test_environment_and_export_work(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'environment.sh');
         $commands = $this->loadCommands($script);
@@ -64,7 +64,7 @@ class ProcessExecutorTest extends TestCase
         $this->assertEquals('', trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
     }
 
-    public function test_root_dir_is_application_directory()
+    public function test_root_dir_is_application_directory(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'root-dir.sh');
         $commands = $this->loadCommands($script);
@@ -83,7 +83,7 @@ class ProcessExecutorTest extends TestCase
         $this->assertEquals(__DIR__, trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
     }
 
-    public function test_template_engine_works_with_template_destinations()
+    public function test_template_engine_works_with_template_destinations(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'root-dir.sh');
         $commands = $this->loadCommands($script);
@@ -106,7 +106,7 @@ class ProcessExecutorTest extends TestCase
         $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
     }
 
-    public function test_executor_recognises_template_commands()
+    public function test_executor_recognises_template_commands(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'template.sh');
         $commands = $this->loadCommands($script);
@@ -124,7 +124,7 @@ class ProcessExecutorTest extends TestCase
         $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
     }
 
-    public function test_non_executable_bash_commands_throw()
+    public function test_non_executable_bash_commands_throw(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'bash-non-executable.sh');
 
@@ -132,7 +132,7 @@ class ProcessExecutorTest extends TestCase
         $this->loadCommands($script);
     }
 
-    public function test_non_writable_bash_commands_throw()
+    public function test_non_writable_bash_commands_throw(): void
     {
         chmod(__DIR__ . '/_non_writable', 0555);
         $script = $this->createScript(__DIR__ . '/_non_writable', 'bash.sh');
@@ -141,7 +141,7 @@ class ProcessExecutorTest extends TestCase
         $this->loadCommands($script);
     }
 
-    public function test_executor_recognises_bash_commands()
+    public function test_executor_recognises_bash_commands(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'bash.sh');
         $commands = $this->loadCommands($script);
@@ -164,7 +164,7 @@ class ProcessExecutorTest extends TestCase
         $this->assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
     }
 
-    public function test_executor_recognises_secure_bash_commands()
+    public function test_executor_recognises_secure_bash_commands(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'better_bash.sh');
         $commands = $this->loadCommands($script);
@@ -188,7 +188,7 @@ class ProcessExecutorTest extends TestCase
         $this->assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
     }
 
-    public function test_executor_recognises_defered_commands()
+    public function test_executor_recognises_defered_commands(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'deferred.sh');
         $commands = $this->loadCommands($script);
@@ -228,7 +228,7 @@ class ProcessExecutorTest extends TestCase
         $this->assertEquals(["Done\n", "Done\n", "Done\n", "Done\n"], $logger->output);
     }
 
-    public function test_deferred_commands_get_executed_even_with_error_in_between()
+    public function test_deferred_commands_get_executed_even_with_error_in_between(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'deferred_with_error.sh');
         $commands = $this->loadCommands($script);
@@ -277,7 +277,7 @@ class ProcessExecutorTest extends TestCase
      * @before
      * @after
      */
-    public function removeState()
+    public function removeState(): void
     {
         @unlink(__DIR__ . '/_testvalue.tpl');
     }

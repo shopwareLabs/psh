@@ -20,20 +20,20 @@ class ProcessEnvironmentTest extends TestCase
         putenv('FOO');
     }
 
-    public function test_it_returns_all_passed_constants()
+    public function test_it_returns_all_passed_constants(): void
     {
         $env = new ProcessEnvironment((new EnvironmentResolver())->resolveConstants(['FOO' => 'BAR']), [], [], []);
         $this->assertEquals(['FOO' => new SimpleValueProvider('BAR')], $env->getAllValues());
     }
 
-    public function test_it_creates_processes()
+    public function test_it_creates_processes(): void
     {
         $env = new ProcessEnvironment([], [], [], []);
         $this->assertInstanceOf(Process::class, $env->createProcess('foo'));
         $this->assertEquals('foo', $env->createProcess('foo')->getCommandLine());
     }
 
-    public function test_it_resolves_variables()
+    public function test_it_resolves_variables(): void
     {
         $env = new ProcessEnvironment([], (new EnvironmentResolver())->resolveVariables([
             'FOO' => 'ls',
@@ -50,7 +50,7 @@ class ProcessEnvironmentTest extends TestCase
         }
     }
 
-    public function test_it_creates_templates()
+    public function test_it_creates_templates(): void
     {
         $env = new ProcessEnvironment([], [], (new EnvironmentResolver())->resolveTemplates([
             ['source' => __DIR__ . '_foo.tpl', 'destination' => 'bar.txt'],
@@ -62,7 +62,7 @@ class ProcessEnvironmentTest extends TestCase
         $this->assertCount(1, $templates);
     }
 
-    public function test_dotenv_can_be_overwritten_by_existing_env_vars()
+    public function test_dotenv_can_be_overwritten_by_existing_env_vars(): void
     {
         putenv('FOO=baz');
         $env = new ProcessEnvironment([], [], [], (new EnvironmentResolver())->resolveDotenvVariables([
@@ -72,7 +72,7 @@ class ProcessEnvironmentTest extends TestCase
         $this->assertSame('baz', $env->getAllValues()['FOO']->getValue());
     }
 
-    public function test_dotenv_file_variables()
+    public function test_dotenv_file_variables(): void
     {
         $env = new ProcessEnvironment([], [], [], (new EnvironmentResolver())->resolveDotenvVariables([
             new DotenvFile(__DIR__ . '/_dotenv/simple.env'),

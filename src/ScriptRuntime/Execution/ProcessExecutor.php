@@ -67,7 +67,7 @@ class ProcessExecutor
     /**
      * @param Command[] $commands
      */
-    public function execute(Script $script, array $commands)
+    public function execute(Script $script, array $commands): void
     {
         $this->logger->startScript($script);
 
@@ -84,7 +84,7 @@ class ProcessExecutor
         $this->logger->finishScript($script);
     }
 
-    private function executeCommand(Command $command, int $index, int $totalCount)
+    private function executeCommand(Command $command, int $index, int $totalCount): void
     {
         switch (true) {
             case $command instanceof BashCommand:
@@ -143,7 +143,7 @@ class ProcessExecutor
         }
     }
 
-    private function executeTemplateRendering()
+    private function executeTemplateRendering(): void
     {
         foreach ($this->environment->getTemplates() as $template) {
             $this->renderTemplate($template);
@@ -162,31 +162,28 @@ class ProcessExecutor
         return $parsedCommand;
     }
 
-    private function setProcessDefaults(Process $process, ProcessCommand $command)
+    private function setProcessDefaults(Process $process, ProcessCommand $command): void
     {
         $process->setWorkingDirectory($this->applicationDirectory);
         $process->setTimeout(0);
         $process->setTty($command->isTTy());
     }
 
-    private function runProcess(Process $process)
+    private function runProcess(Process $process): void
     {
-        $process->run(function ($type, $response) {
+        $process->run(function (string $type, string $response): void {
             $this->logger->log(new LogMessage($response, $type === Process::ERR));
         });
     }
 
-    private function testProcessResultValid(Process $process, ProcessCommand $command)
+    private function testProcessResultValid(Process $process, ProcessCommand $command): void
     {
         if (!$this->isProcessResultValid($process, $command)) {
             throw new ExecutionErrorException('Command exited with Error');
         }
     }
 
-    /**
-     * @param $template
-     */
-    private function renderTemplate(Template $template)
+    private function renderTemplate(Template $template): void
     {
         $renderedTemplateDestination = $this->templateEngine
             ->render($template->getDestination(), $this->environment->getAllValues());
@@ -199,7 +196,7 @@ class ProcessExecutor
         $template->setContents($renderedTemplateContent);
     }
 
-    private function waitForDeferredProcesses()
+    private function waitForDeferredProcesses(): void
     {
         if (count($this->deferredProcesses) === 0) {
             return;
@@ -230,11 +227,11 @@ class ProcessExecutor
         $this->deferredProcesses = [];
     }
 
-    private function deferProcess(string $parsedCommand, DeferredProcessCommand $command, Process $process)
+    private function deferProcess(string $parsedCommand, DeferredProcessCommand $command, Process $process): void
     {
         $deferredProcess = new DeferredProcess($parsedCommand, $command, $process);
 
-        $process->start(function ($type, $response) use ($deferredProcess) {
+        $process->start(function (string $type, string $response) use ($deferredProcess): void {
             $deferredProcess->log(new LogMessage($response, $type === Process::ERR));
         });
 
@@ -246,7 +243,7 @@ class ProcessExecutor
         return $command->isIgnoreError() || $process->isSuccessful();
     }
 
-    private function logWaitStart(WaitCommand $command, int $index, int $totalCount)
+    private function logWaitStart(WaitCommand $command, int $index, int $totalCount): void
     {
         $this->logger->logStart(
             'Waiting',
@@ -258,7 +255,7 @@ class ProcessExecutor
         );
     }
 
-    private function logTemplateStart(TemplateCommand $command, int $index, int $totalCount, Template $template)
+    private function logTemplateStart(TemplateCommand $command, int $index, int $totalCount, Template $template): void
     {
         $this->logger->logStart(
             'Template',
@@ -270,7 +267,7 @@ class ProcessExecutor
         );
     }
 
-    private function logDeferedStart(DeferredProcessCommand $command, int $index, int $totalCount, string $parsedCommand)
+    private function logDeferedStart(DeferredProcessCommand $command, int $index, int $totalCount, string $parsedCommand): void
     {
         $this->logger->logStart(
             'Deferring',
@@ -282,7 +279,7 @@ class ProcessExecutor
         );
     }
 
-    private function logSynchronousProcessStart(ProcessCommand $command, int $index, int $totalCount, string $parsedCommand)
+    private function logSynchronousProcessStart(ProcessCommand $command, int $index, int $totalCount, string $parsedCommand): void
     {
         $this->logger->logStart(
             'Starting',
@@ -294,7 +291,7 @@ class ProcessExecutor
         );
     }
 
-    private function logBashStart(BashCommand $command, int $index, int $totalCount)
+    private function logBashStart(BashCommand $command, int $index, int $totalCount): void
     {
         $this->logger->logStart(
             'Executing',
@@ -306,10 +303,7 @@ class ProcessExecutor
         );
     }
 
-    /**
-     * @param $index
-     */
-    private function logDeferredOutputStart(DeferredProcess $deferredProcess, $index)
+    private function logDeferredOutputStart(DeferredProcess $deferredProcess, int $index): void
     {
         $this->logger->logStart(
             'Output from',

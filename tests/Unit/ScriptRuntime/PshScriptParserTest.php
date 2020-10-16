@@ -19,7 +19,7 @@ use function file_get_contents;
 
 class PshScriptParserTest extends TestCase
 {
-    public function test_it_loads_all_simple_commands_from_a_script()
+    public function test_it_loads_all_simple_commands_from_a_script(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'simple.sh'));
 
@@ -32,7 +32,7 @@ class PshScriptParserTest extends TestCase
         $this->assertFalse($lastCommand->isIgnoreError());
     }
 
-    public function test_it_concatenates_commands()
+    public function test_it_concatenates_commands(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'concatenate.sh'));
 
@@ -45,7 +45,7 @@ class PshScriptParserTest extends TestCase
         $this->assertFalse($lastCommand->isIgnoreError());
     }
 
-    public function test_it_sets_ignore_error()
+    public function test_it_sets_ignore_error(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'ignore_error.sh'));
 
@@ -58,7 +58,7 @@ class PshScriptParserTest extends TestCase
         $this->assertTrue($lastCommand->isIgnoreError());
     }
 
-    public function test_it_sets_tty()
+    public function test_it_sets_tty(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'tty.sh'));
 
@@ -71,7 +71,7 @@ class PshScriptParserTest extends TestCase
         $this->assertTrue($lastCommand->isTty());
     }
 
-    public function test_includes_with_local_commands()
+    public function test_includes_with_local_commands(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'local_include.sh'));
 
@@ -88,13 +88,13 @@ class PshScriptParserTest extends TestCase
         $this->assertFalse($lastCommand->isIgnoreError());
     }
 
-    public function test_include_throws_exception()
+    public function test_include_throws_exception(): void
     {
         $this->expectException(RuntimeException::class);
         $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_include.sh'));
     }
 
-    public function test_action_with_local_commands()
+    public function test_action_with_local_commands(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'local_action.sh'), [
             new ScriptsPath(__DIR__ . '/_scripts/', false),
@@ -114,13 +114,13 @@ class PshScriptParserTest extends TestCase
         $this->assertFalse($lastCommand->isIgnoreError());
     }
 
-    public function test_action_throws_exception()
+    public function test_action_throws_exception(): void
     {
         $this->expectException(RuntimeException::class);
         $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_action.sh'));
     }
 
-    public function test_renders_templates_on_demand()
+    public function test_renders_templates_on_demand(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'template.sh'));
 

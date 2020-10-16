@@ -10,7 +10,7 @@ use Shopware\Psh\Test\Acceptance\MockWriter;
 
 class ClimateLoggerTest extends TestCase
 {
-    public function test_success_output()
+    public function test_success_output(): void
     {
         $cliMateLogger = new ClimateLogger(new CLImate(), new Duration());
         MockWriter::addToClimateLogger($cliMateLogger);
@@ -19,7 +19,7 @@ class ClimateLoggerTest extends TestCase
         self::assertStringContainsString('Executed Successfully', MockWriter::$content);
     }
 
-    public function test_error_output()
+    public function test_error_output(): void
     {
         $cliMateLogger = new ClimateLogger(new CLImate(), new Duration());
         MockWriter::addToClimateLogger($cliMateLogger);
@@ -28,7 +28,7 @@ class ClimateLoggerTest extends TestCase
         self::assertStringContainsString('Executed with failure', MockWriter::$content);
     }
 
-    public function test_warn_output()
+    public function test_warn_output(): void
     {
         $cliMateLogger = new ClimateLogger(new CLImate(), new Duration());
         MockWriter::addToClimateLogger($cliMateLogger);

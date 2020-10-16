@@ -43,7 +43,7 @@ class CommandBuilder
         $this->reset();
     }
 
-    private function reset()
+    private function reset(): void
     {
         $this->ignoreError = false;
         $this->tty = false;
@@ -127,7 +127,7 @@ class CommandBuilder
     }
 
     /**
-     * @return SynchronusProcessCommand[]
+     * @return Command[]
      */
     public function getAll(): array
     {

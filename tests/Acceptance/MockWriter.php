@@ -12,14 +12,13 @@ class MockWriter implements WriterInterface
 
     /**
      * @param  string $content
-     * @return void
      */
-    public function write($content)
+    public function write($content): void
     {
         self::$content .= $content;
     }
 
-    public static function addToApplication(Application $application)
+    public static function addToApplication(Application $application): void
     {
         self::$content = '';
 
@@ -29,7 +28,7 @@ class MockWriter implements WriterInterface
         $application->cliMate->output->defaultTo('out');
     }
 
-    public static function addToClimateLogger(ClimateLogger $climateLogger)
+    public static function addToClimateLogger(ClimateLogger $climateLogger): void
     {
         self::$content = '';
 

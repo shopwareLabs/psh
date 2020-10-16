@@ -34,7 +34,7 @@ class BashScriptParser implements ScriptParser
         return [new BashCommand($script, $warning)];
     }
 
-    private function testScriptFileFitsRequirements(Script $script)
+    private function testScriptFileFitsRequirements(Script $script): void
     {
         if (!is_executable($script->getPath())) {
             throw new RuntimeException('Bash scripts can only be executed if they are executable please execute <bold>chmod +x ' . $script->getPath() . '</bold>');
@@ -45,7 +45,7 @@ class BashScriptParser implements ScriptParser
         }
     }
 
-    private function testContentContainsMarker(string $content)
+    private function testContentContainsMarker(string $content): void
     {
         if (mb_strpos($content, self::TYPE_DIRECT_EXECUTE) === false) {
             throw new ScriptNotSupportedByParser('Marker for execution missing');

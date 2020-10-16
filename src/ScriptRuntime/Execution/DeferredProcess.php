@@ -49,7 +49,7 @@ class DeferredProcess
         return $this->process;
     }
 
-    public function log(LogMessage $logMessage)
+    public function log(LogMessage $logMessage): void
     {
         $this->log[] = $logMessage;
     }

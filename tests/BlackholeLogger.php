@@ -12,26 +12,23 @@ class BlackholeLogger implements Logger
 
     public $output = [];
 
-    public function startScript(Script $script)
+    public function startScript(Script $script): void
     {
     }
 
-    public function finishScript(Script $script)
+    public function finishScript(Script $script): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function logWait()
+    public function logWait(): void
     {
     }
 
-    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max): void
     {
     }
 
-    public function log(LogMessage $logMessage)
+    public function log(LogMessage $logMessage): void
     {
         if ($logMessage->isError()) {
             $this->errors[] = $logMessage->getMessage();
@@ -40,15 +37,15 @@ class BlackholeLogger implements Logger
         }
     }
 
-    public function logSuccess()
+    public function logSuccess(): void
     {
     }
 
-    public function logFailure()
+    public function logFailure(): void
     {
     }
 
-    public function warn(string $message)
+    public function warn(string $message): void
     {
         // TODO: Implement warn() method.
     }

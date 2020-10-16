@@ -9,7 +9,7 @@ use Shopware\Psh\Application\ParameterParser;
 
 class ApplicationFactoryTest extends TestCase
 {
-    public function test_createConfig()
+    public function test_createConfig(): void
     {
         $testParams = [
             './psh',
@@ -29,7 +29,7 @@ class ApplicationFactoryTest extends TestCase
         $this->assertEquals($expectedResult, $parsedParams);
     }
 
-    public function test_createConfig_with_invalid_config_file()
+    public function test_createConfig_with_invalid_config_file(): void
     {
         $testParams = [
             './psh',
@@ -46,7 +46,7 @@ class ApplicationFactoryTest extends TestCase
         );
     }
 
-    public function test_reformatParams_expects_exception()
+    public function test_reformatParams_expects_exception(): void
     {
         $paramParser = new ParameterParser();
 
@@ -54,7 +54,7 @@ class ApplicationFactoryTest extends TestCase
         $paramParser->parseParams(['./psh', 'unit', 'someFalseParameter']);
     }
 
-    public function test_reformatParams_expects_array()
+    public function test_reformatParams_expects_array(): void
     {
         $paramParser = new ParameterParser();
         $testParams = [

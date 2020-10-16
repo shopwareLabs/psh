@@ -12,12 +12,12 @@ class ConfigMergerTest extends TestCase
 {
     const DEFAULT_ENV = 'env';
 
-    public function test_it_can_be_created()
+    public function test_it_can_be_created(): void
     {
         $this->assertInstanceOf(ConfigMerger::class, new ConfigMerger());
     }
 
-    public function test_it_should_return_config()
+    public function test_it_should_return_config(): void
     {
         $config = new Config('my header', '', [], []);
 
@@ -28,7 +28,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals($config, $result);
     }
 
-    public function test_it_should_override_header()
+    public function test_it_should_override_header(): void
     {
         $config = new Config('my header', '', [], []);
         $override = new Config('override', '', [], []);
@@ -40,7 +40,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals('override', $result->getHeader());
     }
 
-    public function test_it_should_override_default_environment()
+    public function test_it_should_override_default_environment(): void
     {
         $config = new Config('', 'default env', [], []);
         $override = new Config('', 'default env override', [], []);
@@ -52,7 +52,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals('default env override', $result->getDefaultEnvironment());
     }
 
-    public function test_it_should_use_original_config_if_override_is_empty()
+    public function test_it_should_use_original_config_if_override_is_empty(): void
     {
         $config = new Config('my header', 'default env', [self::DEFAULT_ENV => new ConfigEnvironment(false)], []);
         $override = new Config('', '', [], []);
@@ -65,7 +65,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals([self::DEFAULT_ENV => new ConfigEnvironment(false)], $result->getEnvironments());
     }
 
-    public function test_it_should_add_environment_from_override()
+    public function test_it_should_add_environment_from_override(): void
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'], [], ['foo' => 'bar'])];
         $newEnv = ['newEnv' => new ConfigEnvironment(false, ['actions'])];
@@ -84,7 +84,7 @@ class ConfigMergerTest extends TestCase
         $this->assertContainsOnlyInstancesOf(SimpleValueProvider::class, $mergedConfig->getConstants());
     }
 
-    public function test_it_should_use_original_environments()
+    public function test_it_should_use_original_environments(): void
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'])];
 
@@ -98,7 +98,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals('actions', $result->getAllScriptsPaths()[0]->getPath());
     }
 
-    public function test_it_should_override_environment_paths()
+    public function test_it_should_override_environment_paths(): void
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'])];
 
@@ -114,7 +114,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals('override/actions', $result->getAllScriptsPaths()[0]->getPath());
     }
 
-    public function test_it_should_override_environment_dynamic_values()
+    public function test_it_should_override_environment_dynamic_values(): void
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [], ['DYNAMIC_VAR' => 'dynamic value'])];
 
@@ -130,7 +130,7 @@ class ConfigMergerTest extends TestCase
         $this->assertSame('dynamic value override', $result->getDynamicVariables(self::DEFAULT_ENV)['DYNAMIC_VAR']->getCommand());
     }
 
-    public function test_it_should_add_dynamic_values()
+    public function test_it_should_add_dynamic_values(): void
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [], ['DYNAMIC_VAR' => 'dynamic value', 'DYNAMIC_VAR2' => 'dynamic value 2'])];
 
@@ -154,7 +154,7 @@ class ConfigMergerTest extends TestCase
         $this->assertSame('dynamic override value', $result->getDynamicVariables(self::DEFAULT_ENV)['DYNAMIC_OVERRIDE_VAR']->getCommand());
     }
 
-    public function test_it_should_add_and_override_constant_values()
+    public function test_it_should_add_and_override_constant_values(): void
     {
         $envs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [
@@ -188,7 +188,7 @@ class ConfigMergerTest extends TestCase
         $this->assertSame('override constant', $result->getConstants(self::DEFAULT_ENV)['ADDED_CONST']->getValue());
     }
 
-    public function test_it_should_override_templates()
+    public function test_it_should_override_templates(): void
     {
         $envs = [
             self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [
@@ -214,7 +214,7 @@ class ConfigMergerTest extends TestCase
         );
     }
 
-    public function test_dotenv_paths()
+    public function test_dotenv_paths(): void
     {
         $configMerge = (new ConfigMerger())->merge(
             new Config('', self::DEFAULT_ENV, [
@@ -240,7 +240,7 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals('overwrite/.c', $paths['.c']->getPath());
     }
 
-    public function test_hidden_override_with_both_false()
+    public function test_hidden_override_with_both_false(): void
     {
         $configMerge = (new ConfigMerger())->merge(
             new Config('', self::DEFAULT_ENV, [
@@ -254,7 +254,7 @@ class ConfigMergerTest extends TestCase
         $this->assertFalse($configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->isHidden());
     }
 
-    public function test_hidden_override_with_hidden_base()
+    public function test_hidden_override_with_hidden_base(): void
     {
         $configMerge = (new ConfigMerger())->merge(
             new Config('', self::DEFAULT_ENV, [
@@ -268,7 +268,7 @@ class ConfigMergerTest extends TestCase
         $this->assertTrue($configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->isHidden());
     }
 
-    public function test_hidden_override_with_hidden_override()
+    public function test_hidden_override_with_hidden_override(): void
     {
         $configMerge = (new ConfigMerger())->merge(
             new Config('', self::DEFAULT_ENV, [

@@ -142,7 +142,7 @@ class ConfigBuilder
         return new Config($this->header, self::DEFAULT_ENV, $this->environments, $params);
     }
 
-    private function reset()
+    private function reset(): void
     {
         if ($this->currentEnvironment) {
             $this->environments[$this->currentEnvironment] = new ConfigEnvironment(

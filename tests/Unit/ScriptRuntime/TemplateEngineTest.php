@@ -19,7 +19,7 @@ class TemplateEngineTest extends TestCase
         'curl http://__APP_HOST____APP_PATH__' => 2,
     ];
 
-    public function test_regex_matches_fixtures()
+    public function test_regex_matches_fixtures(): void
     {
         foreach ($this->fixtures as $fixture => $expectedOccurrences) {
             preg_match_all(TemplateEngine::REGEX, $fixture, $matches);
@@ -27,14 +27,14 @@ class TemplateEngineTest extends TestCase
         }
     }
 
-    public function test_it_renders_successfully_with_no_placeholders()
+    public function test_it_renders_successfully_with_no_placeholders(): void
     {
         $engine = new TemplateEngine();
         $this->assertEquals('foo', $engine->render('foo', []));
         $this->assertEquals('foo', $engine->render('foo', ['BAR' => new SimpleValueProvider('baz')]));
     }
 
-    public function test_it_replaces_a_value()
+    public function test_it_replaces_a_value(): void
     {
         $engine = new TemplateEngine();
         $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => new SimpleValueProvider('baz')]));
@@ -50,7 +50,7 @@ class TemplateEngineTest extends TestCase
         $this->assertEquals('foo __FO-BAR__ foo', $engine->render('foo __FO-BAR__(sic!) foo', ['FO-BAR' => new SimpleValueProvider('baz')]));
     }
 
-    public function test_values_can_be_set_case_insensitive()
+    public function test_values_can_be_set_case_insensitive(): void
     {
         $engine = new TemplateEngine();
         $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['BAR' => new SimpleValueProvider('baz')]));
@@ -60,7 +60,7 @@ class TemplateEngineTest extends TestCase
         $this->assertEquals('foo baz', $engine->render('foo __BAR__', ['bAr' => new SimpleValueProvider('baz')]));
     }
 
-    public function test_it_throw_exceptions_for_missing_values()
+    public function test_it_throw_exceptions_for_missing_values(): void
     {
         $engine = new TemplateEngine();
 
@@ -68,7 +68,7 @@ class TemplateEngineTest extends TestCase
         $engine->render('foo __BAR__, __BUZ__', ['BAR' => new SimpleValueProvider('baz')]);
     }
 
-    public function test_it_replaces_multiple_values()
+    public function test_it_replaces_multiple_values(): void
     {
         $engine = new TemplateEngine();
 
@@ -85,7 +85,7 @@ class TemplateEngineTest extends TestCase
         );
     }
 
-    public function test_values_can_be_concatenated()
+    public function test_values_can_be_concatenated(): void
     {
         $engine = new TemplateEngine();
 

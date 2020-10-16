@@ -80,6 +80,7 @@ return PhpCsFixer\Config::create()
                 'property',
             ],
         ],
+        'void_return' => true,
     ])
     ->setRiskyAllowed(true)
     ->setUsingCache(true)

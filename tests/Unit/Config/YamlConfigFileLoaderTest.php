@@ -25,14 +25,14 @@ class YamlConfigFileLoaderTest extends TestCase
         return new YamlConfigFileLoader($parser, new ConfigBuilder(), __DIR__);
     }
 
-    public function test_it_can_be_instantiated()
+    public function test_it_can_be_instantiated(): void
     {
         $loader = $this->createConfigLoader();
         $this->assertInstanceOf(YamlConfigFileLoader::class, $loader);
         $this->assertInstanceOf(ConfigLoader::class, $loader);
     }
 
-    public function test_it_supports_yaml_files()
+    public function test_it_supports_yaml_files(): void
     {
         $loader = $this->createConfigLoader();
 
@@ -48,7 +48,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertFalse($loader->isSupported('fo.yaml.bar'));
     }
 
-    public function test_it_works_if_no_paths_are_present()
+    public function test_it_works_if_no_paths_are_present(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -65,7 +65,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertVariables($config, ['filesystem' => 'ls -al']);
     }
 
-    public function test_it_works_if_no_dynamics_are_present()
+    public function test_it_works_if_no_dynamics_are_present(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -84,7 +84,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertConstants($config, ['FOO' => 'bar']);
     }
 
-    public function test_it_works_if_no_consts_are_present()
+    public function test_it_works_if_no_consts_are_present(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -108,7 +108,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
     }
 
-    public function test_it_creates_a_valid_config_file_if_all_required_params_are_present()
+    public function test_it_creates_a_valid_config_file_if_all_required_params_are_present(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -130,7 +130,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertInstanceOf(Config::class, $config);
     }
 
-    public function test_it_creates_a_valid_config_file_if_all_params_are_present()
+    public function test_it_creates_a_valid_config_file_if_all_params_are_present(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -153,7 +153,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertInstanceOf(Config::class, $config);
     }
 
-    public function test_environment_paths_do_not_influence_default_environment()
+    public function test_environment_paths_do_not_influence_default_environment(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -196,7 +196,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
-    public function test_it_loads_environment_paths()
+    public function test_it_loads_environment_paths(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -239,7 +239,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
-    public function test_it_loads_environments_with_vars()
+    public function test_it_loads_environments_with_vars(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -290,7 +290,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
-    public function test_it_loads_templates()
+    public function test_it_loads_templates(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -311,7 +311,7 @@ class YamlConfigFileLoaderTest extends TestCase
         ], $config->getTemplates());
     }
 
-    public function test_it_loads_dotenv_files()
+    public function test_it_loads_dotenv_files(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -330,7 +330,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertEquals(__DIR__ . '/.baz', $config->getDotenvPaths()['.baz']->getPath());
     }
 
-    public function test_it_loads_dotenv_files_from_environments_overwritten()
+    public function test_it_loads_dotenv_files_from_environments_overwritten(): void
     {
         $yamlMock = $this->prophesize(Parser::class);
         $yamlMock->parse('foo')->willReturn([
@@ -357,7 +357,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $this->assertEquals(__DIR__ . '/_foo/.buz', $config->getDotenvPaths('env')['.buz']->getPath());
     }
 
-    public function test_fixPath_throws_exception()
+    public function test_fixPath_throws_exception(): void
     {
         $loader = $this->createConfigLoader();
 

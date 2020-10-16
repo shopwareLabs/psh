@@ -9,22 +9,19 @@ use Shopware\Psh\Listing\Script;
  */
 interface Logger
 {
-    public function startScript(Script $script);
+    public function startScript(Script $script): void;
 
-    public function finishScript(Script $script);
+    public function finishScript(Script $script): void;
 
-    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max);
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max): void;
 
-    /**
-     * @return void
-     */
-    public function logWait();
+    public function logWait(): void;
 
-    public function log(LogMessage $logMessage);
+    public function log(LogMessage $logMessage): void;
 
-    public function logSuccess();
+    public function logSuccess(): void;
 
-    public function logFailure();
+    public function logFailure(): void;
 
-    public function warn(string $message);
+    public function warn(string $message): void;
 }

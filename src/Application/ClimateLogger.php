@@ -47,13 +47,13 @@ EOD;
         $this->duration = $duration;
     }
 
-    public function startScript(Script $script)
+    public function startScript(Script $script): void
     {
         $this->scriptStartTime = time();
         $this->cliMate->green()->out("<bold>Starting Execution of '" . $script->getName() . "'</bold> <dim>('" . $script->getPath() . "')</dim>\n");
     }
 
-    public function finishScript(Script $script)
+    public function finishScript(Script $script): void
     {
         $durationInSeconds = time() - $this->scriptStartTime;
 
@@ -69,15 +69,12 @@ EOD;
         return str_replace(PHP_EOL, PHP_EOL . "\t", $response);
     }
 
-    /**
-     * @return void
-     */
-    public function logWait()
+    public function logWait(): void
     {
         $this->cliMate->green()->bold()->inline("\nWAITING...\n\t");
     }
 
-    public function log(LogMessage $logMessage)
+    public function log(LogMessage $logMessage): void
     {
         if ($logMessage->isError()) {
             $this->err($logMessage->getMessage());
@@ -86,33 +83,33 @@ EOD;
         }
     }
 
-    private function err(string $response)
+    private function err(string $response): void
     {
         $this->cliMate->red()->inline($this->formatOutput($response));
     }
 
-    private function out(string $response)
+    private function out(string $response): void
     {
         $this->cliMate->green()->inline($this->formatOutput($response));
     }
 
-    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max): void
     {
         $index++;
         $this->cliMate->yellow()->inline("\n({$index}/{$max}) $headline\n<bold>> {$subject}</bold>\n\t");
     }
 
-    public function logSuccess()
+    public function logSuccess(): void
     {
         $this->cliMate->green()->bold()->out('Executed Successfully');
     }
 
-    public function logFailure()
+    public function logFailure(): void
     {
         $this->cliMate->green()->red()->out('Executed with failure');
     }
 
-    public function warn(string $message)
+    public function warn(string $message): void
     {
         $this->cliMate->out(sprintf(self::WARNING_TEMPLATE, $message));
     }

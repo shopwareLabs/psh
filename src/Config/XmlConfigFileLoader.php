@@ -88,7 +88,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
     /**
      * @param array $pshConfigNode
      */
-    private function setConfigData(string $file, DOMElement $pshConfigNode)
+    private function setConfigData(string $file, DOMElement $pshConfigNode): void
     {
         $this->configBuilder->setCommandPaths(
             $this->extractCommandPaths($file, $pshConfigNode)
@@ -159,7 +159,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
         }, $templates);
     }
 
-    private function extractPlaceholders(string $file, DOMElement $placeholder)
+    private function extractPlaceholders(string $file, DOMElement $placeholder): void
     {
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DYNAMIC, $placeholder) as $dynamic) {
             $this->configBuilder->setDynamicVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);

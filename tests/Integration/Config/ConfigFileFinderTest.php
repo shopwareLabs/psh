@@ -9,7 +9,7 @@ use function sys_get_temp_dir;
 
 class ConfigFileFinderTest extends TestCase
 {
-    public function test_config_loader_throw_when_it_cant_find_a_psh_file()
+    public function test_config_loader_throw_when_it_cant_find_a_psh_file(): void
     {
         $loader = new ConfigFileFinder();
 
@@ -17,7 +17,7 @@ class ConfigFileFinderTest extends TestCase
         $loader->discoverFiles(sys_get_temp_dir());
     }
 
-    public function test_config_loader_returns_file_if_found()
+    public function test_config_loader_returns_file_if_found(): void
     {
         $loader = new ConfigFileFinder();
 
@@ -25,7 +25,7 @@ class ConfigFileFinderTest extends TestCase
         $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
     }
 
-    public function test_config_loader_returns_file_in_same_directory_if_found()
+    public function test_config_loader_returns_file_in_same_directory_if_found(): void
     {
         $loader = new ConfigFileFinder();
 
@@ -33,7 +33,7 @@ class ConfigFileFinderTest extends TestCase
         $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
     }
 
-    public function test_config_loader_prefers_original_over_dist_file()
+    public function test_config_loader_prefers_original_over_dist_file(): void
     {
         $loader = new ConfigFileFinder();
 
@@ -41,7 +41,7 @@ class ConfigFileFinderTest extends TestCase
         $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
     }
 
-    public function test_config_loader_returns_override_file()
+    public function test_config_loader_returns_override_file(): void
     {
         $loader = new ConfigFileFinder();
 
@@ -53,7 +53,7 @@ class ConfigFileFinderTest extends TestCase
         ], $files);
     }
 
-    public function test_config_loader_returns_dist_and_override_file()
+    public function test_config_loader_returns_dist_and_override_file(): void
     {
         $loader = new ConfigFileFinder();
 
@@ -65,7 +65,7 @@ class ConfigFileFinderTest extends TestCase
         ], $files);
     }
 
-    public function test_config_loader_returns_dist_xml_and_override_yaml_file()
+    public function test_config_loader_returns_dist_xml_and_override_yaml_file(): void
     {
         $loader = new ConfigFileFinder();
 

@@ -8,7 +8,7 @@ use function mb_strpos;
 
 class MinApplicationTest extends TestCase
 {
-    public function test_application_listing()
+    public function test_application_listing(): void
     {
         $application = new Application(__DIR__ . '/_minApp');
         MockWriter::addToApplication($application);

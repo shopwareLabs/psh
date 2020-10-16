@@ -14,13 +14,13 @@ class ApplicationTest extends TestCase
      * @before
      * @after
      */
-    public function clearCreatedResults()
+    public function clearCreatedResults(): void
     {
         @unlink(__DIR__ . '/_app/result.txt');
         @unlink(__DIR__ . '/_app_missing_requirement/result.txt');
     }
 
-    public function test_application_listing()
+    public function test_application_listing(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -36,7 +36,7 @@ class ApplicationTest extends TestCase
         $this->assertStringNotContainsString('test:.hidden', MockWriter::$content);
     }
 
-    public function test_hidden_execution()
+    public function test_hidden_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -46,7 +46,7 @@ class ApplicationTest extends TestCase
         $this->assertSimpleScript($exitCode, 'test');
     }
 
-    public function test_application_execution()
+    public function test_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -56,7 +56,7 @@ class ApplicationTest extends TestCase
         $this->assertSimpleScript($exitCode, 'prod');
     }
 
-    public function test_environment_application_execution()
+    public function test_environment_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -66,7 +66,7 @@ class ApplicationTest extends TestCase
         $this->assertSimpleScript($exitCode, 'test');
     }
 
-    public function test_hidden_environment_application_execution()
+    public function test_hidden_environment_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -76,7 +76,7 @@ class ApplicationTest extends TestCase
         $this->assertSimpleScript($exitCode, 'hidden');
     }
 
-    public function test_environment_deferred_application_execution()
+    public function test_environment_deferred_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -97,7 +97,7 @@ class ApplicationTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
-    public function test_error_application_execution()
+    public function test_error_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -106,7 +106,7 @@ class ApplicationTest extends TestCase
         $this->assertNotEquals(0, $exitCode);
     }
 
-    public function test_chain_two_commands_with_a_comma_executes_both()
+    public function test_chain_two_commands_with_a_comma_executes_both(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -122,7 +122,7 @@ class ApplicationTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
-    public function test_chain_two_commands_with_a_comma_executes_both_unless_an_error_occures()
+    public function test_chain_two_commands_with_a_comma_executes_both_unless_an_error_occures(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -135,7 +135,7 @@ class ApplicationTest extends TestCase
         $this->assertStringNotContainsString('3 script(s) available', MockWriter::$content);
     }
 
-    public function test_psh_config_override_should_override_existing_psh_configuration()
+    public function test_psh_config_override_should_override_existing_psh_configuration(): void
     {
         $application = new Application(__DIR__ . '/_override_app');
         MockWriter::addToApplication($application);
@@ -147,7 +147,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('override-app', MockWriter::$content);
     }
 
-    public function test_psh_config_override_should_override_existing_psh_configuration_executes_with_override_params()
+    public function test_psh_config_override_should_override_existing_psh_configuration_executes_with_override_params(): void
     {
         $application = new Application(__DIR__ . '/_override_app');
         MockWriter::addToApplication($application);
@@ -161,7 +161,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('foo-content', MockWriter::$content);
     }
 
-    public function test_psh_groups_commands_by_environment()
+    public function test_psh_groups_commands_by_environment(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -174,7 +174,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('test:', MockWriter::$content);
     }
 
-    public function test_bash_autocomplete_listing()
+    public function test_bash_autocomplete_listing(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -186,7 +186,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('error simple test:env test:env2', MockWriter::$content);
     }
 
-    public function test_script_not_found_listing_with_guess()
+    public function test_script_not_found_listing_with_guess(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -200,7 +200,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('1 script(s) available', MockWriter::$content);
     }
 
-    public function test_script_not_found_listing_without_guess()
+    public function test_script_not_found_listing_without_guess(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -212,7 +212,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('Script with name pkdi not found', MockWriter::$content);
     }
 
-    public function test_showListings_returns_no_scripts_available()
+    public function test_showListings_returns_no_scripts_available(): void
     {
         $application = new Application(__DIR__);
         MockWriter::addToApplication($application);
@@ -222,7 +222,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('Currently no scripts available', MockWriter::$content);
     }
 
-    public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched()
+    public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched(): void
     {
         $application = new Application(__DIR__ . '/_app_invalid_template');
         MockWriter::addToApplication($application);
@@ -233,7 +233,7 @@ class ApplicationTest extends TestCase
         $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 
-    public function test_it_exits_early_without_all_requirements_met()
+    public function test_it_exits_early_without_all_requirements_met(): void
     {
         $application = new Application(__DIR__ . '/_app_missing_requirement');
         MockWriter::addToApplication($application);
@@ -247,7 +247,7 @@ class ApplicationTest extends TestCase
         $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 
-    public function test_requirements_can_be_overwritten_by_param()
+    public function test_requirements_can_be_overwritten_by_param(): void
     {
         $application = new Application(__DIR__ . '/_app_missing_requirement');
         MockWriter::addToApplication($application);
@@ -261,7 +261,7 @@ class ApplicationTest extends TestCase
         $this->assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
     }
 
-    public function test_it_throws_exception_InvalidParameterException_and_it_is_catched()
+    public function test_it_throws_exception_InvalidParameterException_and_it_is_catched(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -272,12 +272,12 @@ class ApplicationTest extends TestCase
         $this->assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 
-    private function assertNoErrorExitCode(int $exitCode)
+    private function assertNoErrorExitCode(int $exitCode): void
     {
         $this->assertEquals(0, $exitCode, 'Application errored unexpextedly: ' . MockWriter::$content);
     }
 
-    private function assertSimpleScript(int $exitCode, string $envName)
+    private function assertSimpleScript(int $exitCode, string $envName): void
     {
         $this->assertNoErrorExitCode($exitCode);
         $this->assertStringContainsString('ls -al', MockWriter::$content);

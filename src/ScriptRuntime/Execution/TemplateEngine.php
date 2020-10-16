@@ -44,7 +44,7 @@ class TemplateEngine
     /**
      * @throws RuntimeException
      */
-    private function getValue(string $placeholder, array $allValues)
+    private function getValue(string $placeholder, array $allValues): string
     {
         $valueName = mb_substr($placeholder, 2, -2);
 

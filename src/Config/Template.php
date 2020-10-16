@@ -33,7 +33,7 @@ class Template
         return $this->destination;
     }
 
-    public function setDestination(string $destination)
+    public function setDestination(string $destination): void
     {
         $this->destination = $destination;
     }
@@ -50,7 +50,7 @@ class Template
         return file_get_contents($this->source);
     }
 
-    public function setContents(string $contents)
+    public function setContents(string $contents): void
     {
         file_put_contents($this->destination, $contents);
     }

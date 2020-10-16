@@ -74,6 +74,6 @@ class ProcessEnvironment
 
     public function createProcess(string $shellCommand): Process
     {
-        return new Process($shellCommand);
+        return Process::fromShellCommandline($shellCommand);
     }
 }

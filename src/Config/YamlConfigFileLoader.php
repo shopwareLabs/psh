@@ -79,7 +79,7 @@ class YamlConfigFileLoader extends ConfigFileLoader
             ->create($params);
     }
 
-    private function setConfigData(string $file, array $rawConfigData)
+    private function setConfigData(string $file, array $rawConfigData): void
     {
         $this->configBuilder->setCommandPaths(
             $this->extractPaths($file, $rawConfigData, self::KEY_COMMAND_PATHS)
@@ -103,6 +103,7 @@ class YamlConfigFileLoader extends ConfigFileLoader
     }
 
     /**
+     * @param mixed|null $default
      * @return mixed|null
      */
     private function extractData(string $key, array $rawConfig, $default = false)

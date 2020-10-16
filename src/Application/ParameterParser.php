@@ -46,10 +46,7 @@ class ParameterParser
         return $reformattedParams;
     }
 
-    /**
-     * @param $key
-     */
-    private function testParameterFormat(string $key)
+    private function testParameterFormat(string $key): void
     {
         if (mb_strpos($key, '--') !== 0) {
             throw new InvalidParameterException(
@@ -58,19 +55,12 @@ class ParameterParser
         }
     }
 
-    /**
-     * @param $key
-     * @return bool|int
-     */
-    private function isKeyValuePair($key)
+    private function isKeyValuePair(string $key): bool
     {
-        return mb_strpos($key, '=');
+        return mb_strpos($key, '=') !== false;
     }
 
-    /**
-     * @param $value
-     */
-    private function isEnclosedInAmpersand($value): bool
+    private function isEnclosedInAmpersand(string $value): bool
     {
         return mb_strpos($value, '"') === 0;
     }

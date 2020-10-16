@@ -11,14 +11,14 @@ use Shopware\Psh\Listing\ScriptPathNotValidException;
 
 class ScriptFinderTest extends TestCase
 {
-    public function test_script_finder_holds_contract_if_no_paths_present()
+    public function test_script_finder_holds_contract_if_no_paths_present(): void
     {
         $finder = new ScriptFinder([], new DescriptionReader());
         $this->assertInstanceOf(ScriptFinder::class, $finder);
         $this->assertIsArray($finder->getAllScripts());
     }
 
-    public function test_script_finder_finds_scripts_if_one_directory_is_passed()
+    public function test_script_finder_finds_scripts_if_one_directory_is_passed(): void
     {
         $finder = new ScriptFinder(
             [$this->createScriptsPath(__DIR__ . '/_scripts')],
@@ -29,7 +29,7 @@ class ScriptFinderTest extends TestCase
         $this->assertCount(4, $finder->getAllScripts());
     }
 
-    public function test_script_finder_finds_scripts_if_two_directories_are_passed_and_filters_noise()
+    public function test_script_finder_finds_scripts_if_two_directories_are_passed_and_filters_noise(): void
     {
         $finder = new ScriptFinder(
             [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
@@ -45,7 +45,7 @@ class ScriptFinderTest extends TestCase
         $this->assertTrue($scripts['.hidden']->isHidden());
     }
 
-    public function test_script_finder_finds_script_by_name_if_two_directories_are_passed_and_filters_noise()
+    public function test_script_finder_finds_script_by_name_if_two_directories_are_passed_and_filters_noise(): void
     {
         $finder = new ScriptFinder(
             [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],
@@ -58,7 +58,7 @@ class ScriptFinderTest extends TestCase
         $this->assertEquals('foo', $script->getName());
     }
 
-    public function test_script_finder_prefixes_script_names_with_namespace_if_present()
+    public function test_script_finder_prefixes_script_names_with_namespace_if_present(): void
     {
         $finder = new ScriptFinder(
             [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff', 'biz')],
@@ -71,7 +71,7 @@ class ScriptFinderTest extends TestCase
         $this->assertEquals('biz:test', $script->getName());
     }
 
-    public function test_script_finder_throws_exception_if_path_is_not_valid()
+    public function test_script_finder_throws_exception_if_path_is_not_valid(): void
     {
         $finder = new ScriptFinder(
             [$this->createScriptsPath(__DIR__ . '/_scripts_not_valid_directory')],
@@ -82,7 +82,7 @@ class ScriptFinderTest extends TestCase
         $finder->getAllScripts();
     }
 
-    public function test_script_finder_adds_description_to_script()
+    public function test_script_finder_adds_description_to_script(): void
     {
         $finder = new ScriptFinder(
             [$this->createScriptsPath(__DIR__ . '/_scripts')],
@@ -93,7 +93,7 @@ class ScriptFinderTest extends TestCase
         $this->assertSame('My description', $script->getDescription());
     }
 
-    public function test_script_finder_finds_partial_name()
+    public function test_script_finder_finds_partial_name(): void
     {
         $finder = new ScriptFinder(
             [$this->createScriptsPath(__DIR__ . '/_scripts'), $this->createScriptsPath(__DIR__ . '/_scripts_with_misc_stuff')],

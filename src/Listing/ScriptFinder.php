@@ -105,7 +105,7 @@ class ScriptFinder
         return in_array($extension, self::VALID_EXTENSIONS, true);
     }
 
-    private function testPathValidity(ScriptsPath $path)
+    private function testPathValidity(ScriptsPath $path): void
     {
         if (!$path->isValid()) {
             throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");

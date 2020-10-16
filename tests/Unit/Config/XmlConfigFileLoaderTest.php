@@ -34,7 +34,7 @@ EOD;
         @unlink(self::TEMP_FILE);
     }
 
-    private function writeTempFile(string $content)
+    private function writeTempFile(string $content): void
     {
         file_put_contents(self::TEMP_FILE, sprintf(self::CONFIG_TEMPLATE, $content));
     }
@@ -44,14 +44,14 @@ EOD;
         return new XmlConfigFileLoader(new ConfigBuilder(), __DIR__);
     }
 
-    public function test_it_can_be_instantiated()
+    public function test_it_can_be_instantiated(): void
     {
         $loader = $this->createConfigLoader();
         $this->assertInstanceOf(XmlConfigFileLoader::class, $loader);
         $this->assertInstanceOf(ConfigLoader::class, $loader);
     }
 
-    public function test_it_supports_yaml_files()
+    public function test_it_supports_yaml_files(): void
     {
         $loader = $this->createConfigLoader();
 
@@ -64,7 +64,7 @@ EOD;
         $this->assertFalse($loader->isSupported('fo.yaml.bar'));
     }
 
-    public function test_it_works_if_no_paths_are_present()
+    public function test_it_works_if_no_paths_are_present(): void
     {
         $this->writeTempFile(<<<EOD
 <placeholder>
@@ -79,7 +79,7 @@ EOD
         $this->assertVariables($config, ['filesystem' => 'ls -al']);
     }
 
-    public function test_it_works_if_no_dynamics_are_present()
+    public function test_it_works_if_no_dynamics_are_present(): void
     {
         $dir = __DIR__;
 
@@ -98,7 +98,7 @@ EOD
         $this->assertConstants($config, ['FOO' => 'bar']);
     }
 
-    public function test_it_works_if_no_consts_are_present()
+    public function test_it_works_if_no_consts_are_present(): void
     {
         $dir = __DIR__;
 
@@ -121,7 +121,7 @@ EOD
         $this->assertEquals(__DIR__ . '/_bar', $scripts[1]->getPath());
     }
 
-    public function test_it_creates_a_valid_config_file_if_all_required_params_are_present()
+    public function test_it_creates_a_valid_config_file_if_all_required_params_are_present(): void
     {
         $dir = __DIR__;
 
@@ -141,7 +141,7 @@ EOD
         $this->assertInstanceOf(Config::class, $config);
     }
 
-    public function test_it_creates_a_valid_config_file_if_all_params_are_present()
+    public function test_it_creates_a_valid_config_file_if_all_params_are_present(): void
     {
         $dir = __DIR__;
 
@@ -162,7 +162,7 @@ EOD
         $this->assertInstanceOf(Config::class, $config);
     }
 
-    public function test_environment_paths_do_not_influence_default_environment()
+    public function test_environment_paths_do_not_influence_default_environment(): void
     {
         $dir = __DIR__;
 
@@ -199,7 +199,7 @@ EOD
         $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
-    public function test_environment_hidden_get_loaded()
+    public function test_environment_hidden_get_loaded(): void
     {
         $dir = __DIR__;
 
@@ -220,7 +220,7 @@ EOD
         $this->assertTrue($config->getAllScriptsPaths()[1]->isHidden());
     }
 
-    public function test_it_loads_environment_paths()
+    public function test_it_loads_environment_paths(): void
     {
         $dir = __DIR__;
 
@@ -258,7 +258,7 @@ EOD
         $this->assertFalse($config->getEnvironments()['namespace']->isHidden());
     }
 
-    public function test_it_loads_environments_with_vars()
+    public function test_it_loads_environments_with_vars(): void
     {
         $dir = __DIR__;
 
@@ -301,7 +301,7 @@ EOD
         $this->assertEquals('namespace', $scripts[1]->getNamespace());
     }
 
-    public function test_it_loads_templates()
+    public function test_it_loads_templates(): void
     {
         $this->writeTempFile(<<<EOD
 <template source="_the_template.tpl" destination="the_destination.txt" />
@@ -318,7 +318,7 @@ EOD
         ], $config->getTemplates());
     }
 
-    public function test_invalid_format()
+    public function test_invalid_format(): void
     {
         $this->writeTempFile(<<<EOD
 <not-allowed />
@@ -331,7 +331,7 @@ EOD
         $loader->load(self::TEMP_FILE, []);
     }
 
-    public function test_multiple_placeholder_elements_are_supported()
+    public function test_multiple_placeholder_elements_are_supported(): void
     {
         $this->writeTempFile(<<<EOD
 <placeholder>
@@ -348,7 +348,7 @@ EOD
         $this->assertCount(2, $config->getConstants());
     }
 
-    public function test_multiple_header_work_although_they_overwrite_each_other()
+    public function test_multiple_header_work_although_they_overwrite_each_other(): void
     {
         $this->writeTempFile(<<<EOD
 <header>NO</header>
@@ -361,7 +361,7 @@ EOD
         $this->assertSame('YES', $config->getHeader());
     }
 
-    public function test_it_loads_dotenv_files()
+    public function test_it_loads_dotenv_files(): void
     {
         $this->writeTempFile(<<<EOD
 <placeholder>
@@ -378,7 +378,7 @@ EOD
         $this->assertEquals(__DIR__ . '/.baz', $config->getDotenvPaths()['.baz']->getPath());
     }
 
-    public function test_it_loads_dotenv_files_from_environments_overwritten()
+    public function test_it_loads_dotenv_files_from_environments_overwritten(): void
     {
         $this->writeTempFile(<<<EOD
 <placeholder>
