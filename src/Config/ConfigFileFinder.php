@@ -25,7 +25,18 @@ class ConfigFileFinder
         return $this->determineResultInDirectory($files);
     }
 
-    public function findFirstDirectoryWithConfigFile(string $fromDirectory): array
+    public function discoverConfigInDirectory(string $directory): array
+    {
+        $globResult = glob($directory . '/' . self::VALID_FILE_NAME_GLOB);
+
+        if (!is_array($globResult) || count($globResult) === 0) {
+            return [];
+        }
+
+        return $this->determineResultInDirectory($globResult);
+    }
+
+    private function findFirstDirectoryWithConfigFile(string $fromDirectory): array
     {
         $currentDirectory = $fromDirectory;
 
@@ -39,28 +50,31 @@ class ConfigFileFinder
             $currentDirectory = dirname($currentDirectory);
         } while ($currentDirectory !== '/');
 
-        throw new RuntimeException('No config file found, make sure you have created a .psh file');
+        throw new RuntimeException('No config file found, make sure you have created a .psh.xml file');
     }
 
-    public function determineResultInDirectory(array $globResult): array
+    /**
+     * @internal
+     */
+    public function determineResultInDirectory(array $configFileCandidates): array
     {
-        if (count($globResult) === 1) {
-            return $globResult;
+        if (count($configFileCandidates) === 1) {
+            return $configFileCandidates;
         }
 
-        $overrideFiles = array_filter($globResult, function (string $file) {
+        $overrideFiles = array_filter($configFileCandidates, function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'override';
         });
 
-        $distFiles = array_filter($globResult, function (string $file) {
+        $distFiles = array_filter($configFileCandidates, function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'dist';
         });
 
-        $configFiles = array_filter($globResult, function (string $file) {
+        $configFiles = array_filter($configFileCandidates, function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension !== 'override' && $extension !== 'dist';

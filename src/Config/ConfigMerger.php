@@ -7,7 +7,7 @@ use function array_merge;
 
 class ConfigMerger
 {
-    public function merge(Config $config, Config $override = null): Config
+    public function mergeOverride(Config $config, Config $override = null): Config
     {
         if ($override === null) {
             return $config;
@@ -29,10 +29,27 @@ class ConfigMerger
             $defaultEnvironment = $override->getDefaultEnvironment();
         }
 
-        return new Config($header, $defaultEnvironment, $environments, $config->getParams());
+        return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $config->getParams(), $header);
     }
 
-    private function mergeConfigEnvironments(Config $config, Config $override): array
+    public function mergeImport(Config $config, Config $import = null): Config
+    {
+        if ($import === null) {
+            return $config;
+        }
+
+        $header = $config->getHeader();
+        $defaultEnvironment = $config->getDefaultEnvironment();
+        $environments = $config->getEnvironments();
+
+        if ($import->getEnvironments()) {
+            $environments = $this->mergeConfigEnvironments($config, $import, true);
+        }
+
+        return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $config->getParams(), $header);
+    }
+
+    private function mergeConfigEnvironments(Config $config, Config $override, bool $asImport = false): array
     {
         $environments = [];
 
@@ -51,14 +68,19 @@ class ConfigMerger
                 continue;
             }
 
-            $environments[$name] = $this
-                ->mergeEnvironments($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
+            if ($asImport) {
+                $environments[$name] = $this
+                    ->mergeEnvironmentsAsImport($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
+            } else {
+                $environments[$name] = $this
+                    ->mergeEnvironmentsAsOverride($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
+            }
         }
 
         return $environments;
     }
 
-    private function mergeEnvironments(ConfigEnvironment $original, ConfigEnvironment $override): ConfigEnvironment
+    private function mergeEnvironmentsAsOverride(ConfigEnvironment $original, ConfigEnvironment $override): ConfigEnvironment
     {
         return new ConfigEnvironment(
             $this->overrideHidden($original, $override),
@@ -66,6 +88,18 @@ class ConfigMerger
             $this->mergeDynamicVariables($original, $override),
             $this->mergeConstants($original, $override),
             $this->overrideTemplates($original, $override),
+            $this->mergeDotenvPaths($original, $override)
+        );
+    }
+
+    private function mergeEnvironmentsAsImport(ConfigEnvironment $original, ConfigEnvironment $override): ConfigEnvironment
+    {
+        return new ConfigEnvironment(
+            $this->overrideHidden($original, $override),
+            $this->mergeScriptsPaths($original, $override),
+            $this->mergeDynamicVariables($original, $override),
+            $this->mergeConstants($original, $override),
+            $this->mergeTemplates($original, $override),
             $this->mergeDotenvPaths($original, $override)
         );
     }
@@ -81,6 +115,14 @@ class ConfigMerger
     private function mergeDotenvPaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
         return array_merge($configEnvironment->getDotenvPaths(), $overrideConfigEnv->getDotenvPaths());
+    }
+
+    /**
+     * @return ScriptsPath[]
+     */
+    private function mergeScriptsPaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    {
+        return array_merge($configEnvironment->getAllScriptsPaths(), $overrideConfigEnv->getAllScriptsPaths());
     }
 
     /**
@@ -110,6 +152,11 @@ class ConfigMerger
         }
 
         return $configEnvironment->getTemplates();
+    }
+
+    private function mergeTemplates(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    {
+        return array_merge($configEnvironment->getTemplates(), $overrideConfigEnv->getTemplates());
     }
 
     private function overrideHidden(ConfigEnvironment $originalConfigEnv, ConfigEnvironment $overrideEnv): bool

@@ -7,6 +7,7 @@
     <xs:complexType name="pshConfig">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="header" type="xs:string"/>
+            <xs:element name="import" type="import"/>
             <xs:element name="placeholder" type="vars"/>
 
             <xs:element name="path" type="xs:string"/>
@@ -59,4 +60,7 @@
         <xs:attribute name="description" type="xs:string" use="optional" />
     </xs:complexType>
 
+    <xs:complexType name="import">
+        <xs:attribute name="path" type="xs:string" use="required" />
+    </xs:complexType>
 </xs:schema>

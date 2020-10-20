@@ -76,4 +76,15 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/_configFileFinderFixtures/override_yml_and_dist_xml/.psh.yaml.override',
         ], $files);
     }
+
+    public function test_discover_config_in_directory_does_not_recurse(): void
+    {
+        $loader = new ConfigFileFinder();
+
+        $file = $loader->discoverConfigInDirectory(__DIR__ . '/_configFileFinderFixtures/dist/sub/sub2/sub3');
+        $this->assertEquals([], $file);
+
+        $file = $loader->discoverConfigInDirectory(__DIR__ . '/_configFileFinderFixtures/dist');
+        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
+    }
 }

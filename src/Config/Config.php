@@ -36,20 +36,25 @@ class Config
     private $params;
 
     /**
+     * @var array
+     */
+    private $source;
+
+    /**
      * @param ConfigEnvironment[] $environments
      */
     public function __construct(
-//        EnvironmentResolver $resolver,
-        string $header = null,
+        EnvironmentResolver $resolver,
         string $defaultEnvironment,
         array $environments,
-        array $params
+        array $params,
+        string $header = null
     ) {
-        $this->resolver = new EnvironmentResolver();
-        $this->header = $header;
+        $this->resolver = $resolver;
         $this->defaultEnvironment = $defaultEnvironment;
         $this->environments = $environments;
         $this->params = $params;
+        $this->header = $header;
     }
 
     /**
@@ -152,7 +157,7 @@ class Config
     /**
      * @return string
      */
-    public function getHeader()
+    public function getHeader(): ?string
     {
         return $this->header;
     }
@@ -173,6 +178,11 @@ class Config
     public function getParams(): array
     {
         return $this->params;
+    }
+
+    public function getImports()
+    {
+        return $this->getEnvironment()->getImports();
     }
 
     /**

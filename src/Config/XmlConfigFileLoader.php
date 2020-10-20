@@ -18,6 +18,8 @@ class XmlConfigFileLoader extends ConfigFileLoader
 {
     private const NODE_HEADER = 'header';
 
+    private const NODE_IMPORT = 'import';
+
     private const NODE_PLACEHOLDER = 'placeholder';
 
     private const NODE_PLACEHOLDER_DYNAMIC = 'dynamic';
@@ -65,10 +67,14 @@ class XmlConfigFileLoader extends ConfigFileLoader
         $this->configBuilder->start();
 
         $headers = $this->extractNodes(self::NODE_HEADER, $pshConfigNode);
-
         foreach ($headers as $header) {
             $this->configBuilder
                 ->setHeader($header->nodeValue);
+        }
+
+        $imports = $this->extractNodes(self::NODE_IMPORT, $pshConfigNode);
+        foreach ($imports as $importNode) {
+            $this->configBuilder->setImport($importNode->getAttribute('path'));
         }
 
         $this->setConfigData($file, $pshConfigNode);

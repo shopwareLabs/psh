@@ -19,7 +19,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter',
         ]);
 
-        self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
+        $this->assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
     public function test_file_discovery_with_dist_file_only(): void
@@ -29,7 +29,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.dist',
         ]);
 
-        self::assertEquals([__DIR__ . '/.psh.does-not-matter.dist'], $result);
+        $this->assertEquals([__DIR__ . '/.psh.does-not-matter.dist'], $result);
     }
 
     public function test_file_discovery_with_dist_file_and_default_file(): void
@@ -40,7 +40,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.dist',
         ]);
 
-        self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
+        $this->assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
     public function test_file_discovery_with_dist_file_and_default_file_and_override_file(): void
@@ -52,7 +52,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
-        self::assertEquals([
+        $this->assertEquals([
             __DIR__ . '/.psh.does-not-matter',
             __DIR__ . '/.psh.does-not-matter.override',
         ], $result);
@@ -66,7 +66,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
-        self::assertEquals([
+        $this->assertEquals([
             __DIR__ . '/.psh.does-not-matter',
             __DIR__ . '/.psh.does-not-matter.override',
         ], $result);
@@ -80,7 +80,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
-        self::assertEquals([
+        $this->assertEquals([
             __DIR__ . '/.psh.does-not-matter.dist',
             __DIR__ . '/.psh.does-not-matter.override',
         ], $result);

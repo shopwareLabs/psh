@@ -5,6 +5,7 @@ namespace Shopware\Psh\Application;
 use RuntimeException;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
+use Shopware\Psh\Config\ConfigFactory;
 use Shopware\Psh\Config\ConfigFileFinder;
 use Shopware\Psh\Config\ConfigMerger;
 use Shopware\Psh\Config\XmlConfigFileLoader;
@@ -38,30 +39,20 @@ class ApplicationFactory
         $overwrittenConsts = (new ParameterParser())->parseParams($params);
         $configFinder = new ConfigFileFinder();
         $configFiles = $configFinder->discoverFiles($rootDirectory);
-
+        $merger = new ConfigMerger();
         $configLoaders = [
             new YamlConfigFileLoader(new Parser(), new ConfigBuilder(), $rootDirectory),
             new XmlConfigFileLoader(new ConfigBuilder(), $rootDirectory),
         ];
+        $configFactory = new ConfigFactory($merger, $configFinder, $configLoaders);
 
-        $configs = [];
-        foreach ($configFiles as $configFile) {
-            foreach ($configLoaders as $configLoader) {
-                if (!$configLoader->isSupported($configFile)) {
-                    continue;
-                }
-
-                $configs[] = $configLoader->load($configFile, $overwrittenConsts);
-            }
-        }
+        $configs = $configFactory->gatherConfigs($rootDirectory, $configFiles, $overwrittenConsts);
 
         if (count($configs) === 0) {
             throw new RuntimeException('Unable to read any configuration from "' . implode(', ', $configFiles) . '"');
         }
 
-        $merger = new ConfigMerger();
-
-        return $merger->merge(...$configs);
+        return $configFactory->mergeConfigs($configs);
     }
 
     public function createScriptFinder(Config $config): ScriptFinder
@@ -101,9 +92,6 @@ class ApplicationFactory
         return $scriptLoader->loadScript($script);
     }
 
-    /**
-     * @param $directory
-     */
     public function getConfigFiles(string $directory): array
     {
         return  (new ConfigFileFinder())->discoverFiles($directory);

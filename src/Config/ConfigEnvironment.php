@@ -42,6 +42,11 @@ class ConfigEnvironment
      */
     private $requiredVariables;
 
+    /**
+     * @var array
+     */
+    private $imports;
+
     public function __construct(
         bool $hidden,
         array $commandPaths = [],
@@ -49,7 +54,8 @@ class ConfigEnvironment
         array $constants = [],
         array $templates = [],
         array $dotenvPaths = [],
-        array $requiredVariables = []
+        array $requiredVariables = [],
+        array $imports = []
     ) {
         $this->hidden = $hidden;
         $this->commandPaths = $commandPaths;
@@ -58,6 +64,7 @@ class ConfigEnvironment
         $this->templates = $templates;
         $this->dotenvPaths = $dotenvPaths;
         $this->requiredVariables = $requiredVariables;
+        $this->imports = $imports;
     }
 
     public function isHidden(): bool
@@ -93,5 +100,10 @@ class ConfigEnvironment
     public function getRequiredVariables(): array
     {
         return $this->requiredVariables;
+    }
+
+    public function getImports(): array
+    {
+        return $this->imports;
     }
 }

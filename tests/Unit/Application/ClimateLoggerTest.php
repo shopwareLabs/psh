@@ -16,7 +16,7 @@ class ClimateLoggerTest extends TestCase
         MockWriter::addToClimateLogger($cliMateLogger);
         $cliMateLogger->logSuccess();
 
-        self::assertStringContainsString('Executed Successfully', MockWriter::$content);
+        $this->assertStringContainsString('Executed Successfully', MockWriter::$content);
     }
 
     public function test_error_output(): void
@@ -25,7 +25,7 @@ class ClimateLoggerTest extends TestCase
         MockWriter::addToClimateLogger($cliMateLogger);
         $cliMateLogger->logFailure();
 
-        self::assertStringContainsString('Executed with failure', MockWriter::$content);
+        $this->assertStringContainsString('Executed with failure', MockWriter::$content);
     }
 
     public function test_warn_output(): void
@@ -34,6 +34,6 @@ class ClimateLoggerTest extends TestCase
         MockWriter::addToClimateLogger($cliMateLogger);
         $cliMateLogger->warn('FOOOOOOOOOOOOOOOOO');
 
-        self::assertStringContainsString('FOOOOOOOOOOOOOOOOO', MockWriter::$content);
+        $this->assertStringContainsString('FOOOOOOOOOOOOOOOOO', MockWriter::$content);
     }
 }

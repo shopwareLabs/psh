@@ -81,6 +81,9 @@ return PhpCsFixer\Config::create()
             ],
         ],
         'void_return' => true,
+        'php_unit_test_case_static_method_calls' => [
+            'call_type' => 'this',
+        ]
     ])
     ->setRiskyAllowed(true)
     ->setUsingCache(true)

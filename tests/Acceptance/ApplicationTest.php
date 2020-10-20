@@ -31,7 +31,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('Using .psh.xml', MockWriter::$content);
         $this->assertStringContainsString('test:env', MockWriter::$content);
         $this->assertStringContainsString('test:env2', MockWriter::$content);
-        $this->assertStringContainsString('6 script(s) available', MockWriter::$content);
+        $this->assertStringContainsString('7 script(s) available', MockWriter::$content);
         $this->assertStringNotContainsString('Duration:', MockWriter::$content);
         $this->assertStringNotContainsString('test:.hidden', MockWriter::$content);
     }
@@ -94,7 +94,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString(' echo "test"', MockWriter::$content);
         $this->assertStringContainsString('All commands successfully executed!', MockWriter::$content);
         $this->assertStringContainsString('Duration:', MockWriter::$content);
-        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
+        $this->assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
     public function test_error_application_execution(): void
@@ -119,7 +119,7 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('All commands successfully executed!', MockWriter::$content);
         $this->assertStringNotContainsString('3 script(s) available', MockWriter::$content);
         $this->assertStringContainsString('Duration:', MockWriter::$content);
-        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
+        $this->assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
     public function test_chain_two_commands_with_a_comma_executes_both_unless_an_error_occures(): void
@@ -292,6 +292,6 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('All commands successfully executed!', MockWriter::$content);
         $this->assertStringContainsString('Duration:', MockWriter::$content);
 
-        self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', $envName);
+        $this->assertStringEqualsFile(__DIR__ . '/_app/result.txt', $envName);
     }
 }

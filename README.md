@@ -33,6 +33,7 @@ Table of contents
     * [Environments](#environments)
     * [Headers](#headers)
     * [Overriding configuration file](#overriding-configuration-file)
+    * [Importing configuration files](#importing-configuration-files)
 * [PSH-Scripts](#sh-scripts)
     * [Defining placeholders](#defining-placeholders)
     * [Including other actions](#including-other-actions)
@@ -321,6 +322,18 @@ Optionally - and just for fun - you can output a ASCII header in front of every 
 You can place a `.psh.xml.override` inside your directory where the `.psh.xml` is located to override the specific configurations.
 
 > Notice: You can overwrite a XML config file with a YAML file to ease the migration from one format to the other.
+
+#### Importing configuration files
+
+You can import environments, actions and placeholders by using the import statement and telling psh to look in another place.
+
+```xml
+<import path="another/config/file/location" />
+```
+
+These directories should contain a `psh.xml` or `psh.xml.dist`. If no file is found a warning is issued but no braking error, since it may very well be that psh is currently installing or downloading the files. You can also use a glob pattern like "tools/**/config"
+
+> Notice: This happens through merging the different configurations into one. Be aware that you might overwrite base configuration. 
 
 ## PSH-Scripts
 

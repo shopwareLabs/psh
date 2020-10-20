@@ -252,7 +252,7 @@ class ProcessExecutorTest extends TestCase
         } catch (ExecutionErrorException $e) {
         }
         $executionTime = microtime(true) - $beginExecution;
-        self::assertInstanceOf(ExecutionErrorException::class, $e);
+        $this->assertInstanceOf(ExecutionErrorException::class, $e);
 
         // check a wait occurred
         $totalWait = 0;

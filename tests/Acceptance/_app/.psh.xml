@@ -4,6 +4,8 @@
 
     <header>SHOPWARE PHP-SH</header>
     <template source="templates/test.tpl" destination="result.txt"/>
+    <import path="foo/"/>
+    <import path="gl*b"/>
     <path>scripts/</path>
     <placeholder>
         <const name="ENV">prod</const>

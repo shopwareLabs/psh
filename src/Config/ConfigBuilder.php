@@ -33,6 +33,8 @@ class ConfigBuilder
 
     private $currentRequiredVariables;
 
+    private $imports;
+
     public function setHeader(string $header = null): ConfigBuilder
     {
         $this->header = $header;
@@ -128,6 +130,13 @@ class ConfigBuilder
         return $this;
     }
 
+    public function setImport(string $path): self
+    {
+        $this->imports[] = $path;
+
+        return $this;
+    }
+
     public function setTemplates(array $templates): ConfigBuilder
     {
         $this->templates = $templates;
@@ -139,7 +148,7 @@ class ConfigBuilder
     {
         $this->reset();
 
-        return new Config($this->header, self::DEFAULT_ENV, $this->environments, $params);
+        return new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $this->environments, $params, $this->header);
     }
 
     private function reset(): void
@@ -152,7 +161,8 @@ class ConfigBuilder
                 $this->currentConstants,
                 $this->templates,
                 $this->currentDotenvPaths,
-                $this->currentRequiredVariables
+                $this->currentRequiredVariables,
+                $this->imports
             );
         }
 
@@ -163,5 +173,6 @@ class ConfigBuilder
         $this->templates = [];
         $this->hidden = false;
         $this->currentRequiredVariables = [];
+        $this->imports = [];
     }
 }
