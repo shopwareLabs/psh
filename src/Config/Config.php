@@ -36,11 +36,6 @@ class Config
     private $params;
 
     /**
-     * @var array
-     */
-    private $source;
-
-    /**
      * @param ConfigEnvironment[] $environments
      */
     public function __construct(
