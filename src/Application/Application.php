@@ -152,18 +152,6 @@ class Application
         $this->cliMate->bold()->red($string);
     }
 
-    /**
-     * @param $config
-     */
-    protected function printHeader(Config $config): void
-    {
-        $this->cliMate->green()->bold()->out("\n###################");
-
-        if ($config->getHeader()) {
-            $this->cliMate->out("\n" . $config->getHeader());
-        }
-    }
-
     private function getPaddingSize(array $scripts): int
     {
         $maxScriptNameLength = 0;
@@ -208,7 +196,12 @@ class Application
 
     private function printHead(Config $config, ApplicationConfigLogger $logger): void
     {
-        $this->printHeader($config);
+        $this->cliMate->green()->bold()->out("\n###################");
+
+        if ($config->getHeader()) {
+            $this->cliMate->out("\n" . $config->getHeader());
+        }
+
         $logger->printOut($this->cliMate);
     }
 
