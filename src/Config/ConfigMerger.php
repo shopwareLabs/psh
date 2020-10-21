@@ -7,7 +7,7 @@ use function array_merge;
 
 class ConfigMerger
 {
-    public function mergeOverride(Config $config, Config $override = null): Config
+    public function mergeOverride(Config $config, ?Config $override = null): Config
     {
         if ($override === null) {
             return $config;
@@ -32,7 +32,7 @@ class ConfigMerger
         return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $config->getParams(), $header);
     }
 
-    public function mergeImport(Config $config, Config $import = null): Config
+    public function mergeImport(Config $config, ?Config $import = null): Config
     {
         if ($import === null) {
             return $config;

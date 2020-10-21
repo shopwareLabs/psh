@@ -212,7 +212,7 @@ class Application
         $logger->printOut($this->cliMate);
     }
 
-    private function validateConfig(Config $config, string $environment = null): void
+    private function validateConfig(Config $config, ?string $environment = null): void
     {
         $allPlaceholders = $config->getAllPlaceholders($environment);
 

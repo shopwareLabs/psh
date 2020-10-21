@@ -89,6 +89,7 @@ return PhpCsFixer\Config::create()
             'identical' => false,
             'less_and_greater' => false,
         ],
+        'nullable_type_declaration_for_default_null_value' => true,
     ])
     ->setRiskyAllowed(true)
     ->setUsingCache(true)

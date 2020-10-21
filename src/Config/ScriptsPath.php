@@ -27,7 +27,7 @@ class ScriptsPath
     public function __construct(
         string $path,
         bool $hidden,
-        string $namespace = null
+        ?string $namespace = null
     ) {
         $this->namespace = $namespace;
         $this->hidden = $hidden;

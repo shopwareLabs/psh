@@ -105,7 +105,7 @@ class ScriptFinderTest extends TestCase
         self::assertContainsOnlyInstancesOf(Script::class, $finder->getAllScripts());
     }
 
-    private function createScriptsPath(string $path, string $namespace = null): ScriptsPath
+    private function createScriptsPath(string $path, ?string $namespace = null): ScriptsPath
     {
         return new ScriptsPath($path, false, $namespace);
     }

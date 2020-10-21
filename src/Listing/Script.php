@@ -44,7 +44,7 @@ class Script
         string $directory,
         string $scriptName,
         bool $inHiddenPath,
-        string $environment = null,
+        ?string $environment = null,
         $description = ''
     ) {
         $this->directory = $directory;

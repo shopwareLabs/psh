@@ -403,7 +403,7 @@ EOD
         self::assertEquals(__DIR__ . '/_foo/.buz', $config->getDotenvPaths('env')['.buz']->getPath());
     }
 
-    private function assertConstants(Config $config, array $keyValues, string $environment = null): void
+    private function assertConstants(Config $config, array $keyValues, ?string $environment = null): void
     {
         foreach ($keyValues as $key => $value) {
             self::assertArrayHasKey($key, $config->getConstants($environment));
@@ -413,7 +413,7 @@ EOD
         self::assertCount(count($keyValues), $config->getConstants($environment));
     }
 
-    private function assertVariables(Config $config, array $keyValues, string $environment = null): void
+    private function assertVariables(Config $config, array $keyValues, ?string $environment = null): void
     {
         foreach ($keyValues as $key => $value) {
             self::assertArrayHasKey($key, $config->getDynamicVariables($environment));

@@ -43,7 +43,7 @@ class Config
         string $defaultEnvironment,
         array $environments,
         array $params,
-        string $header = null
+        ?string $header = null
     ) {
         $this->resolver = $resolver;
         $this->defaultEnvironment = $defaultEnvironment;
@@ -72,7 +72,7 @@ class Config
         return $paths;
     }
 
-    public function getTemplates(string $environment = null): array
+    public function getTemplates(?string $environment = null): array
     {
         return $this->resolver->resolveTemplates($this->createResult(
             [$this->getEnvironment(), 'getTemplates'],
@@ -80,7 +80,7 @@ class Config
         ));
     }
 
-    public function getDynamicVariables(string $environment = null): array
+    public function getDynamicVariables(?string $environment = null): array
     {
         return $this->resolver->resolveVariables($this->createResult(
             [$this->getEnvironment(), 'getDynamicVariables'],
@@ -88,7 +88,7 @@ class Config
         ));
     }
 
-    public function getConstants(string $environment = null): array
+    public function getConstants(?string $environment = null): array
     {
         return $this->resolver->resolveConstants($this->createResult(
             [$this->getEnvironment(), 'getConstants'],
@@ -97,7 +97,7 @@ class Config
         ));
     }
 
-    public function getAllPlaceholders(string $environment = null): array
+    public function getAllPlaceholders(?string $environment = null): array
     {
         return array_merge(
             $this->getConstants($environment),
@@ -109,7 +109,7 @@ class Config
     /**
      * @return ValueProvider[]
      */
-    public function getDotenvVariables(string $environment = null): array
+    public function getDotenvVariables(?string $environment = null): array
     {
         $paths = $this->getDotenvPaths($environment);
 
@@ -119,7 +119,7 @@ class Config
     /**
      * @return RequiredValue[]
      */
-    public function getRequiredVariables(string $environment = null): array
+    public function getRequiredVariables(?string $environment = null): array
     {
         $requiredValues = $this->createResult(
             [$this->getEnvironment(), 'getRequiredVariables'],
@@ -137,7 +137,7 @@ class Config
     /**
      * @return DotenvFile[]
      */
-    public function getDotenvPaths(string $environment = null): array
+    public function getDotenvPaths(?string $environment = null): array
     {
         $paths = $this->createResult(
             [$this->getEnvironment(), 'getDotenvPaths'],
@@ -196,7 +196,7 @@ class Config
         return $mergedKeyValues;
     }
 
-    private function getEnvironment(string $name = null): ConfigEnvironment
+    private function getEnvironment(?string $name = null): ConfigEnvironment
     {
         if ($name === null) {
             return $this->environments[$this->defaultEnvironment];

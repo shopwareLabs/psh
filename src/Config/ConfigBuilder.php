@@ -35,14 +35,14 @@ class ConfigBuilder
 
     private $imports;
 
-    public function setHeader(string $header = null): ConfigBuilder
+    public function setHeader(?string $header = null): ConfigBuilder
     {
         $this->header = $header;
 
         return $this;
     }
 
-    public function start(string $environment = null): ConfigBuilder
+    public function start(?string $environment = null): ConfigBuilder
     {
         $this->reset();
         if ($environment === null) {
@@ -89,7 +89,7 @@ class ConfigBuilder
         return $this;
     }
 
-    public function addRequirePlaceholder(string $name, string $description = null): ConfigBuilder
+    public function addRequirePlaceholder(string $name, ?string $description = null): ConfigBuilder
     {
         $this->currentRequiredVariables[$name] = $description;
 

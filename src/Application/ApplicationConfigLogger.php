@@ -21,7 +21,7 @@ class ApplicationConfigLogger implements ConfigLogger
         $this->rootDirectory = $rootDirectory;
     }
 
-    public function mainConfigFiles(string $mainFile, string $overrideFile = null): void
+    public function mainConfigFiles(string $mainFile, ?string $overrideFile = null): void
     {
         if ($overrideFile === null) {
             $this->print(sprintf('Using %s', $this->cleanUpPath($mainFile)));
@@ -41,7 +41,7 @@ class ApplicationConfigLogger implements ConfigLogger
         $this->print(sprintf(' -> NOTICE: No import found for path "%s"', $import));
     }
 
-    public function importConfigFiles(string $import, string $mainFile, string $overrideFile = null): void
+    public function importConfigFiles(string $import, string $mainFile, ?string $overrideFile = null): void
     {
         if ($overrideFile === null) {
             $this->print(sprintf(' -> Importing %s from "%s" ', $this->cleanUpPath($mainFile), $import));

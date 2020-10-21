@@ -16,7 +16,7 @@ class BashCommand implements ProcessCommand
      */
     private $warning;
 
-    public function __construct(Script $script, string $warning = null)
+    public function __construct(Script $script, ?string $warning = null)
     {
         $this->script = $script;
         $this->warning = $warning;

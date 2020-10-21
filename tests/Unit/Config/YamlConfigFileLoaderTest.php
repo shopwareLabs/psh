@@ -16,7 +16,7 @@ use function count;
 
 class YamlConfigFileLoaderTest extends TestCase
 {
-    private function createConfigLoader(Parser $parser = null)
+    private function createConfigLoader(?Parser $parser = null)
     {
         if (!$parser) {
             $parser = new Parser();
@@ -369,7 +369,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $method->invoke($loader, __DIR__, 'absoluteOrRelativePath', 'baseFile');
     }
 
-    private function assertConstants(Config $config, array $keyValues, string $environment = null): void
+    private function assertConstants(Config $config, array $keyValues, ?string $environment = null): void
     {
         foreach ($keyValues as $key => $value) {
             self::assertArrayHasKey($key, $config->getConstants($environment));
@@ -379,7 +379,7 @@ class YamlConfigFileLoaderTest extends TestCase
         self::assertCount(count($keyValues), $config->getConstants($environment));
     }
 
-    private function assertVariables(Config $config, array $keyValues, string $environment = null): void
+    private function assertVariables(Config $config, array $keyValues, ?string $environment = null): void
     {
         foreach ($keyValues as $key => $value) {
             self::assertArrayHasKey($key, $config->getDynamicVariables($environment));

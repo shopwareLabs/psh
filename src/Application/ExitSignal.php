@@ -26,7 +26,7 @@ class ExitSignal extends RuntimeException
         return new self(self::RESULT_ERROR);
     }
 
-    public function __construct(int $signal, $message = '', $code = 0, Throwable $previous = null)
+    public function __construct(int $signal, $message = '', $code = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->signal = $signal;
