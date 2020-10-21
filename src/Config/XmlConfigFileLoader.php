@@ -83,7 +83,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
 
         foreach ($environments as $node) {
             $this->configBuilder->start($node->getAttribute('name'));
-            $this->configBuilder->setHidden('true' === $node->getAttribute('hidden'));
+            $this->configBuilder->setHidden($node->getAttribute('hidden') === 'true');
             $this->setConfigData($file, $node);
         }
 

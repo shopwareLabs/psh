@@ -121,7 +121,7 @@ class ConfigFactory
     {
         $mainConfig = array_shift($configs);
 
-        while (0 !== count($configs)) {
+        while (count($configs) !== 0) {
             $mainConfig = $this->configMerger->mergeImport($mainConfig, array_pop($configs));
         }
 

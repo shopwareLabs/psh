@@ -181,7 +181,7 @@ class PshScriptParser implements ScriptParser
 
     private function startsWith(string $needle, string $haystack): bool
     {
-        return (self::TOKEN_WILDCARD === $needle && $haystack !== '') || mb_strpos($haystack, $needle) === 0;
+        return ($needle === self::TOKEN_WILDCARD && $haystack !== '') || mb_strpos($haystack, $needle) === 0;
     }
 
     /**

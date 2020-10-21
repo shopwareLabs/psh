@@ -94,7 +94,7 @@ class Application
         $scriptEnvironment = false;
 
         foreach ($scripts as $script) {
-            if ($scriptEnvironment !== $script->getEnvironment()) {
+            if ($script->getEnvironment() !== $scriptEnvironment) {
                 $scriptEnvironment = $script->getEnvironment();
                 $this->cliMate->green()->br()->bold(($scriptEnvironment ?? 'default') . ':');
             }
