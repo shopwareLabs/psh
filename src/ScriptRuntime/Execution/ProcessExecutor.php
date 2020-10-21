@@ -49,9 +49,6 @@ class ProcessExecutor
      */
     private $deferredProcesses = [];
 
-    /**
-     * ProcessExecutor constructor.
-     */
     public function __construct(
         ProcessEnvironment $environment,
         TemplateEngine $templateEngine,

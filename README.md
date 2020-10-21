@@ -111,7 +111,7 @@ composer install # assuming you have composer installed globally
 ./psh build 
 ```
 
-This will create a release phar in the `build/psh.phar` directory. The project itself requires PHP7.2+. 
+This will create a release phar in the `build/psh.phar` directory. The project itself requires PHP 7.2+. 
 
 Usage
 ------------

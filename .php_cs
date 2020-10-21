@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 $finder = PhpCsFixer\Finder::create()
     ->ignoreUnreadableDirs()
     ->exclude([
-        __DIR__ . '/tests/Integration/ScriptRuntime/_non_writable'
+        __DIR__ . '/tests/Integration/ScriptRuntime/_non_writable',
     ])
     ->in(__DIR__ . '/src')
-    ->in(__DIR__ . '/tests');
-
+    ->in(__DIR__ . '/tests')
+    ->append([__FILE__]);
 
 return PhpCsFixer\Config::create()
     ->setRules([
@@ -25,14 +25,14 @@ return PhpCsFixer\Config::create()
         'single_line_throw' => false,
 
         'array_syntax' => [
-            'syntax' => 'short'
+            'syntax' => 'short',
         ],
         'class_definition' => [
-            'single_line' => true
+            'single_line' => true,
         ],
         'comment_to_phpdoc' => true,
         'concat_space' => [
-            'spacing' => 'one'
+            'spacing' => 'one',
         ],
         'declare_strict_types' => true,
         'dir_constant' => true,
@@ -65,7 +65,7 @@ return PhpCsFixer\Config::create()
         'php_unit_namespaced' => true,
         'php_unit_construct' => true,
         'phpdoc_add_missing_param_annotation' => [
-            'only_untyped' => true
+            'only_untyped' => true,
         ],
         'phpdoc_order' => true,
         'phpdoc_var_annotation_correct_order' => true,
@@ -83,7 +83,7 @@ return PhpCsFixer\Config::create()
         'void_return' => true,
         'php_unit_test_case_static_method_calls' => [
             'call_type' => 'this',
-        ]
+        ],
     ])
     ->setRiskyAllowed(true)
     ->setUsingCache(true)
