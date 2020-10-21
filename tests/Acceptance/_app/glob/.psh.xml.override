@@ -3,5 +3,6 @@
      xsi:noNamespaceSchemaLocation="../../../../resource/config.xsd">
 
     <environment name="glob">
+        <path>actions/</path>
     </environment>
 </psh>

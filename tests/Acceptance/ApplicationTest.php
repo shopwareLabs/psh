@@ -29,6 +29,7 @@ class ApplicationTest extends TestCase
 
         $this->assertNoErrorExitCode($exitCode);
         $this->assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        $this->assertStringContainsString('Available commands:', MockWriter::$content);
         $this->assertStringContainsString('test:env', MockWriter::$content);
         $this->assertStringContainsString('test:env2', MockWriter::$content);
         $this->assertStringContainsString('7 script(s) available', MockWriter::$content);
@@ -155,6 +156,8 @@ class ApplicationTest extends TestCase
 
         $this->assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
         $this->assertStringContainsString('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
+        $this->assertStringContainsString('Importing foo/.psh.xml from "foo"', MockWriter::$content);
+
         $this->assertStringContainsString('override', MockWriter::$content);
         $this->assertStringContainsString('override-app', MockWriter::$content);
         $this->assertStringNotContainsString('_EXTERNAL_PARAM_', MockWriter::$content);
@@ -282,6 +285,8 @@ class ApplicationTest extends TestCase
         $this->assertNoErrorExitCode($exitCode);
         $this->assertStringContainsString('ls -al', MockWriter::$content);
         $this->assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        $this->assertStringContainsString('Importing glob/.psh.xml extended by glob/.psh.xml.override from "gl*b"', MockWriter::$content);
+        $this->assertStringContainsString('NOTICE: No import found for path "foo/"', MockWriter::$content);
         $this->assertStringContainsString('(1/4) Starting', MockWriter::$content);
         $this->assertStringContainsString('(2/4) Starting', MockWriter::$content);
         $this->assertStringContainsString('(3/4) Starting', MockWriter::$content);

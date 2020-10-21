@@ -19,7 +19,6 @@ use function explode;
 use function implode;
 use function mb_strlen;
 use function sprintf;
-use function str_replace;
 
 /**
  * Main application entry point. moves the requested data around and outputs user information.
@@ -165,22 +164,6 @@ class Application
         }
     }
 
-    protected function printConfigFiles(array $configFiles): void
-    {
-        $countConfigFiles = count($configFiles);
-        for ($i = 0; $i < $countConfigFiles; $i++) {
-            $configFiles[$i] = str_replace($this->rootDirectory . '/', '', $configFiles[$i]);
-        }
-
-        if (count($configFiles) === 1) {
-            $this->cliMate->yellow()->out(sprintf("Using %s \n", $configFiles[0]));
-
-            return;
-        }
-
-        $this->cliMate->yellow()->out(sprintf("Using %s extended by %s \n", $configFiles[0], $configFiles[1]));
-    }
-
     private function getPaddingSize(array $scripts): int
     {
         $maxScriptNameLength = 0;
@@ -223,12 +206,10 @@ class Application
         }
     }
 
-    private function printHead(Config $config): void
+    private function printHead(Config $config, ApplicationConfigLogger $logger): void
     {
         $this->printHeader($config);
-
-        $configFiles = $this->applicationFactory->getConfigFiles($this->rootDirectory);
-        $this->printConfigFiles($configFiles);
+        $logger->printOut($this->cliMate);
     }
 
     private function validateConfig(Config $config, string $environment = null): void
@@ -267,9 +248,11 @@ class Application
 
     private function prepare(array $inputArgs): Config
     {
+        $configLogger = new ApplicationConfigLogger($this->rootDirectory, $this->cliMate);
+
         try {
             $config = $this->applicationFactory
-                ->createConfig($this->rootDirectory, $inputArgs);
+                ->createConfig($configLogger, $this->rootDirectory, $inputArgs);
         } catch (InvalidParameterException $e) {
             $this->notifyError($e->getMessage() . "\n");
 
@@ -286,7 +269,7 @@ class Application
             throw ExitSignal::success();
         }
 
-        $this->printHead($config);
+        $this->printHead($config, $configLogger);
         $this->validateConfig($config);
 
         return $config;

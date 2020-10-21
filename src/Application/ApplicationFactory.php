@@ -7,6 +7,7 @@ use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFactory;
 use Shopware\Psh\Config\ConfigFileFinder;
+use Shopware\Psh\Config\ConfigLogger;
 use Shopware\Psh\Config\ConfigMerger;
 use Shopware\Psh\Config\XmlConfigFileLoader;
 use Shopware\Psh\Config\YamlConfigFileLoader;
@@ -34,7 +35,7 @@ class ApplicationFactory
     /**
      * @throws RuntimeException
      */
-    public function createConfig(string $rootDirectory, array $params): Config
+    public function createConfig(ConfigLogger $logger, string $rootDirectory, array $params): Config
     {
         $overwrittenConsts = (new ParameterParser())->parseParams($params);
         $configFinder = new ConfigFileFinder();
@@ -44,8 +45,9 @@ class ApplicationFactory
             new YamlConfigFileLoader(new Parser(), new ConfigBuilder(), $rootDirectory),
             new XmlConfigFileLoader(new ConfigBuilder(), $rootDirectory),
         ];
-        $configFactory = new ConfigFactory($merger, $configFinder, $configLoaders);
+        $configFactory = new ConfigFactory($merger, $configFinder, $logger, $configLoaders);
 
+        $logger->mainConfigFiles(...$configFiles);
         $configs = $configFactory->gatherConfigs($rootDirectory, $configFiles, $overwrittenConsts);
 
         if (count($configs) === 0) {
@@ -90,10 +92,5 @@ class ApplicationFactory
         );
 
         return $scriptLoader->loadScript($script);
-    }
-
-    public function getConfigFiles(string $directory): array
-    {
-        return  (new ConfigFileFinder())->discoverFiles($directory);
     }
 }

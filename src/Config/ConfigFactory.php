@@ -26,14 +26,21 @@ class ConfigFactory
      */
     private $configLoaders;
 
+    /**
+     * @var ConfigLogger
+     */
+    private $configLogger;
+
     public function __construct(
         ConfigMerger $configMerger,
         ConfigFileFinder $configFileFinder,
+        ConfigLogger $configLogger,
         array $configLoaders
     ) {
         $this->configMerger = $configMerger;
         $this->configFileFinder = $configFileFinder;
         $this->configLoaders = $configLoaders;
+        $this->configLogger = $configLogger;
     }
 
     /**
@@ -80,6 +87,7 @@ class ConfigFactory
         $additionalConfigs = [];
 
         foreach ($config->getImports() as $importPath) {
+            $foundSomething = false;
             foreach (glob($fromPath . '/' . $importPath) as $foundOccurrence) {
                 if (!is_dir($foundOccurrence)) {
                     continue;
@@ -92,8 +100,14 @@ class ConfigFactory
                     continue;
                 }
 
+                $foundSomething = true;
+                $this->configLogger->importConfigFiles($importPath, ...$foundConfigFiles);
                 $additionalConfigs[] = $this
                     ->gatherConfigs($foundOccurrence, $foundConfigFiles, $overwrittenConsts);
+            }
+
+            if (!$foundSomething) {
+                $this->configLogger->notifyImportNotFound($importPath);
             }
         }
 
