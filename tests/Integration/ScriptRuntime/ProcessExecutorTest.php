@@ -60,8 +60,8 @@ class ProcessExecutorTest extends TestCase
 
         $executor->execute($script, $commands);
 
-        $this->assertEmpty($logger->errors, count($logger->errors) . ' stderr: ' . implode("\n", $logger->errors));
-        $this->assertEquals('', trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
+        self::assertEmpty($logger->errors, count($logger->errors) . ' stderr: ' . implode("\n", $logger->errors));
+        self::assertEquals('', trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
     }
 
     public function test_root_dir_is_application_directory(): void
@@ -79,8 +79,8 @@ class ProcessExecutorTest extends TestCase
 
         $executor->execute($script, $commands);
 
-        $this->assertEmpty($logger->errors, count($logger->errors) . ' stderr: ' . implode("\n", $logger->errors));
-        $this->assertEquals(__DIR__, trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
+        self::assertEmpty($logger->errors, count($logger->errors) . ' stderr: ' . implode("\n", $logger->errors));
+        self::assertEquals(__DIR__, trim($logger->output[0]), count($logger->output) . ' stdout: ' . implode("\n", $logger->output));
     }
 
     public function test_template_engine_works_with_template_destinations(): void
@@ -103,7 +103,7 @@ class ProcessExecutorTest extends TestCase
 
         $executor->execute($script, $commands);
 
-        $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
+        self::assertFileExists(__DIR__ . '/_testvalue.tpl');
     }
 
     public function test_executor_recognises_template_commands(): void
@@ -121,7 +121,7 @@ class ProcessExecutorTest extends TestCase
 
         $executor->execute($script, $commands);
 
-        $this->assertFileExists(__DIR__ . '/_testvalue.tpl');
+        self::assertFileExists(__DIR__ . '/_testvalue.tpl');
     }
 
     public function test_non_executable_bash_commands_throw(): void
@@ -147,9 +147,9 @@ class ProcessExecutorTest extends TestCase
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
-        $this->assertCount(1, $commands);
-        $this->assertInstanceOf(BashCommand::class, $commands[0]);
-        $this->assertTrue($commands[0]->hasWarning());
+        self::assertCount(1, $commands);
+        self::assertInstanceOf(BashCommand::class, $commands[0]);
+        self::assertTrue($commands[0]->hasWarning());
 
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
@@ -159,9 +159,9 @@ class ProcessExecutorTest extends TestCase
         );
 
         $executor->execute($script, $commands);
-        $this->assertFileNotExists($script->getTmpPath());
+        self::assertFileNotExists($script->getTmpPath());
 
-        $this->assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
+        self::assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
     }
 
     public function test_executor_recognises_secure_bash_commands(): void
@@ -170,9 +170,9 @@ class ProcessExecutorTest extends TestCase
         $commands = $this->loadCommands($script);
         $logger = new BlackholeLogger();
 
-        $this->assertCount(1, $commands);
-        $this->assertInstanceOf(BashCommand::class, $commands[0]);
-        $this->assertFalse($commands[0]->hasWarning());
+        self::assertCount(1, $commands);
+        self::assertInstanceOf(BashCommand::class, $commands[0]);
+        self::assertFalse($commands[0]->hasWarning());
 
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
@@ -182,10 +182,10 @@ class ProcessExecutorTest extends TestCase
         );
 
         $executor->execute($script, $commands);
-        $this->assertFileNotExists($script->getTmpPath());
+        self::assertFileNotExists($script->getTmpPath());
 
-        $this->assertCount(1, $logger->output);
-        $this->assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
+        self::assertCount(1, $logger->output);
+        self::assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
     }
 
     public function test_executor_recognises_defered_commands(): void
@@ -193,9 +193,9 @@ class ProcessExecutorTest extends TestCase
         $script = $this->createScript(__DIR__ . '/_scripts', 'deferred.sh');
         $commands = $this->loadCommands($script);
 
-        $this->assertCount(5, $commands);
-        $this->assertInstanceOf(WaitCommand::class, $commands[2]);
-        $this->assertInstanceOf(DeferredProcessCommand::class, $commands[0]);
+        self::assertCount(5, $commands);
+        self::assertInstanceOf(WaitCommand::class, $commands[2]);
+        self::assertInstanceOf(DeferredProcessCommand::class, $commands[0]);
 
         $logger = new BlackholeLogger();
 
@@ -212,20 +212,20 @@ class ProcessExecutorTest extends TestCase
         // check a wait occurred
         $totalWait = 0;
         foreach (self::DEFERED_FILES as $file) {
-            $this->assertFileExists($file);
+            self::assertFileExists($file);
 
             $data = json_decode(file_get_contents($file), true);
 
             $currentWait = $data['after'] - $data['before'];
             $totalWait += $currentWait;
 
-            $this->assertGreaterThan(0.0001, $currentWait);
+            self::assertGreaterThan(0.0001, $currentWait);
         }
 
         //assert total duration was less then total wait -> Then it just becomes a problem of more processes on travis if necessary
-        $this->assertLessThan($executionTime * 0.75, $totalWait);
-        $this->assertCount(0, $logger->errors);
-        $this->assertEquals(["Done\n", "Done\n", "Done\n", "Done\n"], $logger->output);
+        self::assertLessThan($executionTime * 0.75, $totalWait);
+        self::assertCount(0, $logger->errors);
+        self::assertEquals(["Done\n", "Done\n", "Done\n", "Done\n"], $logger->output);
     }
 
     public function test_deferred_commands_get_executed_even_with_error_in_between(): void
@@ -233,8 +233,8 @@ class ProcessExecutorTest extends TestCase
         $script = $this->createScript(__DIR__ . '/_scripts', 'deferred_with_error.sh');
         $commands = $this->loadCommands($script);
 
-        $this->assertCount(4, $commands);
-        $this->assertInstanceOf(DeferredProcessCommand::class, $commands[0]);
+        self::assertCount(4, $commands);
+        self::assertInstanceOf(DeferredProcessCommand::class, $commands[0]);
 
         $logger = new BlackholeLogger();
 
@@ -252,25 +252,25 @@ class ProcessExecutorTest extends TestCase
         } catch (ExecutionErrorException $e) {
         }
         $executionTime = microtime(true) - $beginExecution;
-        $this->assertInstanceOf(ExecutionErrorException::class, $e);
+        self::assertInstanceOf(ExecutionErrorException::class, $e);
 
         // check a wait occurred
         $totalWait = 0;
         foreach ([self::DEFERED_FILES[0], self::DEFERED_FILES[1]] as $file) {
-            $this->assertFileExists($file);
+            self::assertFileExists($file);
 
             $data = json_decode(file_get_contents($file), true);
 
             $currentWait = $data['after'] - $data['before'];
             $totalWait += $currentWait;
 
-            $this->assertGreaterThan(0.0001, $currentWait);
+            self::assertGreaterThan(0.0001, $currentWait);
         }
 
         //assert total duration was less then total wait -> Then it just becomes a problem of more processes on travis if necessary
-        $this->assertLessThan($executionTime, $totalWait);
-        $this->assertCount(0, $logger->errors);
-        $this->assertEquals(["Done\n", "Done\n"], $logger->output);
+        self::assertLessThan($executionTime, $totalWait);
+        self::assertCount(0, $logger->errors);
+        self::assertEquals(["Done\n", "Done\n"], $logger->output);
     }
 
     /**

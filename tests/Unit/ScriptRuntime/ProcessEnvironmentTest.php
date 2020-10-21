@@ -23,14 +23,14 @@ class ProcessEnvironmentTest extends TestCase
     public function test_it_returns_all_passed_constants(): void
     {
         $env = new ProcessEnvironment((new EnvironmentResolver())->resolveConstants(['FOO' => 'BAR']), [], [], []);
-        $this->assertEquals(['FOO' => new SimpleValueProvider('BAR')], $env->getAllValues());
+        self::assertEquals(['FOO' => new SimpleValueProvider('BAR')], $env->getAllValues());
     }
 
     public function test_it_creates_processes(): void
     {
         $env = new ProcessEnvironment([], [], [], []);
-        $this->assertInstanceOf(Process::class, $env->createProcess('foo'));
-        $this->assertEquals('foo', $env->createProcess('foo')->getCommandLine());
+        self::assertInstanceOf(Process::class, $env->createProcess('foo'));
+        self::assertEquals('foo', $env->createProcess('foo')->getCommandLine());
     }
 
     public function test_it_resolves_variables(): void
@@ -42,11 +42,11 @@ class ProcessEnvironmentTest extends TestCase
 
         $resolvedValues = $env->getAllValues();
 
-        $this->assertContainsOnlyInstancesOf(ValueProvider::class, $resolvedValues);
-        $this->assertCount(2, $resolvedValues);
+        self::assertContainsOnlyInstancesOf(ValueProvider::class, $resolvedValues);
+        self::assertCount(2, $resolvedValues);
 
         foreach ($resolvedValues as $value) {
-            $this->assertEquals(trim($value->getValue()), $value->getValue());
+            self::assertEquals(trim($value->getValue()), $value->getValue());
         }
     }
 
@@ -58,8 +58,8 @@ class ProcessEnvironmentTest extends TestCase
 
         $templates = $env->getTemplates();
 
-        $this->assertContainsOnlyInstancesOf(Template::class, $templates);
-        $this->assertCount(1, $templates);
+        self::assertContainsOnlyInstancesOf(Template::class, $templates);
+        self::assertCount(1, $templates);
     }
 
     public function test_dotenv_can_be_overwritten_by_existing_env_vars(): void
@@ -69,7 +69,7 @@ class ProcessEnvironmentTest extends TestCase
             new DotenvFile(__DIR__ . '/_dotenv/simple.env'),
         ]));
 
-        $this->assertSame('baz', $env->getAllValues()['FOO']->getValue());
+        self::assertSame('baz', $env->getAllValues()['FOO']->getValue());
     }
 
     public function test_dotenv_file_variables(): void
@@ -78,7 +78,7 @@ class ProcessEnvironmentTest extends TestCase
             new DotenvFile(__DIR__ . '/_dotenv/simple.env'),
         ]));
 
-        $this->assertCount(1, $env->getAllValues());
-        $this->assertSame('bar', $env->getAllValues()['FOO']->getValue());
+        self::assertCount(1, $env->getAllValues());
+        self::assertSame('bar', $env->getAllValues()['FOO']->getValue());
     }
 }

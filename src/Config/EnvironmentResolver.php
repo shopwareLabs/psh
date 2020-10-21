@@ -14,7 +14,7 @@ class EnvironmentResolver
 {
     /**
      * @param DotenvFile[] $dotenvPaths
-     * @return ValueProvider[}
+     * @return ValueProvider[]
      */
     public function resolveDotenvVariables(array $dotenvPaths): array
     {

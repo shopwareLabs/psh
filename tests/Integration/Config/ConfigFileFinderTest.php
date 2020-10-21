@@ -22,7 +22,7 @@ class ConfigFileFinderTest extends TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/dist/sub/sub2/sub3');
-        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
+        self::assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
     }
 
     public function test_config_loader_returns_file_in_same_directory_if_found(): void
@@ -30,7 +30,7 @@ class ConfigFileFinderTest extends TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/dist');
-        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
+        self::assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
     }
 
     public function test_config_loader_prefers_original_over_dist_file(): void
@@ -38,7 +38,7 @@ class ConfigFileFinderTest extends TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/dist');
-        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
+        self::assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
     }
 
     public function test_config_loader_returns_override_file(): void
@@ -47,7 +47,7 @@ class ConfigFileFinderTest extends TestCase
 
         $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override');
 
-        $this->assertEquals([
+        self::assertEquals([
             __DIR__ . '/_configFileFinderFixtures/override/.psh.xml',
             __DIR__ . '/_configFileFinderFixtures/override/.psh.xml.override',
         ], $files);
@@ -59,7 +59,7 @@ class ConfigFileFinderTest extends TestCase
 
         $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override_and_dist');
 
-        $this->assertEquals([
+        self::assertEquals([
             __DIR__ . '/_configFileFinderFixtures/override_and_dist/.psh.xml.dist',
             __DIR__ . '/_configFileFinderFixtures/override_and_dist/.psh.xml.override',
         ], $files);
@@ -71,7 +71,7 @@ class ConfigFileFinderTest extends TestCase
 
         $files = $loader->discoverFiles(__DIR__ . '/_configFileFinderFixtures/override_yml_and_dist_xml');
 
-        $this->assertEquals([
+        self::assertEquals([
             __DIR__ . '/_configFileFinderFixtures/override_yml_and_dist_xml/.psh.xml.dist',
             __DIR__ . '/_configFileFinderFixtures/override_yml_and_dist_xml/.psh.yaml.override',
         ], $files);
@@ -82,9 +82,9 @@ class ConfigFileFinderTest extends TestCase
         $loader = new ConfigFileFinder();
 
         $file = $loader->discoverConfigInDirectory(__DIR__ . '/_configFileFinderFixtures/dist/sub/sub2/sub3');
-        $this->assertEquals([], $file);
+        self::assertEquals([], $file);
 
         $file = $loader->discoverConfigInDirectory(__DIR__ . '/_configFileFinderFixtures/dist');
-        $this->assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
+        self::assertEquals([__DIR__ . '/_configFileFinderFixtures/dist/.psh.xml'], $file);
     }
 }

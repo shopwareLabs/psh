@@ -11,7 +11,7 @@ class ScriptFinderTest extends TestCase
     public function test_script_finder_holds_contract_if_no_paths_present(): void
     {
         $finder = new ScriptFinder([], new DescriptionReader());
-        $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertIsArray($finder->getAllScripts());
+        self::assertInstanceOf(ScriptFinder::class, $finder);
+        self::assertIsArray($finder->getAllScripts());
     }
 }

@@ -76,20 +76,20 @@ class ConfigBuilder
         $this->currentDotenvPaths = [];
 
         foreach ($dotenvPaths as $dotenvPath) {
-            $this->setDotenvPath($dotenvPath);
+            $this->addDotenvPath($dotenvPath);
         }
 
         return $this;
     }
 
-    public function setDotenvPath(string $dotenvPath): ConfigBuilder
+    public function addDotenvPath(string $dotenvPath): ConfigBuilder
     {
         $this->currentDotenvPaths[pathinfo($dotenvPath, PATHINFO_BASENAME)] = $dotenvPath;
 
         return $this;
     }
 
-    public function setRequirePlaceholder(string $name, string $description = null): ConfigBuilder
+    public function addRequirePlaceholder(string $name, string $description = null): ConfigBuilder
     {
         $this->currentRequiredVariables[$name] = $description;
 
@@ -106,7 +106,7 @@ class ConfigBuilder
         return $this;
     }
 
-    public function setDynamicVariable(string $key, string $value): ConfigBuilder
+    public function addDynamicVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentDynamicVariables[$key] = $value;
 
@@ -123,14 +123,14 @@ class ConfigBuilder
         return $this;
     }
 
-    public function setConstVariable(string $key, string $value): ConfigBuilder
+    public function addConstVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentConstants[$key] = $value;
 
         return $this;
     }
 
-    public function setImport(string $path): self
+    public function addImport(string $path): self
     {
         $this->imports[] = $path;
 

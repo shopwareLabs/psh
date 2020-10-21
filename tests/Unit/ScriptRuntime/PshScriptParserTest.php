@@ -23,69 +23,69 @@ class PshScriptParserTest extends TestCase
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'simple.sh'));
 
-        $this->assertCount(3, $commands);
-        $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
+        self::assertCount(3, $commands);
+        self::assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(5, $lastCommand->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
-        $this->assertFalse($lastCommand->isIgnoreError());
+        self::assertEquals(5, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertFalse($lastCommand->isIgnoreError());
     }
 
     public function test_it_concatenates_commands(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'concatenate.sh'));
 
-        $this->assertCount(2, $commands);
-        $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
+        self::assertCount(2, $commands);
+        self::assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(5, $lastCommand->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
-        $this->assertFalse($lastCommand->isIgnoreError());
+        self::assertEquals(5, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertFalse($lastCommand->isIgnoreError());
     }
 
     public function test_it_sets_ignore_error(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'ignore_error.sh'));
 
-        $this->assertCount(3, $commands);
-        $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
+        self::assertCount(3, $commands);
+        self::assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(5, $lastCommand->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
-        $this->assertTrue($lastCommand->isIgnoreError());
+        self::assertEquals(5, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertTrue($lastCommand->isIgnoreError());
     }
 
     public function test_it_sets_tty(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'tty.sh'));
 
-        $this->assertCount(1, $commands);
-        $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
+        self::assertCount(1, $commands);
+        self::assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(2, $lastCommand->getLineNumber());
-        $this->assertEquals('ls -al', $lastCommand->getShellCommand());
-        $this->assertTrue($lastCommand->isTty());
+        self::assertEquals(2, $lastCommand->getLineNumber());
+        self::assertEquals('ls -al', $lastCommand->getShellCommand());
+        self::assertTrue($lastCommand->isTty());
     }
 
     public function test_includes_with_local_commands(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'local_include.sh'));
 
-        $this->assertCount(8, $commands);
-        $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
+        self::assertCount(8, $commands);
+        self::assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
 
-        $this->assertEquals(2, $commands[0]->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
-        $this->assertFalse($commands[0]->isIgnoreError());
+        self::assertEquals(2, $commands[0]->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
+        self::assertFalse($commands[0]->isIgnoreError());
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(5, $lastCommand->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
-        $this->assertFalse($lastCommand->isIgnoreError());
+        self::assertEquals(5, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertFalse($lastCommand->isIgnoreError());
     }
 
     public function test_include_throws_exception(): void
@@ -101,17 +101,17 @@ class PshScriptParserTest extends TestCase
             new ScriptsPath(__DIR__ . '/_scripts/', false, 'env'),
         ]);
 
-        $this->assertCount(8, $commands);
-        $this->assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
+        self::assertCount(8, $commands);
+        self::assertContainsOnlyInstancesOf(SynchronusProcessCommand::class, $commands);
 
-        $this->assertEquals(2, $commands[0]->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
-        $this->assertFalse($commands[0]->isIgnoreError());
+        self::assertEquals(2, $commands[0]->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
+        self::assertFalse($commands[0]->isIgnoreError());
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(5, $lastCommand->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
-        $this->assertFalse($lastCommand->isIgnoreError());
+        self::assertEquals(5, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertFalse($lastCommand->isIgnoreError());
     }
 
     public function test_action_throws_exception(): void
@@ -124,21 +124,21 @@ class PshScriptParserTest extends TestCase
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'template.sh'));
 
-        $this->assertCount(3, $commands);
-        $this->assertContainsOnlyInstancesOf(Command::class, $commands);
+        self::assertCount(3, $commands);
+        self::assertContainsOnlyInstancesOf(Command::class, $commands);
 
-        $this->assertEquals(2, $commands[0]->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
-        $this->assertFalse($commands[0]->isIgnoreError());
+        self::assertEquals(2, $commands[0]->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
+        self::assertFalse($commands[0]->isIgnoreError());
 
-        $this->assertInstanceOf(TemplateCommand::class, $commands[1]);
-        $this->assertEquals(__DIR__ . '/_scripts/complex.sh', $commands[1]->createTemplate()->getDestination());
-        $this->assertEquals(file_get_contents(__DIR__ . '/_scripts/simple.sh'), $commands[1]->createTemplate()->getContent());
+        self::assertInstanceOf(TemplateCommand::class, $commands[1]);
+        self::assertEquals(__DIR__ . '/_scripts/complex.sh', $commands[1]->createTemplate()->getDestination());
+        self::assertEquals(file_get_contents(__DIR__ . '/_scripts/simple.sh'), $commands[1]->createTemplate()->getContent());
 
         $lastCommand = array_pop($commands);
-        $this->assertEquals(4, $lastCommand->getLineNumber());
-        $this->assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
-        $this->assertFalse($lastCommand->isIgnoreError());
+        self::assertEquals(4, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertFalse($lastCommand->isIgnoreError());
     }
 
     /**

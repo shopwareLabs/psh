@@ -20,7 +20,7 @@ class TemplateTest extends TestCase
     {
         $template = new Template(__DIR__ . '/_test_read.tpl', '**');
 
-        $this->assertEquals('foo::bar::baz', $template->getContent());
+        self::assertEquals('foo::bar::baz', $template->getContent());
     }
 
     public function test_it_dumps_the_contents_then(): void
@@ -28,7 +28,7 @@ class TemplateTest extends TestCase
         $template = new Template(__DIR__ . '/_test_write.tpl', __DIR__ . '/_test_write.tpl');
 
         $template->setContents('test');
-        $this->assertEquals('test', $template->getContent());
+        self::assertEquals('test', $template->getContent());
     }
 
     /**

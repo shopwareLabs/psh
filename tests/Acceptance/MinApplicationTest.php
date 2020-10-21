@@ -15,6 +15,6 @@ class MinApplicationTest extends TestCase
 
         $application->run([]);
 
-        $this->assertNotFalse(mb_strpos(MockWriter::$content, '1 script(s) available'));
+        self::assertNotFalse(mb_strpos(MockWriter::$content, '1 script(s) available'));
     }
 }

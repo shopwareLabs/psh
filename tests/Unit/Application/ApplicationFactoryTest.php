@@ -27,7 +27,7 @@ class ApplicationFactoryTest extends TestCase
             'FILTER' => '--filter aaaa',
         ];
 
-        $this->assertEquals($expectedResult, $parsedParams);
+        self::assertEquals($expectedResult, $parsedParams);
     }
 
     public function test_createConfig_with_invalid_config_file(): void
@@ -82,7 +82,7 @@ class ApplicationFactoryTest extends TestCase
             'ENV6' => 'gh""t=tg',
         ];
 
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     private function getApplicationFactory(): ApplicationFactory

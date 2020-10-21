@@ -50,7 +50,7 @@ class ConfigFileFinder
             $currentDirectory = dirname($currentDirectory);
         } while ($currentDirectory !== '/');
 
-        throw new RuntimeException('No config file found, make sure you have created a .psh.xml file');
+        throw new RuntimeException('No config file found, make sure you have created a .psh.xml or .psh.xml.dist file');
     }
 
     /**

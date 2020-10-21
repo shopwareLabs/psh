@@ -16,7 +16,7 @@ class ExitSignal extends RuntimeException
      */
     private $signal;
 
-    public static function success()
+    public static function success(): self
     {
         return new self(self::RESULT_SUCCESS);
     }

@@ -9,7 +9,7 @@ class ConfigFileFinderTest extends TestCase
 {
     public function test_config_loader_can_be_created(): void
     {
-        $this->assertInstanceOf(ConfigFileFinder::class, new ConfigFileFinder());
+        self::assertInstanceOf(ConfigFileFinder::class, new ConfigFileFinder());
     }
 
     public function test_file_discovery_default_case(): void
@@ -19,7 +19,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter',
         ]);
 
-        $this->assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
+        self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
     public function test_file_discovery_with_dist_file_only(): void
@@ -29,7 +29,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.dist',
         ]);
 
-        $this->assertEquals([__DIR__ . '/.psh.does-not-matter.dist'], $result);
+        self::assertEquals([__DIR__ . '/.psh.does-not-matter.dist'], $result);
     }
 
     public function test_file_discovery_with_dist_file_and_default_file(): void
@@ -40,7 +40,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.dist',
         ]);
 
-        $this->assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
+        self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
     public function test_file_discovery_with_dist_file_and_default_file_and_override_file(): void
@@ -52,7 +52,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
-        $this->assertEquals([
+        self::assertEquals([
             __DIR__ . '/.psh.does-not-matter',
             __DIR__ . '/.psh.does-not-matter.override',
         ], $result);
@@ -66,7 +66,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
-        $this->assertEquals([
+        self::assertEquals([
             __DIR__ . '/.psh.does-not-matter',
             __DIR__ . '/.psh.does-not-matter.override',
         ], $result);
@@ -80,7 +80,7 @@ class ConfigFileFinderTest extends TestCase
             __DIR__ . '/.psh.does-not-matter.override',
         ]);
 
-        $this->assertEquals([
+        self::assertEquals([
             __DIR__ . '/.psh.does-not-matter.dist',
             __DIR__ . '/.psh.does-not-matter.override',
         ], $result);

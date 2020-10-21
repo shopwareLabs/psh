@@ -175,7 +175,7 @@ class Config
         return $this->params;
     }
 
-    public function getImports()
+    public function getImports(): array
     {
         return $this->getEnvironment()->getImports();
     }

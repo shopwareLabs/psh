@@ -59,7 +59,7 @@ class ApplicationConfigLogger implements ConfigLogger
 
     private function cleanUpPath(string $configFile): string
     {
-        return  str_replace($this->rootDirectory . '/', '', $configFile);
+        return str_replace($this->rootDirectory . '/', '', $configFile);
     }
 
     private function print(string $message): void

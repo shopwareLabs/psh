@@ -253,11 +253,7 @@ class Application
         try {
             $config = $this->applicationFactory
                 ->createConfig($configLogger, $this->rootDirectory, $inputArgs);
-        } catch (InvalidParameterException $e) {
-            $this->notifyError($e->getMessage() . "\n");
-
-            throw ExitSignal::error();
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidParameterException | InvalidArgumentException $e) {
             $this->notifyError("\n" . $e->getMessage() . "\n");
 
             throw ExitSignal::error();

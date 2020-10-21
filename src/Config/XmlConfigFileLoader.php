@@ -74,7 +74,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
 
         $imports = $this->extractNodes(self::NODE_IMPORT, $pshConfigNode);
         foreach ($imports as $importNode) {
-            $this->configBuilder->setImport($importNode->getAttribute('path'));
+            $this->configBuilder->addImport($importNode->getAttribute('path'));
         }
 
         $this->setConfigData($file, $pshConfigNode);
@@ -168,19 +168,19 @@ class XmlConfigFileLoader extends ConfigFileLoader
     private function extractPlaceholders(string $file, DOMElement $placeholder): void
     {
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DYNAMIC, $placeholder) as $dynamic) {
-            $this->configBuilder->setDynamicVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);
+            $this->configBuilder->addDynamicVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);
         }
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_CONST, $placeholder) as $const) {
-            $this->configBuilder->setConstVariable($const->getAttribute('name'), $const->nodeValue);
+            $this->configBuilder->addConstVariable($const->getAttribute('name'), $const->nodeValue);
         }
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DOTENV, $placeholder) as $dotenv) {
-            $this->configBuilder->setDotenvPath($this->fixPath($this->applicationRootDirectory, $dotenv->nodeValue, $file));
+            $this->configBuilder->addDotenvPath($this->fixPath($this->applicationRootDirectory, $dotenv->nodeValue, $file));
         }
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_REQUIRE, $placeholder) as $require) {
-            $this->configBuilder->setRequirePlaceholder($require->getAttribute('name'), $require->getAttribute('description'));
+            $this->configBuilder->addRequirePlaceholder($require->getAttribute('name'), $require->getAttribute('description'));
         }
     }
 
