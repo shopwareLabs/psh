@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 # DESCRIPTION: Remove build artifacts
+# <PSH_EXECUTE_THROUGH_CMD>
+set -euo pipefail
 
-I: rm -R build/*
+rm -Rf build/*
+rm -Rf vendor-bin/*/vendor
+rm -Rf bin
+rm -Rf vendor

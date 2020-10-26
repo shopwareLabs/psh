@@ -180,9 +180,6 @@ class Config
         return $this->getEnvironment()->getImports();
     }
 
-    /**
-     * @param callable[] ...$valueProviders
-     */
     private function createResult(callable ...$valueProviders): array
     {
         $mergedKeyValues = [];

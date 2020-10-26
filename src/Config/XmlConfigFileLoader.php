@@ -93,9 +93,6 @@ class XmlConfigFileLoader implements ConfigFileLoader
             ->create($params);
     }
 
-    /**
-     * @param array $pshConfigNode
-     */
     private function setConfigData(string $file, DOMElement $pshConfigNode): void
     {
         $this->configBuilder->setCommandPaths(
@@ -133,9 +130,6 @@ class XmlConfigFileLoader implements ConfigFileLoader
         return $nodes;
     }
 
-    /**
-     * @param $pshConfigNode
-     */
     private function extractCommandPaths(string $file, DOMElement $pshConfigNode): array
     {
         $pathNodes = $this->extractNodes(self::NODE_PATH, $pshConfigNode);
@@ -145,9 +139,6 @@ class XmlConfigFileLoader implements ConfigFileLoader
         }, $pathNodes);
     }
 
-    /**
-     * @param array $pshConfigNodes
-     */
     private function extractTemplates(string $file, DOMElement $pshConfigNodes): array
     {
         $templates = $this->extractNodes(self::NODE_TEMPLATE, $pshConfigNodes);

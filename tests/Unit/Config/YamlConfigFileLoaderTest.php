@@ -16,7 +16,7 @@ use function count;
 
 class YamlConfigFileLoaderTest extends TestCase
 {
-    private function createConfigLoader(?Parser $parser = null)
+    private function createConfigLoader(?Parser $parser = null): YamlConfigFileLoader
     {
         if (!$parser) {
             $parser = new Parser();
@@ -28,7 +28,6 @@ class YamlConfigFileLoaderTest extends TestCase
     public function test_it_can_be_instantiated(): void
     {
         $loader = $this->createConfigLoader();
-        self::assertInstanceOf(YamlConfigFileLoader::class, $loader);
         self::assertInstanceOf(ConfigFileLoader::class, $loader);
     }
 

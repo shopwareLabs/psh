@@ -20,9 +20,6 @@ class ProcessValueProvider implements ValueProvider
         $this->process = $process;
     }
 
-    /**
-     * @return mixed
-     */
     public function getValue(): string
     {
         $this->process->mustRun();

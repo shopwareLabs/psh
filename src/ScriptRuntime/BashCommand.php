@@ -47,7 +47,7 @@ class BashCommand implements ProcessCommand
         return $this->warning !== null;
     }
 
-    public function getWarning(): string
+    public function getWarning(): ?string
     {
         return $this->warning;
     }

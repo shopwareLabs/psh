@@ -1,5 +1,10 @@
 {
     "require": {
-        "infection/infection": "^0.18.0"
+        "infection/infection": ">=0.15.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
     }
 }

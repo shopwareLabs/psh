@@ -39,10 +39,12 @@
         }
     ],
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "platform": {
+            "php": "7.2.0"
+        }
     },
     "scripts": {
-        "post-update-cmd": ["@composer bin all update --ansi"]
     },
     "minimum-stability": "stable"
 }
