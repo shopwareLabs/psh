@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": "^7.2",
         "ext-dom": "*",
         "symfony/finder": "^4.4",
         "symfony/process": "^4.4",
@@ -42,7 +42,6 @@
         "bin-dir": "bin"
     },
     "scripts": {
-        "bin": "echo 'bin not installed'",
         "post-update-cmd": ["@composer bin all update --ansi"]
     },
     "minimum-stability": "stable"

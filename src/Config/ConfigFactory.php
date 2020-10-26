@@ -22,7 +22,7 @@ class ConfigFactory
     private $configFileFinder;
 
     /**
-     * @var ConfigLoader[]
+     * @var ConfigFileLoader[]
      */
     private $configLoaders;
 

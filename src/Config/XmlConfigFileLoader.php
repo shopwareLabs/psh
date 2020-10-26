@@ -14,8 +14,10 @@ use function pathinfo;
 /**
  * Load the config data from an xml file
  */
-class XmlConfigFileLoader extends ConfigFileLoader
+class XmlConfigFileLoader implements ConfigFileLoader
 {
+    use ConfigFileLoaderFileSystemHandlers;
+
     private const NODE_HEADER = 'header';
 
     private const NODE_IMPORT = 'import';

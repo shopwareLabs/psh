@@ -15,15 +15,12 @@ class ConfigMerger
 
         $header = $config->getHeader();
         $defaultEnvironment = $config->getDefaultEnvironment();
-        $environments = $config->getEnvironments();
 
         if ($override->getHeader()) {
             $header = $override->getHeader();
         }
 
-        if ($override->getEnvironments()) {
-            $environments = $this->mergeConfigEnvironments($config, $override);
-        }
+        $environments = $this->mergeOverrideConfigEnvironments($config, $override);
 
         if ($override->getDefaultEnvironment()) {
             $defaultEnvironment = $override->getDefaultEnvironment();
@@ -40,44 +37,25 @@ class ConfigMerger
 
         $header = $config->getHeader();
         $defaultEnvironment = $config->getDefaultEnvironment();
-        $environments = $config->getEnvironments();
-
-        if ($import->getEnvironments()) {
-            $environments = $this->mergeConfigEnvironments($config, $import, true);
-        }
+        $environments = $this->mergeImportConfigEnvironments($config, $import);
 
         return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $config->getParams(), $header);
     }
 
-    private function mergeConfigEnvironments(Config $config, Config $override, bool $asImport = false): array
+    private function mergeOverrideConfigEnvironments(Config $config, Config $override): array
     {
-        $environments = [];
+        return $this->mapEnvironments($config, $override, function (ConfigEnvironment $environment, ConfigEnvironment $overrideEnvironment) {
+            return $this
+                    ->mergeEnvironmentsAsOverride($environment, $overrideEnvironment);
+        });
+    }
 
-        $foundEnvironments = array_keys(array_merge($config->getEnvironments(), $override->getEnvironments()));
-
-        foreach ($foundEnvironments as $name) {
-            if (!isset($override->getEnvironments()[$name])) {
-                $environments[$name] = $config->getEnvironments()[$name];
-
-                continue;
-            }
-
-            if (!isset($config->getEnvironments()[$name])) {
-                $environments[$name] = $override->getEnvironments()[$name];
-
-                continue;
-            }
-
-            if ($asImport) {
-                $environments[$name] = $this
-                    ->mergeEnvironmentsAsImport($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
-            } else {
-                $environments[$name] = $this
-                    ->mergeEnvironmentsAsOverride($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
-            }
-        }
-
-        return $environments;
+    private function mergeImportConfigEnvironments(Config $config, Config $import): array
+    {
+        return $this->mapEnvironments($config, $import, function (ConfigEnvironment $environment, ConfigEnvironment $importEnvironment) {
+            return $this
+                    ->mergeEnvironmentsAsImport($environment, $importEnvironment);
+        });
     }
 
     private function mergeEnvironmentsAsOverride(ConfigEnvironment $original, ConfigEnvironment $override): ConfigEnvironment
@@ -92,15 +70,15 @@ class ConfigMerger
         );
     }
 
-    private function mergeEnvironmentsAsImport(ConfigEnvironment $original, ConfigEnvironment $override): ConfigEnvironment
+    private function mergeEnvironmentsAsImport(ConfigEnvironment $original, ConfigEnvironment $import): ConfigEnvironment
     {
         return new ConfigEnvironment(
-            $this->overrideHidden($original, $override),
-            $this->mergeScriptsPaths($original, $override),
-            $this->mergeDynamicVariables($original, $override),
-            $this->mergeConstants($original, $override),
-            $this->mergeTemplates($original, $override),
-            $this->mergeDotenvPaths($original, $override)
+            $this->overrideHidden($original, $import),
+            $this->mergeScriptsPaths($original, $import),
+            $this->mergeDynamicVariables($original, $import),
+            $this->mergeConstants($original, $import),
+            $this->mergeTemplates($original, $import),
+            $this->mergeDotenvPaths($original, $import)
         );
     }
 
@@ -142,9 +120,6 @@ class ConfigMerger
         return array_merge($configEnvironment->getConstants(), $overrideConfigEnv->getConstants());
     }
 
-    /**
-     * @param $overrideConfigEnv
-     */
     private function overrideTemplates(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
         if ($overrideConfigEnv->getTemplates()) {
@@ -166,5 +141,35 @@ class ConfigMerger
         }
 
         return $originalConfigEnv->isHidden();
+    }
+
+    private function getAllEnvironmentNames(Config $config, Config $override): array
+    {
+        return array_keys(array_merge($config->getEnvironments(), $override->getEnvironments()));
+    }
+
+    private function mapEnvironments(Config $config, Config $override, callable $closure): array
+    {
+        $environments = [];
+
+        $foundEnvironments = $this->getAllEnvironmentNames($config, $override);
+
+        foreach ($foundEnvironments as $name) {
+            if (!isset($override->getEnvironments()[$name])) {
+                $environments[$name] = $config->getEnvironments()[$name];
+
+                continue;
+            }
+
+            if (!isset($config->getEnvironments()[$name])) {
+                $environments[$name] = $override->getEnvironments()[$name];
+
+                continue;
+            }
+
+            $environments[$name] = $closure($config->getEnvironments()[$name], $override->getEnvironments()[$name]);
+        }
+
+        return $environments;
     }
 }

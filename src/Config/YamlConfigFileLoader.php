@@ -11,8 +11,10 @@ use function pathinfo;
 /**
  * Load the config data from a yaml file
  */
-class YamlConfigFileLoader extends ConfigFileLoader
+class YamlConfigFileLoader implements ConfigFileLoader
 {
+    use ConfigFileLoaderFileSystemHandlers;
+
     const KEY_HEADER = 'header';
 
     const KEY_DYNAMIC_VARIABLES = 'dynamic';

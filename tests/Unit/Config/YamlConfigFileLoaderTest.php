@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
-use Shopware\Psh\Config\ConfigLoader;
+use Shopware\Psh\Config\ConfigFileLoader;
 use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Config\Template;
 use Shopware\Psh\Config\YamlConfigFileLoader;
@@ -29,7 +29,7 @@ class YamlConfigFileLoaderTest extends TestCase
     {
         $loader = $this->createConfigLoader();
         self::assertInstanceOf(YamlConfigFileLoader::class, $loader);
-        self::assertInstanceOf(ConfigLoader::class, $loader);
+        self::assertInstanceOf(ConfigFileLoader::class, $loader);
     }
 
     public function test_it_supports_yaml_files(): void
