@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
+use InvalidArgumentException;
 use Shopware\Psh\Config\Template;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\BashCommand;
@@ -137,6 +138,8 @@ class ProcessExecutor
                 $this->waitForDeferredProcesses();
 
                 break;
+            default:
+                throw new InvalidArgumentException('Trying to execute unknown command');
         }
     }
 

@@ -42,7 +42,7 @@ class ScriptLoader
         throw new ScriptNotSupportedByParser('Can not find a parser able to parse ' . $script->getPath());
     }
 
-    protected function loadFileContents(string $file): string
+    private function loadFileContents(string $file): string
     {
         return file_get_contents($file);
     }

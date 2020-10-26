@@ -12,6 +12,10 @@ class BlackholeLogger implements Logger
 
     public $output = [];
 
+    public $successes = 0;
+
+    public $failures = 0;
+
     public function startScript(Script $script): void
     {
     }
@@ -39,10 +43,12 @@ class BlackholeLogger implements Logger
 
     public function logSuccess(): void
     {
+        $this->successes++;
     }
 
     public function logFailure(): void
     {
+        $this->failures++;
     }
 
     public function warn(string $message): void

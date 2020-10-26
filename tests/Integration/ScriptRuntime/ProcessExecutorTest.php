@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shopware\Psh\Config\EnvironmentResolver;
@@ -9,6 +10,7 @@ use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\BashCommand;
+use Shopware\Psh\ScriptRuntime\Command;
 use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
 use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
@@ -212,14 +214,7 @@ class ProcessExecutorTest extends TestCase
         // check a wait occurred
         $totalWait = 0;
         foreach (self::DEFERED_FILES as $file) {
-            self::assertFileExists($file);
-
-            $data = json_decode(file_get_contents($file), true);
-
-            $currentWait = $data['after'] - $data['before'];
-            $totalWait += $currentWait;
-
-            self::assertGreaterThan(0.0001, $currentWait);
+            $totalWait = $this->assertDeferredFile($file, $totalWait);
         }
 
         //assert total duration was less then total wait -> Then it just becomes a problem of more processes on travis if necessary
@@ -228,9 +223,9 @@ class ProcessExecutorTest extends TestCase
         self::assertEquals(["Done\n", "Done\n", "Done\n", "Done\n"], $logger->output);
     }
 
-    public function test_deferred_commands_get_executed_even_with_error_in_between(): void
+    public function test_deferred_commands_get_executed_even_with_sync_error_in_between(): void
     {
-        $script = $this->createScript(__DIR__ . '/_scripts', 'deferred_with_error.sh');
+        $script = $this->createScript(__DIR__ . '/_scripts', 'deferred_with_sync_error.sh');
         $commands = $this->loadCommands($script);
 
         self::assertCount(4, $commands);
@@ -257,20 +252,74 @@ class ProcessExecutorTest extends TestCase
         // check a wait occurred
         $totalWait = 0;
         foreach ([self::DEFERED_FILES[0], self::DEFERED_FILES[1]] as $file) {
-            self::assertFileExists($file);
-
-            $data = json_decode(file_get_contents($file), true);
-
-            $currentWait = $data['after'] - $data['before'];
-            $totalWait += $currentWait;
-
-            self::assertGreaterThan(0.0001, $currentWait);
+            $totalWait = $this->assertDeferredFile($file, $totalWait);
         }
 
         //assert total duration was less then total wait -> Then it just becomes a problem of more processes on travis if necessary
         self::assertLessThan($executionTime, $totalWait);
         self::assertCount(0, $logger->errors);
         self::assertEquals(["Done\n", "Done\n"], $logger->output);
+    }
+
+    public function test_deferred_commands_get_executed_even_with_deferred_error_in_between(): void
+    {
+        $script = $this->createScript(__DIR__ . '/_scripts', 'deferred_with_deferred_error.sh');
+        $commands = $this->loadCommands($script);
+
+        self::assertCount(4, $commands);
+        self::assertInstanceOf(DeferredProcessCommand::class, $commands[0]);
+
+        $logger = new BlackholeLogger();
+
+        $executor = new ProcessExecutor(
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
+            $logger,
+            __DIR__
+        );
+
+        $beginExecution = microtime(true);
+
+        try {
+            $executor->execute($script, $commands);
+        } catch (ExecutionErrorException $e) {
+        }
+        $executionTime = microtime(true) - $beginExecution;
+        self::assertInstanceOf(ExecutionErrorException::class, $e);
+
+        // check a wait occurred
+        $totalWait = 0;
+        $totalWait = $this->assertDeferredFile(self::DEFERED_FILES[0], $totalWait);
+        self::assertFileNotExists(self::DEFERED_FILES[1]);
+        self::assertFileNotExists(self::DEFERED_FILES[2]);
+
+        //assert total duration was less then total wait -> Then it just becomes a problem of more processes on travis if necessary
+        self::assertLessThan($executionTime, $totalWait);
+        self::assertCount(0, $logger->errors);
+        self::assertSame(2, $logger->failures);
+        self::assertSame(2, $logger->successes);
+        self::assertEquals(["Done\n", "Done\n"], $logger->output);
+    }
+
+    public function test_unkbownh_command_throws(): void
+    {
+        $script = $this->createScript(__DIR__ . '/_scripts', 'deferred_with_deferred_error.sh');
+        $commands = [new class() implements Command {
+            public function getLineNumber(): int
+            {
+                return PHP_INT_MAX;
+            }
+        }];
+
+        $executor = new ProcessExecutor(
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
+            new BlackholeLogger(),
+            __DIR__
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $executor->execute($script, $commands);
     }
 
     /**
@@ -282,7 +331,7 @@ class ProcessExecutorTest extends TestCase
         @unlink(__DIR__ . '/_testvalue.tpl');
     }
 
-    private function loadCommands(Script $script)
+    private function loadCommands(Script $script): array
     {
         $loader = new ScriptLoader(
             new BashScriptParser(),
@@ -305,5 +354,19 @@ class ProcessExecutorTest extends TestCase
     private function createScript(string $directory, string $scriptName): Script
     {
         return new Script($directory, $scriptName, false);
+    }
+
+    private function assertDeferredFile(string $file, float $totalWait): float
+    {
+        self::assertFileExists($file);
+
+        $data = json_decode(file_get_contents($file), true);
+
+        $currentWait = $data['after'] - $data['before'];
+        $totalWait += $currentWait;
+
+        self::assertGreaterThan(0.0001, $currentWait);
+
+        return $totalWait;
     }
 }

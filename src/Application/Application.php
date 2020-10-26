@@ -107,7 +107,7 @@ class Application
         $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");
     }
 
-    protected function extractScriptNames(array $inputArgs): array
+    private function extractScriptNames(array $inputArgs): array
     {
         if (!isset($inputArgs[1])) {
             return [];
@@ -116,7 +116,7 @@ class Application
         return explode(',', $inputArgs[1]);
     }
 
-    protected function execute(Script $script, Config $config, ScriptFinder $scriptFinder): void
+    private function execute(Script $script, Config $config, ScriptFinder $scriptFinder): void
     {
         $commands = $this->applicationFactory
             ->createCommands($script, $scriptFinder);
@@ -139,7 +139,7 @@ class Application
     /**
      * @param $string
      */
-    public function notifySuccess(string $string): void
+    private function notifySuccess(string $string): void
     {
         $this->cliMate->bold()->green($string);
     }
