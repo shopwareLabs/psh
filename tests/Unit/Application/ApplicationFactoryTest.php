@@ -1,14 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\Test\Unit\Application;
 
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Shopware\Psh\Application\ApplicationFactory;
 use Shopware\Psh\Application\ParameterParser;
-use Shopware\Psh\Config\Config;
+use Shopware\Psh\Config\ConfigLogger;
 
-class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
+class ApplicationFactoryTest extends TestCase
 {
-    public function test_createConfig()
+    public function test_createConfig(): void
     {
         $testParams = [
             './psh',
@@ -25,35 +27,36 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
             'FILTER' => '--filter aaaa',
         ];
 
-        $this->assertEquals($expectedResult, $parsedParams);
+        self::assertEquals($expectedResult, $parsedParams);
     }
 
-    public function test_createConfig_with_invalid_config_file()
+    public function test_createConfig_with_invalid_config_file(): void
     {
         $testParams = [
             './psh',
-            'unit'
+            'unit',
         ];
 
         $factory = $this->getApplicationFactory();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $factory->createConfig(
+            $this->prophesize(ConfigLogger::class)->reveal(),
             __DIR__ . '/_fixtures_with_invalid_config_files/config/.psh.not-supported',
             $testParams
         );
     }
 
-    public function test_reformatParams_expects_exception()
+    public function test_reformatParams_expects_exception(): void
     {
         $paramParser = new ParameterParser();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $paramParser->parseParams(['./psh', 'unit', 'someFalseParameter']);
     }
 
-    public function test_reformatParams_expects_array()
+    public function test_reformatParams_expects_array(): void
     {
         $paramParser = new ParameterParser();
         $testParams = [
@@ -68,7 +71,6 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
             '--env6="gh""t=tg"',
         ];
 
-
         $result = $paramParser->parseParams($testParams);
 
         $expectedResult = [
@@ -80,12 +82,9 @@ class ApplicationFactoryTest extends \PHPUnit_Framework_TestCase
             'ENV6' => 'gh""t=tg',
         ];
 
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return ApplicationFactory
-     */
     private function getApplicationFactory(): ApplicationFactory
     {
         return new ApplicationFactory();

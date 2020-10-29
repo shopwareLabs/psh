@@ -9,17 +9,11 @@ class WaitCommand implements Command
      */
     private $lineNumber;
 
-    /**
-     * @param int $lineNumber
-     */
     public function __construct(int $lineNumber)
     {
         $this->lineNumber = $lineNumber;
     }
 
-    /**
-     * @return int
-     */
     public function getLineNumber(): int
     {
         return $this->lineNumber;

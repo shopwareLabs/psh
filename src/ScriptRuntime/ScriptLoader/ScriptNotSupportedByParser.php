@@ -2,6 +2,8 @@
 
 namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
-class ScriptNotSupportedByParser extends \RuntimeException
+use RuntimeException;
+
+class ScriptNotSupportedByParser extends RuntimeException
 {
 }

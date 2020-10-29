@@ -7,6 +7,7 @@
     <xs:complexType name="pshConfig">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="header" type="xs:string"/>
+            <xs:element name="import" type="import"/>
             <xs:element name="placeholder" type="vars"/>
 
             <xs:element name="path" type="xs:string"/>
@@ -35,6 +36,7 @@
             <xs:element name="const" type="var" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="dynamic" type="var" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="dotenv" type="pathvar" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="require" type="requirevar" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
     </xs:complexType>
 
@@ -51,5 +53,14 @@
             <xs:extension base="xs:string">
             </xs:extension>
         </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="requirevar">
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="description" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="import">
+        <xs:attribute name="path" type="xs:string" use="required" />
     </xs:complexType>
 </xs:schema>

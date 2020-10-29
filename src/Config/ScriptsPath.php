@@ -2,6 +2,8 @@
 
 namespace Shopware\Psh\Config;
 
+use function is_dir;
+
 class ScriptsPath
 {
     /**
@@ -20,14 +22,12 @@ class ScriptsPath
     private $path;
 
     /**
-     * @param string $path
-     * @param bool $hidden
      * @param string $namespace
      */
     public function __construct(
         string $path,
         bool $hidden,
-        string $namespace = null
+        ?string $namespace = null
     ) {
         $this->namespace = $namespace;
         $this->hidden = $hidden;
@@ -42,25 +42,16 @@ class ScriptsPath
         return $this->namespace;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @return bool
-     */
     public function isHidden(): bool
     {
         return $this->hidden;
     }
 
-    /**
-     * @return bool
-     */
     public function isValid(): bool
     {
         return is_dir($this->path);

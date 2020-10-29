@@ -27,11 +27,6 @@ class DeferredProcess
      */
     private $log = [];
 
-    /**
-     * @param string $parsedCommand
-     * @param DeferredProcessCommand $command
-     * @param Process $process
-     */
     public function __construct(string $parsedCommand, DeferredProcessCommand $command, Process $process)
     {
         $this->command = $command;
@@ -39,34 +34,22 @@ class DeferredProcess
         $this->parsedCommand = $parsedCommand;
     }
 
-    /**
-     * @return string
-     */
     public function getParsedCommand(): string
     {
         return $this->parsedCommand;
     }
 
-    /**
-     * @return DeferredProcessCommand
-     */
     public function getCommand(): DeferredProcessCommand
     {
         return $this->command;
     }
 
-    /**
-     * @return Process
-     */
     public function getProcess(): Process
     {
         return $this->process;
     }
 
-    /**
-     * @param LogMessage $logMessage
-     */
-    public function log(LogMessage $logMessage)
+    public function log(LogMessage $logMessage): void
     {
         $this->log[] = $logMessage;
     }

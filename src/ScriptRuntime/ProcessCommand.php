@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime;
 
@@ -7,18 +7,9 @@ namespace Shopware\Psh\ScriptRuntime;
  */
 interface ProcessCommand extends Command
 {
-    /**
-     * @return boolean
-     */
     public function isIgnoreError(): bool;
 
-    /**
-     * @return int
-     */
     public function getLineNumber(): int;
 
-    /**
-     * @return bool
-     */
     public function isTTy(): bool;
 }

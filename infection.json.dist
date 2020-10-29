@@ -4,8 +4,10 @@
             "src"
         ]
     },
-    "timeout": 10,
     "logs": {
-        "text": "humbuglog.txt"
+        "text": "build/infection.log"
+    },
+    "mutators": {
+        "@default": true
     }
 }

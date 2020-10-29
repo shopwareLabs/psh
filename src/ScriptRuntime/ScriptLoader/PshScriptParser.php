@@ -1,13 +1,18 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
-use function pathinfo;
-use const PATHINFO_BASENAME;
-use const PATHINFO_DIRNAME;
+use RuntimeException;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
+use function array_pop;
+use function explode;
+use function file_exists;
+use function mb_strlen;
+use function mb_strpos;
+use function mb_substr;
+use function pathinfo;
+use function trim;
 
 /**
  * Load scripts and parse it into commands
@@ -42,10 +47,6 @@ class PshScriptParser implements ScriptParser
      */
     private $scriptFinder;
 
-    /**
-     * @param CommandBuilder $commandBuilder
-     * @param ScriptFinder $scriptFinder
-     */
     public function __construct(CommandBuilder $commandBuilder, ScriptFinder $scriptFinder)
     {
         $this->commandBuilder = $commandBuilder;
@@ -115,7 +116,6 @@ class PshScriptParser implements ScriptParser
                 $this->commandBuilder
                     ->addWaitCommand($lineNumber);
 
-
                 return '';
             },
 
@@ -146,11 +146,6 @@ class PshScriptParser implements ScriptParser
         ];
     }
 
-    /**
-     * @param Script $fromScript
-     * @param string $includeStatement
-     * @return string
-     */
     private function findInclude(Script $fromScript, string $includeStatement): string
     {
         if (file_exists($includeStatement)) {
@@ -161,13 +156,9 @@ class PshScriptParser implements ScriptParser
             return $fromScript->getDirectory() . '/' . $includeStatement;
         }
 
-        throw new \RuntimeException('Unable to parse include statement "' . $includeStatement . '" in "' . $fromScript->getPath() . '"');
+        throw new RuntimeException('Unable to parse include statement "' . $includeStatement . '" in "' . $fromScript->getPath() . '"');
     }
 
-    /**
-     * @param string $command
-     * @return bool
-     */
     private function isExecutableLine(string $command): bool
     {
         $command = trim($command);
@@ -183,28 +174,17 @@ class PshScriptParser implements ScriptParser
         return true;
     }
 
-    /**
-     * @param string $needle
-     * @param string $haystack
-     * @return string
-     */
     private function removeFromStart(string $needle, string $haystack): string
     {
-        return substr($haystack, strlen($needle));
+        return mb_substr($haystack, mb_strlen($needle));
     }
 
-    /**
-     * @param string $needle
-     * @param string $haystack
-     * @return bool
-     */
     private function startsWith(string $needle, string $haystack): bool
     {
-        return (self::TOKEN_WILDCARD === $needle && $haystack !== '') || strpos($haystack, $needle) === 0;
+        return ($needle === self::TOKEN_WILDCARD && $haystack !== '') || mb_strpos($haystack, $needle) === 0;
     }
 
     /**
-     * @param string $contents
      * @return string[]
      */
     private function splitIntoLines(string $contents): array
@@ -221,7 +201,7 @@ class PshScriptParser implements ScriptParser
 
             if ($this->startsWith(self::CONCATENATE_PREFIX, $line)) {
                 $lastValue = array_pop($lines);
-                $lines[] = $lastValue  . ' ' . trim($line);
+                $lines[] = $lastValue . ' ' . trim($line);
 
                 continue;
             }

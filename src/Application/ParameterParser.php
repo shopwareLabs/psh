@@ -2,12 +2,17 @@
 
 namespace Shopware\Psh\Application;
 
+use function array_slice;
+use function count;
+use function explode;
+use function mb_strpos;
+use function mb_strtoupper;
+use function mb_substr;
+use function sprintf;
+use function str_replace;
+
 class ParameterParser
 {
-    /**
-     * @param array $params
-     * @return array
-     */
     public function parseParams(array $params): array
     {
         if (count($params) < 2) {
@@ -27,7 +32,7 @@ class ParameterParser
                 list($key, $value) = explode('=', $key, 2);
 
                 if ($this->isEnclosedInAmpersand($value)) {
-                    $value = substr($value, 1, -1);
+                    $value = mb_substr($value, 1, -1);
                 }
             } else {
                 $i++;
@@ -35,39 +40,28 @@ class ParameterParser
             }
 
             $key = str_replace('--', '', $key);
-            $reformattedParams[strtoupper($key)] = $value;
+            $reformattedParams[mb_strtoupper($key)] = $value;
         }
 
         return $reformattedParams;
     }
 
-    /**
-     * @param $key
-     */
-    private function testParameterFormat(string $key)
+    private function testParameterFormat(string $key): void
     {
-        if (strpos($key, '--') !== 0) {
+        if (mb_strpos($key, '--') !== 0) {
             throw new InvalidParameterException(
                 sprintf('Unable to parse parameter %s. Use -- for correct usage', $key)
             );
         }
     }
 
-    /**
-     * @param $key
-     * @return bool|int
-     */
-    private function isKeyValuePair($key)
+    private function isKeyValuePair(string $key): bool
     {
-        return strpos($key, '=');
+        return mb_strpos($key, '=') !== false;
     }
 
-    /**
-     * @param $value
-     * @return bool
-     */
-    private function isEnclosedInAmpersand($value): bool
+    private function isEnclosedInAmpersand(string $value): bool
     {
-        return strpos($value, '"') === 0;
+        return mb_strpos($value, '"') === 0;
     }
 }

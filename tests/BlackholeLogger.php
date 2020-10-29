@@ -9,48 +9,30 @@ use Shopware\Psh\ScriptRuntime\Execution\LogMessage;
 class BlackholeLogger implements Logger
 {
     public $errors = [];
+
     public $output = [];
 
+    public $successes = 0;
 
-    /**
-     * @param Script $script
-     */
-    public function startScript(Script $script)
+    public $failures = 0;
+
+    public function startScript(Script $script): void
     {
     }
 
-
-    /**
-     * @param Script $script
-     */
-    public function finishScript(Script $script)
+    public function finishScript(Script $script): void
     {
     }
 
-    /**
-     * @return void
-     */
-    public function logWait()
+    public function logWait(): void
     {
     }
 
-    /**
-     * @param string $headline
-     * @param string $subject
-     * @param int $line
-     * @param bool $isIgnoreError
-     * @param int $index
-     * @param int $max
-     */
-    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max): void
     {
     }
 
-    /**
-     * @param LogMessage $logMessage
-     * @return mixed
-     */
-    public function log(LogMessage $logMessage)
+    public function log(LogMessage $logMessage): void
     {
         if ($logMessage->isError()) {
             $this->errors[] = $logMessage->getMessage();
@@ -59,19 +41,17 @@ class BlackholeLogger implements Logger
         }
     }
 
-    public function logSuccess()
+    public function logSuccess(): void
     {
+        $this->successes++;
     }
 
-    public function logFailure()
+    public function logFailure(): void
     {
+        $this->failures++;
     }
 
-    /**
-     * @param string $message
-     * @return mixed
-     */
-    public function warn(string $message)
+    public function warn(string $message): void
     {
         // TODO: Implement warn() method.
     }

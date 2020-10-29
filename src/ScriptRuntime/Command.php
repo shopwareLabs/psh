@@ -4,8 +4,5 @@ namespace Shopware\Psh\ScriptRuntime;
 
 interface Command
 {
-    /**
-     * @return int
-     */
     public function getLineNumber(): int;
 }

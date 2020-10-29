@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\Command;
+use function file_get_contents;
 
 /**
  * Load scripts and parse it into commands
@@ -19,13 +19,12 @@ class ScriptLoader
     /**
      * @param ScriptParser ...$parsers
      */
-    public function __construct(ScriptParser ... $parsers)
+    public function __construct(ScriptParser ...$parsers)
     {
         $this->parsers = $parsers;
     }
 
     /**
-     * @param Script $script
      * @return Command[]
      */
     public function loadScript(Script $script): array
@@ -43,11 +42,7 @@ class ScriptLoader
         throw new ScriptNotSupportedByParser('Can not find a parser able to parse ' . $script->getPath());
     }
 
-    /**
-     * @param string $file
-     * @return string
-     */
-    protected function loadFileContents(string $file): string
+    private function loadFileContents(string $file): string
     {
         return file_get_contents($file);
     }

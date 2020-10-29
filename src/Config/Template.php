@@ -1,7 +1,11 @@
 <?php declare(strict_types=1);
 
+namespace Shopware\Psh\Config;
 
-namespace Shopware\Psh\ScriptRuntime\Execution;
+use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValidException;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
 
 /**
  * Access template content and write the content to the target destination
@@ -18,34 +22,23 @@ class Template
      */
     private $destination;
 
-    /**
-     * @param string $source
-     * @param string $destination
-     */
     public function __construct(string $source, string $destination)
     {
         $this->source = $source;
         $this->destination = $destination;
     }
 
-    /**
-     * @return string
-     */
     public function getDestination(): string
     {
         return $this->destination;
     }
 
-    /**
-     * @param string $destination
-     */
-    public function setDestination(string $destination)
+    public function setDestination(string $destination): void
     {
         $this->destination = $destination;
     }
 
     /**
-     * @return string
      * @throws TemplateNotValidException
      */
     public function getContent(): string
@@ -57,10 +50,7 @@ class Template
         return file_get_contents($this->source);
     }
 
-    /**
-     * @param string $contents
-     */
-    public function setContents(string $contents)
+    public function setContents(string $contents): void
     {
         file_put_contents($this->destination, $contents);
     }

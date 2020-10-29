@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Shopware\Psh\ScriptRuntime;
 
@@ -7,8 +7,5 @@ namespace Shopware\Psh\ScriptRuntime;
  */
 interface ParsableCommand extends Command
 {
-    /**
-     * @return string
-     */
     public function getShellCommand(): string;
 }

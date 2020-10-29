@@ -3,33 +3,44 @@
 namespace Shopware\Psh\Config;
 
 use DOMElement;
+use DOMNodeList;
 use DOMXPath;
 use Symfony\Component\Config\Util\XmlUtils;
+use function array_map;
+use function count;
+use function in_array;
+use function pathinfo;
 
 /**
  * Load the config data from an xml file
  */
-class XmlConfigFileLoader extends ConfigFileLoader
+class XmlConfigFileLoader implements ConfigFileLoader
 {
-    const NODE_HEADER = 'header';
+    use ConfigFileLoaderFileSystemHandlers;
 
-    const NODE_PLACEHOLDER = 'placeholder';
+    private const NODE_HEADER = 'header';
 
-    const NODE_PLACEHOLDER_DYNAMIC = 'dynamic';
+    private const NODE_IMPORT = 'import';
 
-    const NODE_PLACEHOLDER_CONST = 'const';
+    private const NODE_PLACEHOLDER = 'placeholder';
 
-    const NODE_PLACEHOLDER_DOTENV = 'dotenv';
+    private const NODE_PLACEHOLDER_DYNAMIC = 'dynamic';
 
-    const NODE_PATH = 'path';
+    private const NODE_PLACEHOLDER_CONST = 'const';
 
-    const NODE_ENVIRONMENT = 'environment';
+    private const NODE_PLACEHOLDER_DOTENV = 'dotenv';
 
-    const NODE_TEMPLATE = 'template';
+    private const NODE_PLACEHOLDER_REQUIRE = 'require';
 
-    const NODE_TEMPLATE_SOURCE = 'source';
+    private const NODE_PATH = 'path';
 
-    const NODE_TEMPLATE_DESTINATION = 'destination';
+    private const NODE_ENVIRONMENT = 'environment';
+
+    private const NODE_TEMPLATE = 'template';
+
+    private const NODE_TEMPLATE_SOURCE = 'source';
+
+    private const NODE_TEMPLATE_DESTINATION = 'destination';
 
     /**
      * @var ConfigBuilder
@@ -41,37 +52,31 @@ class XmlConfigFileLoader extends ConfigFileLoader
      */
     private $applicationRootDirectory;
 
-    /**
-     * @param ConfigBuilder $configBuilder
-     * @param string $applicationRootDirectory
-     */
     public function __construct(ConfigBuilder $configBuilder, string $applicationRootDirectory)
     {
         $this->configBuilder = $configBuilder;
         $this->applicationRootDirectory = $applicationRootDirectory;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isSupported(string $file): bool
     {
         return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.xml', '.psh.xml.dist', '.psh.xml.override'], true);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function load(string $file, array $params): Config
     {
         $pshConfigNode = $this->loadXmlRoot($file);
         $this->configBuilder->start();
 
         $headers = $this->extractNodes(self::NODE_HEADER, $pshConfigNode);
-
         foreach ($headers as $header) {
             $this->configBuilder
                 ->setHeader($header->nodeValue);
+        }
+
+        $imports = $this->extractNodes(self::NODE_IMPORT, $pshConfigNode);
+        foreach ($imports as $importNode) {
+            $this->configBuilder->addImport($importNode->getAttribute('path'));
         }
 
         $this->setConfigData($file, $pshConfigNode);
@@ -80,7 +85,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
 
         foreach ($environments as $node) {
             $this->configBuilder->start($node->getAttribute('name'));
-            $this->configBuilder->setHidden('true' === $node->getAttribute('hidden'));
+            $this->configBuilder->setHidden($node->getAttribute('hidden') === 'true');
             $this->setConfigData($file, $node);
         }
 
@@ -88,11 +93,7 @@ class XmlConfigFileLoader extends ConfigFileLoader
             ->create($params);
     }
 
-    /**
-     * @param string $file
-     * @param array $pshConfigNode
-     */
-    private function setConfigData(string $file, DOMElement $pshConfigNode)
+    private function setConfigData(string $file, DOMElement $pshConfigNode): void
     {
         $this->configBuilder->setCommandPaths(
             $this->extractCommandPaths($file, $pshConfigNode)
@@ -110,8 +111,6 @@ class XmlConfigFileLoader extends ConfigFileLoader
     }
 
     /**
-     * @param string $key
-     * @param DOMElement $parent
      * @return DOMElement[]
      */
     private function extractNodes(string $key, DOMElement $parent): array
@@ -131,11 +130,6 @@ class XmlConfigFileLoader extends ConfigFileLoader
         return $nodes;
     }
 
-    /**
-     * @param string $file
-     * @param $pshConfigNode
-     * @return array
-     */
     private function extractCommandPaths(string $file, DOMElement $pshConfigNode): array
     {
         $pathNodes = $this->extractNodes(self::NODE_PATH, $pshConfigNode);
@@ -145,11 +139,6 @@ class XmlConfigFileLoader extends ConfigFileLoader
         }, $pathNodes);
     }
 
-    /**
-     * @param string $file
-     * @param array $pshConfigNodes
-     * @return array
-     */
     private function extractTemplates(string $file, DOMElement $pshConfigNodes): array
     {
         $templates = $this->extractNodes(self::NODE_TEMPLATE, $pshConfigNodes);
@@ -164,39 +153,36 @@ class XmlConfigFileLoader extends ConfigFileLoader
                 'destination' => $this->makeAbsolutePath(
                     $file,
                     $template->getAttribute(self::NODE_TEMPLATE_DESTINATION)
-                )
+                ),
             ];
         }, $templates);
     }
 
-    /**
-     * @param DOMElement $placeholder
-     */
-    private function extractPlaceholders(string $file, DOMElement $placeholder)
+    private function extractPlaceholders(string $file, DOMElement $placeholder): void
     {
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DYNAMIC, $placeholder) as $dynamic) {
-            $this->configBuilder->setDynamicVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);
+            $this->configBuilder->addDynamicVariable($dynamic->getAttribute('name'), $dynamic->nodeValue);
         }
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_CONST, $placeholder) as $const) {
-            $this->configBuilder->setConstVariable($const->getAttribute('name'), $const->nodeValue);
+            $this->configBuilder->addConstVariable($const->getAttribute('name'), $const->nodeValue);
         }
 
         foreach ($this->extractNodes(self::NODE_PLACEHOLDER_DOTENV, $placeholder) as $dotenv) {
-            $this->configBuilder->setDotenvPath($this->fixPath($this->applicationRootDirectory, $dotenv->nodeValue, $file));
+            $this->configBuilder->addDotenvPath($this->fixPath($this->applicationRootDirectory, $dotenv->nodeValue, $file));
+        }
+
+        foreach ($this->extractNodes(self::NODE_PLACEHOLDER_REQUIRE, $placeholder) as $require) {
+            $this->configBuilder->addRequirePlaceholder($require->getAttribute('name'), $require->getAttribute('description'));
         }
     }
 
-    /**
-     * @param string $file
-     * @return DOMElement
-     */
     private function loadXmlRoot(string $file): DOMElement
     {
         $xml = XmlUtils::loadFile($file, __DIR__ . '/../../resource/config.xsd');
         $xPath = new DOMXPath($xml);
 
-        /** @var \DOMNodeList $pshConfigNodes */
+        /** @var DOMNodeList $pshConfigNodes */
         $pshConfigNodes = $xPath->query('//psh');
 
         return $pshConfigNodes[0];

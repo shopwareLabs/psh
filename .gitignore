@@ -11,4 +11,6 @@ vendor
 bin
 
 #externals
-humbuglog.txt
+.box_dump
+.php_cs.cache
+.phpunit.result.cache

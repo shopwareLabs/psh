@@ -7,6 +7,9 @@ use League\CLImate\CLImate;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\ScriptRuntime\Execution\Logger;
 use Shopware\Psh\ScriptRuntime\Execution\LogMessage;
+use function sprintf;
+use function str_replace;
+use function time;
 
 /**
  * A CLImate implementation of the runtime logger
@@ -23,7 +26,6 @@ class ClimateLogger implements Logger
 </yellow>
 EOD;
 
-
     /**
      * @var CLImate
      */
@@ -39,29 +41,19 @@ EOD;
      */
     private $duration;
 
-    /**
-     * @param CLImate $cliMate
-     * @param Duration $duration
-     */
     public function __construct(CLImate $cliMate, Duration $duration)
     {
         $this->cliMate = $cliMate;
         $this->duration = $duration;
     }
 
-    /**
-     * @param Script $script
-     */
-    public function startScript(Script $script)
+    public function startScript(Script $script): void
     {
         $this->scriptStartTime = time();
         $this->cliMate->green()->out("<bold>Starting Execution of '" . $script->getName() . "'</bold> <dim>('" . $script->getPath() . "')</dim>\n");
     }
 
-    /**
-     * @param Script $script
-     */
-    public function finishScript(Script $script)
+    public function finishScript(Script $script): void
     {
         $durationInSeconds = time() - $this->scriptStartTime;
 
@@ -69,27 +61,20 @@ EOD;
             $durationInSeconds = 1;
         }
 
-        $this->cliMate->green()->out("\n<bold>Duration: " . $this->duration->humanize($durationInSeconds) . "</bold>");
+        $this->cliMate->green()->out("\n<bold>Duration: " . $this->duration->humanize($durationInSeconds) . '</bold>');
     }
 
-    /**
-     * @param string $response
-     * @return string
-     */
-    private function formatOutput(string $response) :string
+    private function formatOutput(string $response): string
     {
         return str_replace(PHP_EOL, PHP_EOL . "\t", $response);
     }
 
-    /**
-     * @return void
-     */
-    public function logWait()
+    public function logWait(): void
     {
         $this->cliMate->green()->bold()->inline("\nWAITING...\n\t");
     }
 
-    public function log(LogMessage $logMessage)
+    public function log(LogMessage $logMessage): void
     {
         if ($logMessage->isError()) {
             $this->err($logMessage->getMessage());
@@ -98,47 +83,33 @@ EOD;
         }
     }
 
-    /**
-     * @param string $response
-     */
-    private function err(string $response)
+    private function err(string $response): void
     {
         $this->cliMate->red()->inline($this->formatOutput($response));
     }
 
-    /**
-     * @param string $response
-     */
-    private function out(string $response)
+    private function out(string $response): void
     {
         $this->cliMate->green()->inline($this->formatOutput($response));
     }
 
-    /**
-     * @param string $headline
-     * @param string $subject
-     * @param int $line
-     * @param bool $isIgnoreError
-     * @param int $index
-     * @param int $max
-     */
-    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max)
+    public function logStart(string $headline, string $subject, int $line, bool $isIgnoreError, int $index, int $max): void
     {
         $index++;
         $this->cliMate->yellow()->inline("\n({$index}/{$max}) $headline\n<bold>> {$subject}</bold>\n\t");
     }
 
-    public function logSuccess()
+    public function logSuccess(): void
     {
         $this->cliMate->green()->bold()->out('Executed Successfully');
     }
 
-    public function logFailure()
+    public function logFailure(): void
     {
         $this->cliMate->green()->red()->out('Executed with failure');
     }
 
-    public function warn(string $message)
+    public function warn(string $message): void
     {
         $this->cliMate->out(sprintf(self::WARNING_TEMPLATE, $message));
     }

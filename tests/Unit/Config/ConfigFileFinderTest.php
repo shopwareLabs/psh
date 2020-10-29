@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Test\Unit\Config;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Config\ConfigFileFinder;
 
-class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
+class ConfigFileFinderTest extends TestCase
 {
-    public function test_config_loader_can_be_created()
+    public function test_config_loader_can_be_created(): void
     {
-        $this->assertInstanceOf(ConfigFileFinder::class, new ConfigFileFinder());
+        self::assertInstanceOf(ConfigFileFinder::class, new ConfigFileFinder());
     }
 
-    public function test_file_discovery_default_case()
+    public function test_file_discovery_default_case(): void
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
@@ -22,7 +22,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
-    public function test_file_discovery_with_dist_file_only()
+    public function test_file_discovery_with_dist_file_only(): void
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
@@ -32,7 +32,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         self::assertEquals([__DIR__ . '/.psh.does-not-matter.dist'], $result);
     }
 
-    public function test_file_discovery_with_dist_file_and_default_file()
+    public function test_file_discovery_with_dist_file_and_default_file(): void
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
@@ -43,7 +43,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         self::assertEquals([__DIR__ . '/.psh.does-not-matter'], $result);
     }
 
-    public function test_file_discovery_with_dist_file_and_default_file_and_override_file()
+    public function test_file_discovery_with_dist_file_and_default_file_and_override_file(): void
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
@@ -58,7 +58,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         ], $result);
     }
 
-    public function test_file_discovery_with_default_file_and_override_file()
+    public function test_file_discovery_with_default_file_and_override_file(): void
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([
@@ -72,7 +72,7 @@ class ConfigFileFinderTest extends \PHPUnit_Framework_TestCase
         ], $result);
     }
 
-    public function test_file_discovery_with_dist_file__and_override_file()
+    public function test_file_discovery_with_dist_file__and_override_file(): void
     {
         $finder = new ConfigFileFinder();
         $result = $finder->determineResultInDirectory([

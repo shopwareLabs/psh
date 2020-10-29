@@ -12,64 +12,42 @@ class BashCommand implements ProcessCommand
     private $script;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $warning;
 
-    /**
-     * @param Script $script
-     * @param string $warning
-     */
-    public function __construct(Script $script, string $warning = null)
+    public function __construct(Script $script, ?string $warning = null)
     {
         $this->script = $script;
         $this->warning = $warning;
     }
 
-    /**
-     * @return Script
-     */
     public function getScript(): Script
     {
         return $this->script;
     }
 
-    /**
-     * @return int
-     */
     public function getLineNumber(): int
     {
         return 1;
     }
 
-    /**
-     * @return boolean
-     */
     public function isIgnoreError(): bool
     {
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function isTTy(): bool
     {
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function hasWarning(): bool
     {
-        return null !== $this->warning;
+        return $this->warning !== null;
     }
 
-    /**
-     * @return string
-     */
-    public function getWarning(): string
+    public function getWarning(): ?string
     {
         return $this->warning;
     }

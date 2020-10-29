@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
 use Shopware\Psh\ScriptRuntime\Command;
@@ -44,7 +43,7 @@ class CommandBuilder
         $this->reset();
     }
 
-    private function reset()
+    private function reset(): void
     {
         $this->ignoreError = false;
         $this->tty = false;
@@ -52,11 +51,6 @@ class CommandBuilder
         $this->deferred = false;
     }
 
-    /**
-     * @param string $shellCommand
-     * @param int $startLine
-     * @return CommandBuilder
-     */
     public function addProcessCommand(string $shellCommand, int $startLine): CommandBuilder
     {
         if ($this->deferred) {
@@ -81,9 +75,6 @@ class CommandBuilder
     }
 
     /**
-     * @param string $source
-     * @param string $destination
-     * @param int $lineNumber
      * @return $this
      */
     public function addTemplateCommand(string $source, string $destination, int $lineNumber): CommandBuilder
@@ -99,10 +90,6 @@ class CommandBuilder
         return $this;
     }
 
-    /**
-     * @param int $lineNumber
-     * @return CommandBuilder
-     */
     public function addWaitCommand(int $lineNumber): CommandBuilder
     {
         $this->reset();
@@ -111,10 +98,6 @@ class CommandBuilder
         return $this;
     }
 
-    /**
-     * @param bool $set
-     * @return CommandBuilder
-     */
     public function setIgnoreError(bool $set = true): CommandBuilder
     {
         $this->ignoreError = $set;
@@ -122,10 +105,6 @@ class CommandBuilder
         return $this;
     }
 
-    /**
-     * @param bool $set
-     * @return CommandBuilder
-     */
     public function setTty(bool $set = true): CommandBuilder
     {
         $this->tty = $set;
@@ -133,10 +112,6 @@ class CommandBuilder
         return $this;
     }
 
-    /**
-     * @param bool $set
-     * @return CommandBuilder
-     */
     public function setDeferredExecution(bool $set = true): CommandBuilder
     {
         $this->deferred = $set;
@@ -144,10 +119,6 @@ class CommandBuilder
         return $this;
     }
 
-    /**
-     * @param array $commands
-     * @return CommandBuilder
-     */
     public function replaceCommands(array $commands): CommandBuilder
     {
         $this->allCommands = $commands;
@@ -156,7 +127,7 @@ class CommandBuilder
     }
 
     /**
-     * @return SynchronusProcessCommand[]
+     * @return Command[]
      */
     public function getAll(): array
     {

@@ -1,40 +1,41 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
-use Shopware\Psh\ScriptRuntime\Execution\Template;
+use PHPUnit\Framework\TestCase;
+use Shopware\Psh\Config\Template;
 use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValidException;
+use function unlink;
 
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends TestCase
 {
-    public function test_get_content_on_invalid_file_fails()
+    public function test_get_content_on_invalid_file_fails(): void
     {
         $template = new Template('not-avaliable', '**');
         $this->expectException(TemplateNotValidException::class);
         $template->getContent();
     }
 
-    public function test_it_reads_a_files_content()
+    public function test_it_reads_a_files_content(): void
     {
         $template = new Template(__DIR__ . '/_test_read.tpl', '**');
 
-        $this->assertEquals('foo::bar::baz', $template->getContent());
+        self::assertEquals('foo::bar::baz', $template->getContent());
     }
 
-    public function test_it_dumps_the_contents_then()
+    public function test_it_dumps_the_contents_then(): void
     {
         $template = new Template(__DIR__ . '/_test_write.tpl', __DIR__ . '/_test_write.tpl');
 
         $template->setContents('test');
-        $this->assertEquals('test', $template->getContent());
+        self::assertEquals('test', $template->getContent());
     }
 
     /**
      * @before
      * @after
      */
-    public function removeState()
+    public function removeState(): void
     {
         @unlink(__DIR__ . '/_test_write.tpl');
     }

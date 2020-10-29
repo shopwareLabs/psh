@@ -2,6 +2,8 @@
 
 namespace Shopware\Psh\Config;
 
+use function pathinfo;
+
 /**
  * Builder pattern
  *
@@ -29,21 +31,18 @@ class ConfigBuilder
 
     private $hidden;
 
-    /**
-     * @param string|null $header
-     * @return ConfigBuilder
-     */
-    public function setHeader(string $header = null): ConfigBuilder
+    private $currentRequiredVariables;
+
+    private $imports;
+
+    public function setHeader(?string $header = null): ConfigBuilder
     {
         $this->header = $header;
+
         return $this;
     }
 
-    /**
-     * @param string|null $environment
-     * @return ConfigBuilder
-     */
-    public function start(string $environment = null): ConfigBuilder
+    public function start(?string $environment = null): ConfigBuilder
     {
         $this->reset();
         if ($environment === null) {
@@ -51,110 +50,108 @@ class ConfigBuilder
         }
 
         $this->currentEnvironment = $environment;
+
         return $this;
     }
 
-    /**
-     * @param bool $set
-     * @return ConfigBuilder
-     */
     public function setHidden(bool $set): ConfigBuilder
     {
         $this->hidden = $set;
+
         return $this;
     }
 
-    /**
-     * @param array $commandPaths
-     * @return ConfigBuilder
-     */
     public function setCommandPaths(array $commandPaths): ConfigBuilder
     {
         $this->currentCommandPaths = $commandPaths;
+
         return $this;
     }
 
     /**
-     * @param array $dotenvPaths
-     * @return ConfigBuilder
+     * @deprecated only used by yaml builder
      */
     public function setDotenvPaths(array $dotenvPaths): ConfigBuilder
     {
         $this->currentDotenvPaths = [];
 
         foreach ($dotenvPaths as $dotenvPath) {
-            $this->setDotenvPath($dotenvPath);
+            $this->addDotenvPath($dotenvPath);
         }
 
         return $this;
     }
 
-    /**
-     * @param string $dotenvPath
-     * @return ConfigBuilder
-     */
-    public function setDotenvPath(string $dotenvPath): ConfigBuilder
+    public function addDotenvPath(string $dotenvPath): ConfigBuilder
     {
         $this->currentDotenvPaths[pathinfo($dotenvPath, PATHINFO_BASENAME)] = $dotenvPath;
 
         return $this;
     }
 
+    public function addRequirePlaceholder(string $name, ?string $description = null): ConfigBuilder
+    {
+        $this->currentRequiredVariables[$name] = $description;
+
+        return $this;
+    }
+
     /**
      * @deprecated only used by yaml builder
-     * @param array $dynamicVariables
-     * @return ConfigBuilder
      */
     public function setDynamicVariables(array $dynamicVariables): ConfigBuilder
     {
         $this->currentDynamicVariables = $dynamicVariables;
+
         return $this;
     }
 
-    public function setDynamicVariable(string $key, string $value): ConfigBuilder
+    public function addDynamicVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentDynamicVariables[$key] = $value;
+
         return $this;
     }
 
     /**
      * @deprecated only used by yaml builder
-     * @param array $constants
-     * @return ConfigBuilder
      */
     public function setConstants(array $constants): ConfigBuilder
     {
         $this->currentConstants = $constants;
+
         return $this;
     }
 
-    public function setConstVariable(string $key, string $value): ConfigBuilder
+    public function addConstVariable(string $key, string $value): ConfigBuilder
     {
         $this->currentConstants[$key] = $value;
+
         return $this;
     }
 
-    /**
-     * @param array $templates
-     * @return ConfigBuilder
-     */
+    public function addImport(string $path): self
+    {
+        $this->imports[] = $path;
+
+        return $this;
+    }
+
     public function setTemplates(array $templates): ConfigBuilder
     {
         $this->templates = $templates;
+
         return $this;
     }
 
-    /**
-     * @return Config
-     */
     public function create(array $params): Config
     {
         $this->reset();
 
-        return new Config($this->header, self::DEFAULT_ENV, $this->environments, $params);
+        return new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $this->environments, $params, $this->header);
     }
 
-    private function reset()
+    private function reset(): void
     {
         if ($this->currentEnvironment) {
             $this->environments[$this->currentEnvironment] = new ConfigEnvironment(
@@ -163,7 +160,9 @@ class ConfigBuilder
                 $this->currentDynamicVariables,
                 $this->currentConstants,
                 $this->templates,
-                $this->currentDotenvPaths
+                $this->currentDotenvPaths,
+                $this->currentRequiredVariables,
+                $this->imports
             );
         }
 
@@ -173,5 +172,7 @@ class ConfigBuilder
         $this->currentConstants = [];
         $this->templates = [];
         $this->hidden = false;
+        $this->currentRequiredVariables = [];
+        $this->imports = [];
     }
 }

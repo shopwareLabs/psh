@@ -2,15 +2,16 @@
 
 namespace Shopware\Psh\Test\Unit\Listing;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\ScriptFinder;
 
-class ScriptFinderTest extends \PHPUnit_Framework_TestCase
+class ScriptFinderTest extends TestCase
 {
-    public function test_script_finder_holds_contract_if_no_paths_present()
+    public function test_script_finder_holds_contract_if_no_paths_present(): void
     {
         $finder = new ScriptFinder([], new DescriptionReader());
-        $this->assertInstanceOf(ScriptFinder::class, $finder);
-        $this->assertInternalType('array', $finder->getAllScripts());
+        self::assertInstanceOf(ScriptFinder::class, $finder);
+        self::assertIsArray($finder->getAllScripts());
     }
 }

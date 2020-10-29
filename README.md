@@ -27,10 +27,13 @@ Table of contents
     * [Placeholders](#placeholders)
     * [Constants](#constants)
     * [Variables](#variables)
+    * [Dotenv](#dotenv)
+    * [Require](#require)
     * [Templates](#templates)
     * [Environments](#environments)
     * [Headers](#headers)
     * [Overriding configuration file](#overriding-configuration-file)
+    * [Importing configuration files](#importing-configuration-files)
 * [PSH-Scripts](#sh-scripts)
     * [Defining placeholders](#defining-placeholders)
     * [Including other actions](#including-other-actions)
@@ -84,7 +87,6 @@ Download `psh.phar` to your local environment.
 
 ```sh
 wget https://shopwarelabs.github.io/psh/psh.phar # PHP7 Version
-# OR wget https://shopwarelabs.github.io/psh/psh56.phar for the PHP5.6 Version
 chmod +x psh.phar
 ```
 
@@ -109,8 +111,7 @@ composer install # assuming you have composer installed globally
 ./psh build 
 ```
 
-This will create a release phar in the `build/psh.phar` directory. Although the project itself requires PHP7 a PHP 5.6 
-compatible version is currently created with it `build/psh56.phar`. 
+This will create a release phar in the `build/psh.phar` directory. The project itself requires PHP 7.2+. 
 
 Usage
 ------------
@@ -233,6 +234,18 @@ dev-ops/common/actions/test.sh
 echo __TEST__
 ```
 
+#### Require
+
+It may be necessary to require a placeholder to be set, but can't set right away. One such example might be a system dependent path. PSH allows you to communicate this to the user by adding this:
+
+```xml
+<placeholder>
+    <require name="FOO" description="Foo needs to be a reference to bar"/>
+</placeholder>
+```
+
+Now unless foo is set, it is not possible to execute any psh script. The description is optional and can be omitted.
+
 #### Templates
 
 If your application depends on files that are not part of your repository because they differ for different systems (Typically `*.dist` files), 
@@ -309,6 +322,18 @@ Optionally - and just for fun - you can output a ASCII header in front of every 
 You can place a `.psh.xml.override` inside your directory where the `.psh.xml` is located to override the specific configurations.
 
 > Notice: You can overwrite a XML config file with a YAML file to ease the migration from one format to the other.
+
+#### Importing configuration files
+
+You can import environments, actions and placeholders by using the import statement and telling psh to look in another place.
+
+```xml
+<import path="another/config/file/location" />
+```
+
+These directories should contain a `psh.xml` or `psh.xml.dist`. If no file is found a warning is issued but no braking error, since it may very well be that psh is currently installing or downloading the files. You can also use a glob pattern like "tools/**/config"
+
+> Notice: This happens through merging the different configurations into one. Be aware that you might overwrite base configuration. 
 
 ## PSH-Scripts
 

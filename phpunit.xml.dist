@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
         bootstrap="./tests/bootstrap.php"
         backupGlobals="false"
         colors="true"
@@ -8,17 +9,19 @@
         convertWarningsToExceptions="true"
 >
 
-    <testsuite name="Psh Unit Test Suite">
-        <directory>tests/Unit</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite name="Psh Unit Test Suite">
+            <directory>tests/Unit</directory>
+        </testsuite>
 
-    <testsuite name="Psh Integration Test Suite">
-        <directory>tests/Integration</directory>
-    </testsuite>
+        <testsuite name="Psh Integration Test Suite">
+            <directory>tests/Integration</directory>
+        </testsuite>
 
-    <testsuite name="Psh Acceptance Test Suite">
-        <directory>tests/Acceptance</directory>
-    </testsuite>
+        <testsuite name="Psh Acceptance Test Suite">
+            <directory>tests/Acceptance</directory>
+        </testsuite>
+    </testsuites>
 
     <filter>
         <whitelist>
@@ -26,6 +29,7 @@
             <exclude>
                 <directory>tests</directory>
                 <directory>vendor</directory>
+                <directory>vendor-bin</directory>
                 <directory>bin</directory>
             </exclude>
         </whitelist>

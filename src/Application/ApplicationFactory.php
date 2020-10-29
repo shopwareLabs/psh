@@ -1,11 +1,13 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Application;
 
+use RuntimeException;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
+use Shopware\Psh\Config\ConfigFactory;
 use Shopware\Psh\Config\ConfigFileFinder;
+use Shopware\Psh\Config\ConfigLogger;
 use Shopware\Psh\Config\ConfigMerger;
 use Shopware\Psh\Config\XmlConfigFileLoader;
 use Shopware\Psh\Config\YamlConfigFileLoader;
@@ -22,6 +24,8 @@ use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
 use Symfony\Component\Yaml\Parser;
+use function count;
+use function implode;
 
 /**
  * Create the various interdependent objects for the application.
@@ -29,58 +33,35 @@ use Symfony\Component\Yaml\Parser;
 class ApplicationFactory
 {
     /**
-     * @param string $rootDirectory
-     * @param array $params
-     * @return Config
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    public function createConfig(string $rootDirectory, array $params): Config
+    public function createConfig(ConfigLogger $logger, string $rootDirectory, array $params): Config
     {
         $overwrittenConsts = (new ParameterParser())->parseParams($params);
         $configFinder = new ConfigFileFinder();
         $configFiles = $configFinder->discoverFiles($rootDirectory);
-
+        $merger = new ConfigMerger();
         $configLoaders = [
             new YamlConfigFileLoader(new Parser(), new ConfigBuilder(), $rootDirectory),
             new XmlConfigFileLoader(new ConfigBuilder(), $rootDirectory),
         ];
+        $configFactory = new ConfigFactory($merger, $configFinder, $logger, $configLoaders);
 
-        $configs = [];
-        foreach ($configFiles as $configFile) {
-            foreach ($configLoaders as $configLoader) {
-                if (!$configLoader->isSupported($configFile)) {
-                    continue;
-                }
-
-                $configs[] = $configLoader->load($configFile, $overwrittenConsts);
-            }
-        }
+        $logger->mainConfigFiles(...$configFiles);
+        $configs = $configFactory->gatherConfigs($configFiles, $overwrittenConsts);
 
         if (count($configs) === 0) {
-            throw new \RuntimeException('Unable to read any configuration from "' . implode(', ', $configFiles) . '"');
+            throw new RuntimeException('Unable to read any configuration from "' . implode(', ', $configFiles) . '"');
         }
 
-        $merger = new ConfigMerger();
-        
-        return $merger->merge(...$configs);
+        return $configFactory->mergeConfigs($configs);
     }
 
-    /**
-     * @param Config $config
-     * @return ScriptFinder
-     */
     public function createScriptFinder(Config $config): ScriptFinder
     {
         return new ScriptFinder($config->getAllScriptsPaths(), new DescriptionReader());
     }
 
-    /**
-     * @param Script $script
-     * @param Config $config
-     * @param Logger $logger
-     * @param string $rootDirectory
-     * @return ProcessExecutor
-     */
     public function createProcessExecutor(
         Script $script,
         Config $config,
@@ -92,7 +73,7 @@ class ApplicationFactory
                 $config->getConstants($script->getEnvironment()),
                 $config->getDynamicVariables($script->getEnvironment()),
                 $config->getTemplates($script->getEnvironment()),
-                $config->getDotenvPaths($script->getEnvironment())
+                $config->getDotenvVariables($script->getEnvironment())
             ),
             new TemplateEngine(),
             $logger,
@@ -101,9 +82,6 @@ class ApplicationFactory
     }
 
     /**
-     * @param Script $script
-     * @param ScriptFinder $scriptFinder
-     *
      * @return Command[]
      */
     public function createCommands(Script $script, ScriptFinder $scriptFinder): array
@@ -112,15 +90,7 @@ class ApplicationFactory
             new BashScriptParser(),
             new PshScriptParser(new CommandBuilder(), $scriptFinder)
         );
-        return $scriptLoader->loadScript($script);
-    }
 
-    /**
-     * @param $directory
-     * @return array
-     */
-    public function getConfigFiles(string $directory): array
-    {
-        return  (new ConfigFileFinder())->discoverFiles($directory);
+        return $scriptLoader->loadScript($script);
     }
 }

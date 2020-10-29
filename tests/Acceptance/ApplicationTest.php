@@ -1,22 +1,26 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Test\Acceptance;
 
+use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Application\Application;
+use Shopware\Psh\Application\ExitSignal;
+use function file_get_contents;
+use function unlink;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
     /**
      * @before
      * @after
      */
-    public function clearCreatedResults()
+    public function clearCreatedResults(): void
     {
         @unlink(__DIR__ . '/_app/result.txt');
+        @unlink(__DIR__ . '/_app_missing_requirement/result.txt');
     }
 
-    public function test_application_listing()
+    public function test_application_listing(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -24,15 +28,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run([]);
 
         $this->assertNoErrorExitCode($exitCode);
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('test:env', MockWriter::$content);
-        $this->assertContains('test:env2', MockWriter::$content);
-        $this->assertContains('6 script(s) available', MockWriter::$content);
-        $this->assertNotContains('Duration:', MockWriter::$content);
-        $this->assertNotContains('test:.hidden', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString('Available commands:', MockWriter::$content);
+        self::assertStringContainsString('test:env', MockWriter::$content);
+        self::assertStringContainsString('test:env2', MockWriter::$content);
+        self::assertStringContainsString('7 script(s) available', MockWriter::$content);
+        self::assertStringNotContainsString('Duration:', MockWriter::$content);
+        self::assertStringNotContainsString('test:.hidden', MockWriter::$content);
     }
 
-    public function test_hidden_execution()
+    public function test_hidden_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -42,7 +47,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertSimpleScript($exitCode, 'test');
     }
 
-    public function test_application_execution()
+    public function test_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -52,7 +57,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertSimpleScript($exitCode, 'prod');
     }
 
-    public function test_environment_application_execution()
+    public function test_environment_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -62,7 +67,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertSimpleScript($exitCode, 'test');
     }
 
-    public function test_hidden_environment_application_execution()
+    public function test_hidden_environment_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -72,7 +77,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertSimpleScript($exitCode, 'hidden');
     }
 
-    public function test_environment_deferred_application_execution()
+    public function test_environment_deferred_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -80,185 +85,217 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $exitCode = $application->run(['', 'test:deferred']);
 
         $this->assertNoErrorExitCode($exitCode);
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('(1/3) Deferring', MockWriter::$content);
-        $this->assertContains('(2/3) Waiting', MockWriter::$content);
-        $this->assertContains('WAITING...', MockWriter::$content);
-        $this->assertContains('(1/1) Output from', MockWriter::$content);
-        $this->assertNotContains('echo "__ENV__"', MockWriter::$content);
-        $this->assertContains('(3/3) Deferring', MockWriter::$content);
-        $this->assertContains(' echo "test"', MockWriter::$content);
-        $this->assertContains('All commands successfully executed!', MockWriter::$content);
-        $this->assertContains('Duration:', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString('(1/3) Deferring', MockWriter::$content);
+        self::assertStringContainsString('(2/3) Waiting', MockWriter::$content);
+        self::assertStringContainsString('WAITING...', MockWriter::$content);
+        self::assertStringContainsString('(1/1) Output from', MockWriter::$content);
+        self::assertStringNotContainsString('echo "__ENV__"', MockWriter::$content);
+        self::assertStringContainsString('(3/3) Deferring', MockWriter::$content);
+        self::assertStringContainsString(' echo "test"', MockWriter::$content);
+        self::assertStringContainsString('All commands successfully executed!', MockWriter::$content);
+        self::assertStringContainsString('Duration:', MockWriter::$content);
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
-    public function test_error_application_execution()
+    public function test_error_application_execution(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'error']);
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
-        $this->assertNotEquals(0, $exitCode);
+        self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
+        self::assertNotEquals(0, $exitCode);
     }
 
-    public function test_chain_two_commands_with_a_comma_executes_both()
+    public function test_chain_two_commands_with_a_comma_executes_both(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'simple,test:env']);
 
         $this->assertNoErrorExitCode($exitCode);
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains(' echo "prod"', MockWriter::$content);
-        $this->assertContains(' echo "test"', MockWriter::$content);
-        $this->assertContains('All commands successfully executed!', MockWriter::$content);
-        $this->assertNotContains('3 script(s) available', MockWriter::$content);
-        $this->assertContains('Duration:', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString(' echo "prod"', MockWriter::$content);
+        self::assertStringContainsString(' echo "test"', MockWriter::$content);
+        self::assertStringContainsString('All commands successfully executed!', MockWriter::$content);
+        self::assertStringNotContainsString('3 script(s) available', MockWriter::$content);
+        self::assertStringContainsString('Duration:', MockWriter::$content);
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', 'test');
     }
 
-    public function test_chain_two_commands_with_a_comma_executes_both_unless_an_error_occures()
+    public function test_chain_two_commands_with_a_comma_executes_both_unless_an_error_occures(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'error,test:env']);
 
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertNotContains(' echo "test"', MockWriter::$content);
-        $this->assertNotContains('All commands successfully executed!', MockWriter::$content);
-        $this->assertNotContains('3 script(s) available', MockWriter::$content);
+        self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringNotContainsString(' echo "test"', MockWriter::$content);
+        self::assertStringNotContainsString('All commands successfully executed!', MockWriter::$content);
+        self::assertStringNotContainsString('3 script(s) available', MockWriter::$content);
     }
 
-    public function test_psh_config_override_should_override_existing_psh_configuration()
+    public function test_psh_config_override_should_override_existing_psh_configuration(): void
     {
         $application = new Application(__DIR__ . '/_override_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run([]);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
-        $this->assertContains('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
-        $this->assertContains('override', MockWriter::$content);
-        $this->assertContains('override-app', MockWriter::$content);
+        self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
+        self::assertStringContainsString('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
+        self::assertStringContainsString('override', MockWriter::$content);
+        self::assertStringContainsString('override-app', MockWriter::$content);
     }
 
-    public function test_psh_config_override_should_override_existing_psh_configuration_executes_with_override_params()
+    public function test_psh_config_override_should_override_existing_psh_configuration_executes_with_override_params(): void
     {
         $application = new Application(__DIR__ . '/_override_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'override-app', '--external_param', 'foo-content']);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
-        $this->assertContains('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
-        $this->assertContains('override', MockWriter::$content);
-        $this->assertContains('override-app', MockWriter::$content);
-        $this->assertNotContains('_EXTERNAL_PARAM_', MockWriter::$content);
-        $this->assertContains('foo-content', MockWriter::$content);
+        self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
+        self::assertStringContainsString('Using .psh.xml extended by .psh.xml.override', MockWriter::$content);
+        self::assertStringContainsString('Importing foo/.psh.xml from "foo"', MockWriter::$content);
+
+        self::assertStringContainsString('override', MockWriter::$content);
+        self::assertStringContainsString('override-app', MockWriter::$content);
+        self::assertStringNotContainsString('_EXTERNAL_PARAM_', MockWriter::$content);
+        self::assertStringContainsString('foo-content', MockWriter::$content);
     }
 
-    public function test_psh_groups_commands_by_environment()
+    public function test_psh_groups_commands_by_environment(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['']);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
 
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('default:', MockWriter::$content);
-        $this->assertContains('test:', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString('default:', MockWriter::$content);
+        self::assertStringContainsString('test:', MockWriter::$content);
     }
 
-    public function test_bash_autocomplete_listing()
+    public function test_bash_autocomplete_listing(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'bash_autocompletion_dump']);
 
-        $this->assertEquals(Application::RESULT_SUCCESS, $exitCode);
+        self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
 
-        $this->assertNotContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('error simple test:env test:env2', MockWriter::$content);
+        self::assertStringNotContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString('error simple test:env test:env2', MockWriter::$content);
     }
 
-    public function test_script_not_found_listing_with_guess()
+    public function test_script_not_found_listing_with_guess(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'sümple']);
 
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
 
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('Have you been looking for this?', MockWriter::$content);
-        $this->assertContains('- simple', MockWriter::$content);
-        $this->assertContains('1 script(s) available', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString('Have you been looking for this?', MockWriter::$content);
+        self::assertStringContainsString('- simple', MockWriter::$content);
+        self::assertStringContainsString('1 script(s) available', MockWriter::$content);
     }
 
-    public function test_script_not_found_listing_without_guess()
+    public function test_script_not_found_listing_without_guess(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'pkdi']);
 
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
 
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('Script with name pkdi not found', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString('Script with name pkdi not found', MockWriter::$content);
     }
 
-    public function test_showListings_returns_no_scripts_available()
+    public function test_showListings_returns_no_scripts_available(): void
     {
         $application = new Application(__DIR__);
         MockWriter::addToApplication($application);
 
         $application->showListing([]);
 
-        $this->assertContains('Currently no scripts available', MockWriter::$content);
+        self::assertStringContainsString('Currently no scripts available', MockWriter::$content);
     }
 
-    public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched()
+    public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched(): void
     {
-        $application = new Application(__DIR__.'/_app_invalid_template');
+        $application = new Application(__DIR__ . '/_app_invalid_template');
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run(['', 'simple']);
 
-        $this->assertContains('Unable to find a file referenced by "templates/testa.tpl', MockWriter::$content);
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        self::assertStringContainsString('Unable to find a file referenced by "templates/testa.tpl', MockWriter::$content);
+        self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 
-    public function test_it_throws_exception_InvalidParameterException_and_it_is_catched()
+    public function test_it_exits_early_without_all_requirements_met(): void
     {
-        $application = new Application(__DIR__.'/_app');
+        $application = new Application(__DIR__ . '/_app_missing_requirement');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'simple']);
+
+        self::assertFileNotExists(__DIR__ . '/_app_missing_requirement/result.txt');
+
+        self::assertStringContainsString('- Missing required const or var named FOO (needs_foo)', MockWriter::$content);
+        self::assertStringContainsString('- Missing required const or var named BAR', MockWriter::$content);
+        self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
+    }
+
+    public function test_requirements_can_be_overwritten_by_param(): void
+    {
+        $application = new Application(__DIR__ . '/_app_missing_requirement');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['', 'simple', '--foo=foho', '--bar=bahar']);
+
+        self::assertFileExists(__DIR__ . '/_app_missing_requirement/result.txt');
+        self::assertSame('test bahar', file_get_contents(__DIR__ . '/_app_missing_requirement/result.txt'));
+
+        self::assertStringContainsString('echo "foho"', MockWriter::$content);
+        self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
+    }
+
+    public function test_it_throws_exception_InvalidParameterException_and_it_is_catched(): void
+    {
+        $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run(['', 'simple', '-param']);
 
-        $this->assertContains('Unable to parse parameter -param', MockWriter::$content);
-        $this->assertEquals(Application::RESULT_ERROR, $exitCode);
+        self::assertStringContainsString('Unable to parse parameter -param', MockWriter::$content);
+        self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 
-    private function assertNoErrorExitCode(int $exitCode)
+    private function assertNoErrorExitCode(int $exitCode): void
     {
-        $this->assertEquals(0, $exitCode, 'Application errored unexpextedly: ' . MockWriter::$content);
+        self::assertEquals(0, $exitCode, 'Application errored unexpextedly: ' . MockWriter::$content);
     }
 
-    private function assertSimpleScript(int $exitCode, string $envName)
+    private function assertSimpleScript(int $exitCode, string $envName): void
     {
         $this->assertNoErrorExitCode($exitCode);
-        $this->assertContains('ls -al', MockWriter::$content);
-        $this->assertContains('Using .psh.xml', MockWriter::$content);
-        $this->assertContains('(1/4) Starting', MockWriter::$content);
-        $this->assertContains('(2/4) Starting', MockWriter::$content);
-        $this->assertContains('(3/4) Starting', MockWriter::$content);
-        $this->assertContains('(4/4) Deferring', MockWriter::$content);
-        $this->assertContains('WAITING...', MockWriter::$content);
-        $this->assertContains('(1/1) Output from', MockWriter::$content);
-        $this->assertContains(' echo "' . $envName . '"', MockWriter::$content);
-        $this->assertContains('All commands successfully executed!', MockWriter::$content);
-        $this->assertContains('Duration:', MockWriter::$content);
+        self::assertStringContainsString('ls -al', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
+        self::assertStringContainsString('Importing glob/.psh.xml extended by glob/.psh.xml.override from "gl*b"', MockWriter::$content);
+        self::assertStringContainsString('NOTICE: No import found for path "foo/"', MockWriter::$content);
+        self::assertStringContainsString('(1/4) Starting', MockWriter::$content);
+        self::assertStringContainsString('(2/4) Starting', MockWriter::$content);
+        self::assertStringContainsString('(3/4) Starting', MockWriter::$content);
+        self::assertStringContainsString('(4/4) Deferring', MockWriter::$content);
+        self::assertStringContainsString('WAITING...', MockWriter::$content);
+        self::assertStringContainsString('(1/1) Output from', MockWriter::$content);
+        self::assertStringContainsString(' echo "' . $envName . '"', MockWriter::$content);
+        self::assertStringContainsString('All commands successfully executed!', MockWriter::$content);
+        self::assertStringContainsString('Duration:', MockWriter::$content);
 
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', $envName);
     }

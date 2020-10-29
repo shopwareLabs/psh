@@ -2,11 +2,19 @@
 
 namespace Shopware\Psh\Config;
 
+use function array_map;
+use function array_merge;
+
 /**
  * Represents the global configuration consisting of multiple environments
  */
 class Config
 {
+    /**
+     * @var EnvironmentResolver
+     */
+    private $resolver;
+
     /**
      * @var string
      */
@@ -28,21 +36,20 @@ class Config
     private $params;
 
     /**
-     * @param string|null $header
-     * @param string $defaultEnvironment
      * @param ConfigEnvironment[] $environments
-     * @param array $params
      */
     public function __construct(
-        string $header = null,
+        EnvironmentResolver $resolver,
         string $defaultEnvironment,
         array $environments,
-        array $params
+        array $params,
+        ?string $header = null
     ) {
-        $this->header = $header;
+        $this->resolver = $resolver;
         $this->defaultEnvironment = $defaultEnvironment;
         $this->environments = $environments;
         $this->params = $params;
+        $this->header = $header;
     }
 
     /**
@@ -65,48 +72,72 @@ class Config
         return $paths;
     }
 
-    /**
-     * @param string|null $environment
-     * @return array
-     */
-    public function getTemplates(string $environment = null): array
+    public function getTemplates(?string $environment = null): array
     {
-        return $this->createResult(
+        return $this->resolver->resolveTemplates($this->createResult(
             [$this->getEnvironment(), 'getTemplates'],
             [$this->getEnvironment($environment), 'getTemplates']
-        );
+        ));
     }
 
-    /**
-     * @param string|null $environment
-     * @return array
-     */
-    public function getDynamicVariables(string $environment = null): array
+    public function getDynamicVariables(?string $environment = null): array
     {
-        return $this->createResult(
+        return $this->resolver->resolveVariables($this->createResult(
             [$this->getEnvironment(), 'getDynamicVariables'],
             [$this->getEnvironment($environment), 'getDynamicVariables']
-        );
+        ));
     }
 
-    /**
-     * @param string|null $environment
-     * @return array
-     */
-    public function getConstants(string $environment = null): array
+    public function getConstants(?string $environment = null): array
     {
-        return $this->createResult(
+        return $this->resolver->resolveConstants($this->createResult(
             [$this->getEnvironment(), 'getConstants'],
             [$this->getEnvironment($environment), 'getConstants'],
             [$this, 'getParams']
+        ));
+    }
+
+    public function getAllPlaceholders(?string $environment = null): array
+    {
+        return array_merge(
+            $this->getConstants($environment),
+            $this->getDotenvVariables($environment),
+            $this->getDynamicVariables($environment)
         );
     }
 
     /**
-     * @param string|null $environment
+     * @return ValueProvider[]
+     */
+    public function getDotenvVariables(?string $environment = null): array
+    {
+        $paths = $this->getDotenvPaths($environment);
+
+        return $this->resolver->resolveDotenvVariables($paths);
+    }
+
+    /**
+     * @return RequiredValue[]
+     */
+    public function getRequiredVariables(?string $environment = null): array
+    {
+        $requiredValues = $this->createResult(
+            [$this->getEnvironment(), 'getRequiredVariables'],
+            [$this->getEnvironment($environment), 'getRequiredVariables']
+        );
+
+        $result = [];
+        foreach ($requiredValues as $name => $description) {
+            $result[$name] = new RequiredValue($name, $description);
+        }
+
+        return $result;
+    }
+
+    /**
      * @return DotenvFile[]
      */
-    public function getDotenvPaths(string $environment = null): array
+    public function getDotenvPaths(?string $environment = null): array
     {
         $paths = $this->createResult(
             [$this->getEnvironment(), 'getDotenvPaths'],
@@ -121,7 +152,7 @@ class Config
     /**
      * @return string
      */
-    public function getHeader()
+    public function getHeader(): ?string
     {
         return $this->header;
     }
@@ -134,26 +165,21 @@ class Config
         return $this->environments;
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultEnvironment(): string
     {
         return $this->defaultEnvironment;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams() : array
+    public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param callable[] ...$valueProviders
-     * @return array
-     */
+    public function getImports(): array
+    {
+        return $this->getEnvironment()->getImports();
+    }
+
     private function createResult(callable ...$valueProviders): array
     {
         $mergedKeyValues = [];
@@ -167,11 +193,7 @@ class Config
         return $mergedKeyValues;
     }
 
-    /**
-     * @param string|null $name
-     * @return ConfigEnvironment
-     */
-    private function getEnvironment(string $name = null): ConfigEnvironment
+    private function getEnvironment(?string $name = null): ConfigEnvironment
     {
         if ($name === null) {
             return $this->environments[$this->defaultEnvironment];

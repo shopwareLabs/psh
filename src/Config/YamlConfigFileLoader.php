@@ -1,15 +1,20 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Config;
 
 use Symfony\Component\Yaml\Parser;
+use function array_key_exists;
+use function array_map;
+use function in_array;
+use function pathinfo;
 
 /**
  * Load the config data from a yaml file
  */
-class YamlConfigFileLoader extends ConfigFileLoader
+class YamlConfigFileLoader implements ConfigFileLoader
 {
+    use ConfigFileLoaderFileSystemHandlers;
+
     const KEY_HEADER = 'header';
 
     const KEY_DYNAMIC_VARIABLES = 'dynamic';
@@ -39,11 +44,6 @@ class YamlConfigFileLoader extends ConfigFileLoader
      */
     private $applicationRootDirectory;
 
-    /**
-     * @param Parser $yamlReader
-     * @param ConfigBuilder $configBuilder
-     * @param string $applicationRootDirectory
-     */
     public function __construct(Parser $yamlReader, ConfigBuilder $configBuilder, string $applicationRootDirectory)
     {
         $this->yamlReader = $yamlReader;
@@ -51,17 +51,11 @@ class YamlConfigFileLoader extends ConfigFileLoader
         $this->applicationRootDirectory = $applicationRootDirectory;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isSupported(string $file): bool
     {
         return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.yaml', '.psh.yml', '.psh.yml.dist', '.psh.yml.override', '.psh.yaml.dist', '.psh.yaml.override'], true);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function load(string $file, array $params): Config
     {
         $contents = $this->loadFileContents($file);
@@ -87,11 +81,7 @@ class YamlConfigFileLoader extends ConfigFileLoader
             ->create($params);
     }
 
-    /**
-     * @param string $file
-     * @param array $rawConfigData
-     */
-    private function setConfigData(string $file, array $rawConfigData)
+    private function setConfigData(string $file, array $rawConfigData): void
     {
         $this->configBuilder->setCommandPaths(
             $this->extractPaths($file, $rawConfigData, self::KEY_COMMAND_PATHS)
@@ -115,9 +105,7 @@ class YamlConfigFileLoader extends ConfigFileLoader
     }
 
     /**
-     * @param string $key
-     * @param array $rawConfig
-     * @param mixed $default
+     * @param mixed|null $default
      * @return mixed|null
      */
     private function extractData(string $key, array $rawConfig, $default = false)
@@ -129,24 +117,11 @@ class YamlConfigFileLoader extends ConfigFileLoader
         return $rawConfig[$key];
     }
 
-
-
-    /**
-     * @param string $contents
-     * @return array
-     */
     private function parseFileContents(string $contents): array
     {
         return $this->yamlReader->parse($contents);
     }
 
-    /**
-     * @param string $file
-     * @param array $rawConfigData
-     * @param string $key
-     *
-     * @return array
-     */
     private function extractPaths(string $file, array $rawConfigData, string $key): array
     {
         $paths = $this->extractData($key, $rawConfigData, []);
@@ -156,11 +131,6 @@ class YamlConfigFileLoader extends ConfigFileLoader
         }, $paths);
     }
 
-    /**
-     * @param string $file
-     * @param array $rawConfigData
-     * @return array
-     */
     private function extractTemplates(string $file, array $rawConfigData): array
     {
         $templates = $this->extractData(self::KEY_TEMPLATES, $rawConfigData, []);

@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 namespace Shopware\Psh\Config;
 
 /**
@@ -39,20 +38,24 @@ class ConfigEnvironment
     private $dotenvPaths;
 
     /**
-     * @param array $commandPaths
-     * @param array $dynamicVariables
-     * @param array $constants
-     * @param array $templates
-     * @param array $dotenvPaths
-     * @param bool $hidden
+     * @var array
      */
+    private $requiredVariables;
+
+    /**
+     * @var array
+     */
+    private $imports;
+
     public function __construct(
         bool $hidden,
         array $commandPaths = [],
         array $dynamicVariables = [],
         array $constants = [],
         array $templates = [],
-        array $dotenvPaths = []
+        array $dotenvPaths = [],
+        array $requiredVariables = [],
+        array $imports = []
     ) {
         $this->hidden = $hidden;
         $this->commandPaths = $commandPaths;
@@ -60,53 +63,47 @@ class ConfigEnvironment
         $this->constants = $constants;
         $this->templates = $templates;
         $this->dotenvPaths = $dotenvPaths;
+        $this->requiredVariables = $requiredVariables;
+        $this->imports = $imports;
     }
 
-    /**
-     * @return bool
-     */
     public function isHidden(): bool
     {
         return $this->hidden;
     }
 
-    /**
-     * @return array
-     */
     public function getAllScriptsPaths(): array
     {
         return $this->commandPaths;
     }
 
-    /**
-     * @return array
-     */
     public function getDynamicVariables(): array
     {
         return $this->dynamicVariables;
     }
 
-    /**
-     * @return array
-     */
     public function getConstants(): array
     {
         return $this->constants;
     }
 
-    /**
-     * @return array
-     */
     public function getTemplates(): array
     {
         return $this->templates;
     }
 
-    /**
-     * @return array
-     */
     public function getDotenvPaths(): array
     {
         return $this->dotenvPaths;
+    }
+
+    public function getRequiredVariables(): array
+    {
+        return $this->requiredVariables;
+    }
+
+    public function getImports(): array
+    {
+        return $this->imports;
     }
 }
