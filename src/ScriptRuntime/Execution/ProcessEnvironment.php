@@ -5,7 +5,6 @@ namespace Shopware\Psh\ScriptRuntime\Execution;
 use Shopware\Psh\Config\Template;
 use Shopware\Psh\Config\ValueProvider;
 use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
 use function array_merge;
 
 /**
@@ -41,11 +40,6 @@ class ProcessEnvironment
      */
     public function __construct(array $constants, array $variables, array $templates, array $dotenvVars)
     {
-        Assert::allIsInstanceOf($constants, ValueProvider::class);
-        Assert::allIsInstanceOf($variables, ValueProvider::class);
-        Assert::allIsInstanceOf($dotenvVars, ValueProvider::class);
-        Assert::allIsInstanceOf($templates, Template::class);
-
         $this->constants = $constants;
         $this->variables = $variables;
         $this->templates = $templates;

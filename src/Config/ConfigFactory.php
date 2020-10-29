@@ -6,6 +6,7 @@ use function array_merge;
 use function array_pop;
 use function array_shift;
 use function count;
+use function dirname;
 use function glob;
 use function is_dir;
 
@@ -47,7 +48,6 @@ class ConfigFactory
      * @return Config[]
      */
     public function gatherConfigs(
-        string $fromPath,
         array $configFiles,
         array $overwrittenConsts
     ): array {
@@ -64,7 +64,7 @@ class ConfigFactory
                     ->load($configFile, $overwrittenConsts);
 
                 $additionalConfigs[] = $this
-                    ->loadImports($config, $fromPath, $overwrittenConsts);
+                    ->loadImports($config, dirname($configFile), $overwrittenConsts);
 
                 $configs[] = $config;
             }
@@ -103,7 +103,7 @@ class ConfigFactory
                 $foundSomething = true;
                 $this->configLogger->importConfigFiles($importPath, ...$foundConfigFiles);
                 $additionalConfigs[] = $this
-                    ->gatherConfigs($foundOccurrence, $foundConfigFiles, $overwrittenConsts);
+                    ->gatherConfigs($foundConfigFiles, $overwrittenConsts);
             }
 
             if (!$foundSomething) {

@@ -48,7 +48,7 @@ class ApplicationFactory
         $configFactory = new ConfigFactory($merger, $configFinder, $logger, $configLoaders);
 
         $logger->mainConfigFiles(...$configFiles);
-        $configs = $configFactory->gatherConfigs($rootDirectory, $configFiles, $overwrittenConsts);
+        $configs = $configFactory->gatherConfigs($configFiles, $overwrittenConsts);
 
         if (count($configs) === 0) {
             throw new RuntimeException('Unable to read any configuration from "' . implode(', ', $configFiles) . '"');
