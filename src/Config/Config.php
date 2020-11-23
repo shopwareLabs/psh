@@ -4,6 +4,7 @@ namespace Shopware\Psh\Config;
 
 use function array_map;
 use function array_merge;
+use function mb_strtoupper;
 
 /**
  * Represents the global configuration consisting of multiple environments
@@ -82,7 +83,7 @@ class Config
 
     public function getDynamicVariables(?string $environment = null): array
     {
-        return $this->resolver->resolveVariables($this->createResult(
+        return $this->resolver->resolveVariables($this->createUpperCaseResult(
             [$this->getEnvironment(), 'getDynamicVariables'],
             [$this->getEnvironment($environment), 'getDynamicVariables']
         ));
@@ -90,7 +91,7 @@ class Config
 
     public function getConstants(?string $environment = null): array
     {
-        return $this->resolver->resolveConstants($this->createResult(
+        return $this->resolver->resolveConstants($this->createUpperCaseResult(
             [$this->getEnvironment(), 'getConstants'],
             [$this->getEnvironment($environment), 'getConstants'],
             [$this, 'getParams']
@@ -187,6 +188,19 @@ class Config
         foreach ($valueProviders as $valueProvider) {
             foreach ($valueProvider() as $key => $value) {
                 $mergedKeyValues[$key] = $value;
+            }
+        }
+
+        return $mergedKeyValues;
+    }
+
+    private function createUpperCaseResult(callable ...$valueProviders): array
+    {
+        $mergedKeyValues = [];
+
+        foreach ($valueProviders as $valueProvider) {
+            foreach ($valueProvider() as $key => $value) {
+                $mergedKeyValues[mb_strtoupper($key)] = $value;
             }
         }
 

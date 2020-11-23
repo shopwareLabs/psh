@@ -3,10 +3,13 @@
 namespace Shopware\Psh\ScriptRuntime\Execution;
 
 use RuntimeException;
+use Shopware\Psh\PshErrorMessage;
 
 /**
  * A custom exception to enable nice error display
+ *
+ * @psalm-immutable
  */
-class ExecutionErrorException extends RuntimeException
+class TemplateNotValid extends RuntimeException implements PshErrorMessage
 {
 }

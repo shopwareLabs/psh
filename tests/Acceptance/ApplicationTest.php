@@ -264,14 +264,14 @@ class ApplicationTest extends TestCase
         self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
     }
 
-    public function test_it_throws_exception_InvalidParameterException_and_it_is_catched(): void
+    public function test_it_throws_exception_InvalidReferencedPath_and_it_is_catched(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run(['', 'simple', '-param']);
 
-        self::assertStringContainsString('Unable to parse parameter -param', MockWriter::$content);
+        self::assertStringContainsString('Unable to parse parameter "-param"', MockWriter::$content);
         self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 

@@ -3,10 +3,13 @@
 namespace Shopware\Psh\Application;
 
 use RuntimeException;
+use Shopware\Psh\PshErrorMessage;
 
 /**
  * Special exception to enable a nice error message from the app
+ *
+ * @psalm-immutable
  */
-class InvalidParameterException extends RuntimeException
+class InvalidParameter extends RuntimeException implements PshErrorMessage
 {
 }

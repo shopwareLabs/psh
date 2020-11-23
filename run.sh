@@ -2,7 +2,7 @@
 
 set -e
 
-PHPV="7.2"
+PHPV="74"
 PRES=${1:-""}
 docker build -t psh${PHPV} docker/${PHPV}/.
 

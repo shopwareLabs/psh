@@ -179,7 +179,7 @@ class ProcessExecutor
     private function testProcessResultValid(Process $process, ProcessCommand $command): void
     {
         if (!$this->isProcessResultValid($process, $command)) {
-            throw new ExecutionErrorException('Command exited with Error');
+            throw new ExecutionError('Execution aborted, a subcommand failed!');
         }
     }
 

@@ -54,6 +54,6 @@ class TemplateEngine
             }
         }
 
-        throw new RuntimeException('Missing required value for "' . $valueName . '"');
+        throw new MissingRequiredParameter($valueName);
     }
 }

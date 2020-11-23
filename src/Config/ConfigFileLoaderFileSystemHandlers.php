@@ -2,12 +2,9 @@
 
 namespace Shopware\Psh\Config;
 
-use InvalidArgumentException;
 use function file_exists;
 use function file_get_contents;
 use function pathinfo;
-use function print_r;
-use function sprintf;
 
 trait ConfigFileLoaderFileSystemHandlers
 {
@@ -33,11 +30,7 @@ trait ConfigFileLoaderFileSystemHandlers
             }
         }
 
-        throw new InvalidArgumentException(sprintf(
-            'Unable to find a file referenced by "%s", tried: %s',
-            $absoluteOrRelativePath,
-            print_r($possiblyValidFiles, true)
-        ));
+        throw new InvalidReferencedPath($absoluteOrRelativePath, $possiblyValidFiles);
     }
 
     protected function makeAbsolutePath(string $baseFile, string $path): string

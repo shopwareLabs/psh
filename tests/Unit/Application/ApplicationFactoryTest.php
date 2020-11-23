@@ -24,7 +24,7 @@ class ApplicationFactoryTest extends TestCase
         $parsedParams = $factory->parseParams($testParams);
 
         $expectedResult = [
-            'FILTER' => '--filter aaaa',
+            'filter' => '--filter aaaa',
         ];
 
         self::assertEquals($expectedResult, $parsedParams);
@@ -74,12 +74,12 @@ class ApplicationFactoryTest extends TestCase
         $result = $paramParser->parseParams($testParams);
 
         $expectedResult = [
-            'ENV1' => 'dev',
-            'ENV2' => 'dev',
-            'ENV3' => 'dev',
-            'ENV4' => 'dev',
-            'ENV5' => 'gh""ttg',
-            'ENV6' => 'gh""t=tg',
+            'env1' => 'dev',
+            'env2' => 'dev',
+            'env3' => 'dev',
+            'env4' => 'dev',
+            'env5' => 'gh""ttg',
+            'env6' => 'gh""t=tg',
         ];
 
         self::assertEquals($expectedResult, $result);

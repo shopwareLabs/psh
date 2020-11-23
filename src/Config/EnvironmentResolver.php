@@ -8,6 +8,7 @@ use Dotenv\Repository\Adapter\PutenvAdapter;
 use Dotenv\Repository\Adapter\ServerConstAdapter;
 use Symfony\Component\Process\Process;
 use function array_keys;
+use function mb_strtoupper;
 use function pathinfo;
 
 class EnvironmentResolver
@@ -24,7 +25,7 @@ class EnvironmentResolver
             $dotenvVariables = $this->loadDotenvVariables($dotenvPath);
 
             foreach ($dotenvVariables as $variableKey => $variableValue) {
-                $variables[$variableKey] = new SimpleValueProvider($variableValue);
+                $variables[mb_strtoupper($variableKey)] = new SimpleValueProvider($variableValue);
             }
         }
 

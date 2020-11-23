@@ -2,7 +2,7 @@
 
 namespace Shopware\Psh\Config;
 
-use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValidException;
+use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValid;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
@@ -39,12 +39,12 @@ class Template
     }
 
     /**
-     * @throws TemplateNotValidException
+     * @throws TemplateNotValid
      */
     public function getContent(): string
     {
         if (!file_exists($this->source)) {
-            throw new TemplateNotValidException('File source not found in "' . $this->source . '"');
+            throw new TemplateNotValid('File source not found in "' . $this->source . '"');
         }
 
         return file_get_contents($this->source);

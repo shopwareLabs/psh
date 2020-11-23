@@ -7,7 +7,7 @@ use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
-use Shopware\Psh\Listing\ScriptPathNotValidException;
+use Shopware\Psh\Listing\ScriptPathNotValid;
 
 class ScriptFinderTest extends TestCase
 {
@@ -78,7 +78,7 @@ class ScriptFinderTest extends TestCase
             new DescriptionReader()
         );
 
-        $this->expectException(ScriptPathNotValidException::class);
+        $this->expectException(ScriptPathNotValid::class);
         $finder->getAllScripts();
     }
 

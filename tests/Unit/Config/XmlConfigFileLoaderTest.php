@@ -76,7 +76,7 @@ EOD
 
         $loader = $this->createConfigLoader();
         $config = $loader->load(self::TEMP_FILE, []);
-        $this->assertVariables($config, ['filesystem' => 'ls -al']);
+        $this->assertVariables($config, ['FILESYSTEM' => 'ls -al']);
     }
 
     public function test_it_works_if_no_dynamics_are_present(): void
@@ -184,7 +184,7 @@ EOD
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
+            'FILESYSTEM' => 'ls -al',
         ]);
 
         $this->assertConstants($config, [
@@ -242,7 +242,7 @@ EOD
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
+            'FILESYSTEM' => 'ls -al',
         ]);
 
         $this->assertConstants($config, [
@@ -284,13 +284,13 @@ EOD
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
-            'booh' => 'bar',
+            'FILESYSTEM' => 'ls -al',
+            'BOOH' => 'bar',
         ], 'namespace');
 
         $this->assertConstants($config, [
             'FOO' => 'bar',
-            'booh' => 'hah',
+            'BOOH' => 'hah',
         ], 'namespace');
 
         $scripts = $config->getAllScriptsPaths();

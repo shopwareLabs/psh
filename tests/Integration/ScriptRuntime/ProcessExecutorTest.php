@@ -12,7 +12,7 @@ use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\ScriptRuntime\Command;
 use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
-use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
+use Shopware\Psh\ScriptRuntime\Execution\ExecutionError;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessExecutor;
 use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
@@ -244,10 +244,10 @@ class ProcessExecutorTest extends TestCase
 
         try {
             $executor->execute($script, $commands);
-        } catch (ExecutionErrorException $e) {
+        } catch (ExecutionError $e) {
         }
         $executionTime = microtime(true) - $beginExecution;
-        self::assertInstanceOf(ExecutionErrorException::class, $e);
+        self::assertInstanceOf(ExecutionError::class, $e);
 
         // check a wait occurred
         $totalWait = 0;
@@ -282,10 +282,10 @@ class ProcessExecutorTest extends TestCase
 
         try {
             $executor->execute($script, $commands);
-        } catch (ExecutionErrorException $e) {
+        } catch (ExecutionError $e) {
         }
         $executionTime = microtime(true) - $beginExecution;
-        self::assertInstanceOf(ExecutionErrorException::class, $e);
+        self::assertInstanceOf(ExecutionError::class, $e);
 
         // check a wait occurred
         $totalWait = 0;

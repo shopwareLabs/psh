@@ -2,12 +2,12 @@
 
 namespace Shopware\Psh\Test\Unit\Config;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileLoader;
+use Shopware\Psh\Config\InvalidReferencedPath;
 use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Config\Template;
 use Shopware\Psh\Config\YamlConfigFileLoader;
@@ -61,7 +61,7 @@ class YamlConfigFileLoaderTest extends TestCase
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
         $config = $loader->load(__DIR__ . '/_test.txt', []);
-        $this->assertVariables($config, ['filesystem' => 'ls -al']);
+        $this->assertVariables($config, ['FILESYSTEM' => 'ls -al']);
     }
 
     public function test_it_works_if_no_dynamics_are_present(): void
@@ -180,7 +180,7 @@ class YamlConfigFileLoaderTest extends TestCase
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
+            'FILESYSTEM' => 'ls -al',
         ]);
 
         $this->assertConstants($config, [
@@ -223,7 +223,7 @@ class YamlConfigFileLoaderTest extends TestCase
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
+            'FILESYSTEM' => 'ls -al',
         ], 'namespace');
 
         $this->assertConstants($config, [
@@ -272,13 +272,13 @@ class YamlConfigFileLoaderTest extends TestCase
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
-            'booh' => 'bar',
+            'FILESYSTEM' => 'ls -al',
+            'BOOH' => 'bar',
         ], 'namespace');
 
         $this->assertConstants($config, [
             'FOO' => 'bar',
-            'booh' => 'hah',
+            'BOOH' => 'hah',
         ], 'namespace');
 
         $scripts = $config->getAllScriptsPaths();
@@ -363,7 +363,7 @@ class YamlConfigFileLoaderTest extends TestCase
         $method = new ReflectionMethod(YamlConfigFileLoader::class, 'fixPath');
         $method->setAccessible(true);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidReferencedPath::class);
 
         $method->invoke($loader, __DIR__, 'absoluteOrRelativePath', 'baseFile');
     }

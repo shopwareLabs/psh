@@ -4,7 +4,7 @@ namespace Shopware\Psh\Test\Unit\Integration\ScriptRuntime;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Psh\Config\Template;
-use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValidException;
+use Shopware\Psh\ScriptRuntime\Execution\TemplateNotValid;
 use function unlink;
 
 class TemplateTest extends TestCase
@@ -12,7 +12,7 @@ class TemplateTest extends TestCase
     public function test_get_content_on_invalid_file_fails(): void
     {
         $template = new Template('not-avaliable', '**');
-        $this->expectException(TemplateNotValidException::class);
+        $this->expectException(TemplateNotValid::class);
         $template->getContent();
     }
 

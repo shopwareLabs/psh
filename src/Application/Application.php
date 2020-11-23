@@ -2,15 +2,15 @@
 
 namespace Shopware\Psh\Application;
 
-use InvalidArgumentException;
 use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\RequiredValue;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
-use Shopware\Psh\Listing\ScriptNotFoundException;
-use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
+use Shopware\Psh\Listing\ScriptNotFound;
+use Shopware\Psh\PshErrorMessage;
+use Shopware\Psh\ScriptRuntime\Execution\ExecutionError;
 use function array_key_exists;
 use function array_map;
 use function array_merge;
@@ -72,6 +72,10 @@ class Application
             $this->showListing($scriptFinder->getAllVisibleScripts());
 
             throw ExitSignal::success();
+        } catch (PshErrorMessage $error) {
+            $this->notifyError("\n" . $error->getMessage() . "\n");
+
+            return ExitSignal::error()->signal();
         } catch (ExitSignal $signal) {
             return $signal->signal();
         }
@@ -127,7 +131,7 @@ class Application
 
         try {
             $executor->execute($script, $commands);
-        } catch (ExecutionErrorException $e) {
+        } catch (ExecutionError $e) {
             $this->notifyError("\nExecution aborted, a subcommand failed!\n");
 
             throw ExitSignal::error();
@@ -178,7 +182,7 @@ class Application
         $this->cliMate->out(implode(' ', $commands));
     }
 
-    private function showScriptNotFoundListing(ScriptNotFoundException $ex, array $scriptNames, ScriptFinder $scriptFinder): void
+    private function showScriptNotFoundListing(ScriptNotFound $ex, array $scriptNames, ScriptFinder $scriptFinder): void
     {
         $this->notifyError("Script with name {$ex->getScriptName()} not found\n");
 
@@ -243,14 +247,8 @@ class Application
     {
         $configLogger = new ApplicationConfigLogger($this->rootDirectory, $this->cliMate);
 
-        try {
-            $config = $this->applicationFactory
-                ->createConfig($configLogger, $this->rootDirectory, $inputArgs);
-        } catch (InvalidParameterException | InvalidArgumentException $e) {
-            $this->notifyError("\n" . $e->getMessage() . "\n");
-
-            throw ExitSignal::error();
-        }
+        $config = $this->applicationFactory
+            ->createConfig($configLogger, $this->rootDirectory, $inputArgs);
 
         if (count($inputArgs) > 1 && $inputArgs[1] === 'bash_autocompletion_dump') {
             $this->showAutocompleteListing($config);
@@ -276,7 +274,7 @@ class Application
             foreach ($scriptNames as $scriptName) {
                 $this->execute($scriptFinder->findScriptByName($scriptName), $config, $scriptFinder);
             }
-        } catch (ScriptNotFoundException $e) {
+        } catch (ScriptNotFound $e) {
             $this->showScriptNotFoundListing($e, $scriptNames, $scriptFinder);
 
             throw ExitSignal::error();

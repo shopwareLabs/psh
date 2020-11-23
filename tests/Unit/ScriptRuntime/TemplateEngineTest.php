@@ -3,8 +3,8 @@
 namespace Shopware\Psh\Test\Unit\ScriptRuntime;
 
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Shopware\Psh\Config\SimpleValueProvider;
+use Shopware\Psh\ScriptRuntime\Execution\MissingRequiredParameter;
 use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
 use function preg_match_all;
 
@@ -64,7 +64,7 @@ class TemplateEngineTest extends TestCase
     {
         $engine = new TemplateEngine();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(MissingRequiredParameter::class);
         $engine->render('foo __BAR__, __BUZ__', ['BAR' => new SimpleValueProvider('baz')]);
     }
 

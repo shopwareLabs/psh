@@ -7,7 +7,7 @@ use RuntimeException;
 /**
  * Special exception to enable a nice error message from the app
  */
-class ScriptNotFoundException extends RuntimeException
+class ScriptNotFound extends RuntimeException
 {
     /**
      * @var string

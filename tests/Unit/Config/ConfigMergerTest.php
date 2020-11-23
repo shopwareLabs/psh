@@ -81,7 +81,7 @@ class ConfigMergerTest extends TestCase
 
         self::assertArrayHasKey(self::DEFAULT_ENV, $mergedConfig->getEnvironments());
         self::assertArrayHasKey('newEnv', $mergedConfig->getEnvironments());
-        self::assertArrayHasKey('foo', $mergedConfig->getConstants());
+        self::assertArrayHasKey('FOO', $mergedConfig->getConstants());
         self::assertContainsOnlyInstancesOf(SimpleValueProvider::class, $mergedConfig->getConstants());
     }
 
@@ -187,6 +187,32 @@ class ConfigMergerTest extends TestCase
 
         self::assertArrayHasKey('ADDED_CONST', $result->getConstants(self::DEFAULT_ENV));
         self::assertSame('override constant', $result->getConstants(self::DEFAULT_ENV)['ADDED_CONST']->getValue());
+    }
+
+    public function test_external_params_overwrite_consts_independant_of_case(): void
+    {
+        $envs = [
+            self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [
+                'Const' => 'constant value',
+            ]),
+        ];
+
+        $overrideEnvs = [
+            self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [
+                'cONST' => 'override constant value',
+            ]),
+        ];
+
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, ['const' => 'the real value']);
+        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
+
+        $merger = new ConfigMerger();
+        $result = $merger->mergeOverride($config, $override);
+
+        self::assertCount(1, $result->getConstants(self::DEFAULT_ENV));
+
+        self::assertArrayHasKey('CONST', $result->getConstants(self::DEFAULT_ENV));
+        self::assertSame('the real value', $result->getConstants(self::DEFAULT_ENV)['CONST']->getValue());
     }
 
     public function test_it_should_override_templates(): void

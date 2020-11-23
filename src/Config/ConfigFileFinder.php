@@ -2,7 +2,6 @@
 
 namespace Shopware\Psh\Config;
 
-use RuntimeException;
 use function array_filter;
 use function array_merge;
 use function count;
@@ -50,7 +49,7 @@ class ConfigFileFinder
             $currentDirectory = dirname($currentDirectory);
         } while ($currentDirectory !== '/');
 
-        throw new RuntimeException('No config file found, make sure you have created a .psh.xml or .psh.xml.dist file');
+        throw new NoConfigFileFound();
     }
 
     /**

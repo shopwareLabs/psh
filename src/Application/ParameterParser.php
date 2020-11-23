@@ -6,7 +6,6 @@ use function array_slice;
 use function count;
 use function explode;
 use function mb_strpos;
-use function mb_strtoupper;
 use function mb_substr;
 use function sprintf;
 use function str_replace;
@@ -40,7 +39,7 @@ class ParameterParser
             }
 
             $key = str_replace('--', '', $key);
-            $reformattedParams[mb_strtoupper($key)] = $value;
+            $reformattedParams[$key] = $value;
         }
 
         return $reformattedParams;
@@ -49,8 +48,8 @@ class ParameterParser
     private function testParameterFormat(string $key): void
     {
         if (mb_strpos($key, '--') !== 0) {
-            throw new InvalidParameterException(
-                sprintf('Unable to parse parameter %s. Use -- for correct usage', $key)
+            throw new InvalidParameter(
+                sprintf('Unable to parse parameter "%s". Use -- for correct usage', $key)
             );
         }
     }
