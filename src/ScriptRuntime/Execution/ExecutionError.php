@@ -12,4 +12,8 @@ use Shopware\Psh\PshErrorMessage;
  */
 class ExecutionError extends RuntimeException implements PshErrorMessage
 {
+    public function getPshMessage(): string
+    {
+        return $this->getMessage();
+    }
 }

@@ -7,5 +7,5 @@ use Throwable;
 /** @psalm-immutable */
 interface PshErrorMessage extends Throwable
 {
-    public function getMessage();
+    public function getPshMessage(): string;
 }

@@ -13,4 +13,9 @@ class NoConfigFileFound extends Exception implements PshErrorMessage
     {
         parent::__construct('No config file found, make sure you have created a .psh.xml or .psh.xml.dist file', 0, $previous);
     }
+
+    public function getPshMessage(): string
+    {
+        return $this->getMessage();
+    }
 }

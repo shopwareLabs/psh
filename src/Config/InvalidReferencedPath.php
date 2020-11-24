@@ -21,4 +21,9 @@ class InvalidReferencedPath extends Exception implements PshErrorMessage
             print_r($possiblyValidFiles, true)
         ), 0, $previous);
     }
+
+    public function getPshMessage(): string
+    {
+        return $this->getMessage();
+    }
 }
