@@ -8,6 +8,7 @@ use DOMXPath;
 use Symfony\Component\Config\Util\XmlUtils;
 use function array_map;
 use function count;
+use function dirname;
 use function in_array;
 use function pathinfo;
 
@@ -66,7 +67,10 @@ class XmlConfigFileLoader implements ConfigFileLoader
     public function load(string $file, array $params): Config
     {
         $pshConfigNode = $this->loadXmlRoot($file);
-        $this->configBuilder->start();
+
+        $this->configBuilder
+            ->setWorkingDirectory(dirname($file))
+            ->start();
 
         $headers = $this->extractNodes(self::NODE_HEADER, $pshConfigNode);
         foreach ($headers as $header) {

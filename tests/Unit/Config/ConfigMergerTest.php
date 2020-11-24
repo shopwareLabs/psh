@@ -7,6 +7,7 @@ use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigEnvironment;
 use Shopware\Psh\Config\ConfigMerger;
 use Shopware\Psh\Config\EnvironmentResolver;
+use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Config\SimpleValueProvider;
 
 class ConfigMergerTest extends TestCase
@@ -68,8 +69,8 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_add_environment_from_override(): void
     {
-        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'], [], ['foo' => 'bar'])];
-        $newEnv = ['newEnv' => new ConfigEnvironment(false, ['actions'])];
+        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], ['foo' => 'bar'])];
+        $newEnv = ['newEnv' => new ConfigEnvironment(false, [])];
 
         $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
         $override = new Config(new EnvironmentResolver(), '', $newEnv, []);
@@ -87,7 +88,7 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_use_original_environments(): void
     {
-        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'])];
+        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('actions', '', false)])];
 
         $config = new Config(new EnvironmentResolver(), '', $envs, []);
         $override = new Config(new EnvironmentResolver(), '', [], []);
@@ -101,9 +102,9 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_override_environment_paths(): void
     {
-        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['actions'])];
+        $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('actions', '', false)])];
 
-        $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment(false, ['override/actions'])];
+        $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('override/actions', '', false)])];
 
         $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
         $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
@@ -322,16 +323,19 @@ class ConfigMergerTest extends TestCase
     {
         $configMerge = (new ConfigMerger())->mergeImport(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(false, ['foo'], [], [], [['source' => 'baz', 'destination' => 'buz']]),
+                self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('foo', '', false)], [], [], [['source' => 'baz', 'destination' => 'buz']]),
             ], []),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(true, ['bar'], [], [], [['source' => 'biz', 'destination' => 'bez']]),
+                self::DEFAULT_ENV => new ConfigEnvironment(true, [new ScriptsPath('bar', '', false)], [], [], [['source' => 'biz', 'destination' => 'bez']]),
             ], [])
         );
 
         self::assertSame(
             ['foo', 'bar'],
-            $configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->getAllScriptsPaths()
+            [
+                $configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->getAllScriptsPaths()[0]->getPath(),
+                $configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->getAllScriptsPaths()[1]->getPath(),
+            ]
         );
         self::assertSame(
             [['source' => 'baz', 'destination' => 'buz'], ['source' => 'biz', 'destination' => 'bez']],

@@ -51,4 +51,9 @@ class BashCommand implements ProcessCommand
     {
         return $this->warning;
     }
+
+    public function getWorkingDirectory(): string
+    {
+        return $this->script->getWorkingDirectory();
+    }
 }

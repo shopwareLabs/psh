@@ -107,6 +107,6 @@ class ScriptFinderTest extends TestCase
 
     private function createScriptsPath(string $path, ?string $namespace = null): ScriptsPath
     {
-        return new ScriptsPath($path, false, $namespace);
+        return new ScriptsPath($path, __DIR__, false, $namespace);
     }
 }

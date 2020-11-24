@@ -65,8 +65,7 @@ class ApplicationFactory
     public function createProcessExecutor(
         Script $script,
         Config $config,
-        Logger $logger,
-        string $rootDirectory
+        Logger $logger
     ): ProcessExecutor {
         return new ProcessExecutor(
             new ProcessEnvironment(
@@ -76,8 +75,7 @@ class ApplicationFactory
                 $config->getDotenvVariables($script->getEnvironment())
             ),
             new TemplateEngine(),
-            $logger,
-            $rootDirectory
+            $logger
         );
     }
 

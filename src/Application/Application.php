@@ -127,7 +127,7 @@ class Application
 
         $logger = new ClimateLogger($this->cliMate, $this->duration);
         $executor = $this->applicationFactory
-            ->createProcessExecutor($script, $config, $logger, $this->rootDirectory);
+            ->createProcessExecutor($script, $config, $logger);
 
         try {
             $executor->execute($script, $commands);

@@ -27,16 +27,23 @@ class DeferredProcessCommand implements ProcessCommand, ParsableCommand
      */
     private $tty;
 
+    /**
+     * @var string
+     */
+    private $workingDirectory;
+
     public function __construct(
         string $shellCommand,
         int $lineNumber,
         bool $ignoreError,
-        bool $tty
+        bool $tty,
+        string $workingDirectory
     ) {
         $this->shellCommand = $shellCommand;
         $this->ignoreError = $ignoreError;
         $this->lineNumber = $lineNumber;
         $this->tty = $tty;
+        $this->workingDirectory = $workingDirectory;
     }
 
     public function getShellCommand(): string
@@ -57,5 +64,10 @@ class DeferredProcessCommand implements ProcessCommand, ParsableCommand
     public function isTTy(): bool
     {
         return $this->tty;
+    }
+
+    public function getWorkingDirectory(): string
+    {
+        return $this->workingDirectory;
     }
 }

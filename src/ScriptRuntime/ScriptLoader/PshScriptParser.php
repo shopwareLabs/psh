@@ -91,7 +91,7 @@ class PshScriptParser implements ScriptParser
 
             self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script) use ($loader): string {
                 $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
-                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME), false);
+                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME), false, $script->getWorkingDirectory());
 
                 $commands = $loader->loadScript($includeScript);
                 $this->commandBuilder->replaceCommands($commands);
@@ -137,9 +137,9 @@ class PshScriptParser implements ScriptParser
                 return $this->removeFromStart(self::TOKEN_MODIFIER_DEFERRED, $currentLine);
             },
 
-            self::TOKEN_WILDCARD => function (string $currentLine, int $lineNumber): string {
+            self::TOKEN_WILDCARD => function (string $currentLine, int $lineNumber, Script $script): string {
                 $this->commandBuilder
-                    ->addProcessCommand($currentLine, $lineNumber);
+                    ->addProcessCommand($currentLine, $lineNumber, $script->getWorkingDirectory());
 
                 return '';
             },

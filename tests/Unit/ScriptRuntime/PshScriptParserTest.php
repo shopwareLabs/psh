@@ -97,8 +97,8 @@ class PshScriptParserTest extends TestCase
     public function test_action_with_local_commands(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'local_action.sh'), [
-            new ScriptsPath(__DIR__ . '/_scripts/', false),
-            new ScriptsPath(__DIR__ . '/_scripts/', false, 'env'),
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false),
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false, 'env'),
         ]);
 
         self::assertCount(8, $commands);
@@ -155,6 +155,6 @@ class PshScriptParserTest extends TestCase
 
     private function createScript(string $directory, string $scriptName): Script
     {
-        return new Script($directory, $scriptName, false);
+        return new Script($directory, $scriptName, false, __DIR__);
     }
 }

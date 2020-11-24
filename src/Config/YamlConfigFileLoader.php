@@ -5,6 +5,7 @@ namespace Shopware\Psh\Config;
 use Symfony\Component\Yaml\Parser;
 use function array_key_exists;
 use function array_map;
+use function dirname;
 use function in_array;
 use function pathinfo;
 
@@ -61,7 +62,9 @@ class YamlConfigFileLoader implements ConfigFileLoader
         $contents = $this->loadFileContents($file);
         $rawConfigData = $this->parseFileContents($contents);
 
-        $this->configBuilder->start();
+        $this->configBuilder
+            ->setWorkingDirectory(dirname($file))
+            ->start();
 
         $this->configBuilder
             ->setHeader(

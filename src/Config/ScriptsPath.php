@@ -22,16 +22,23 @@ class ScriptsPath
     private $path;
 
     /**
+     * @var string
+     */
+    private $workingDirectory;
+
+    /**
      * @param string $namespace
      */
     public function __construct(
         string $path,
+        string $workingDirectory,
         bool $hidden,
         ?string $namespace = null
     ) {
         $this->namespace = $namespace;
         $this->hidden = $hidden;
         $this->path = $path;
+        $this->workingDirectory = $workingDirectory;
     }
 
     /**
@@ -55,5 +62,10 @@ class ScriptsPath
     public function isValid(): bool
     {
         return is_dir($this->path);
+    }
+
+    public function getWorkingDirectory(): string
+    {
+        return $this->workingDirectory;
     }
 }

@@ -12,4 +12,6 @@ interface ProcessCommand extends Command
     public function getLineNumber(): int;
 
     public function isTTy(): bool;
+
+    public function getWorkingDirectory(): string;
 }

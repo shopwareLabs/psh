@@ -51,21 +51,23 @@ class CommandBuilder
         $this->deferred = false;
     }
 
-    public function addProcessCommand(string $shellCommand, int $startLine): CommandBuilder
+    public function addProcessCommand(string $shellCommand, int $startLine, string $workingDirectory): CommandBuilder
     {
         if ($this->deferred) {
             $this->allCommands[] = new DeferredProcessCommand(
                 $shellCommand,
                 $startLine,
                 $this->ignoreError,
-                $this->tty
+                $this->tty,
+                $workingDirectory
             );
         } else {
             $this->allCommands[] = new SynchronusProcessCommand(
                 $shellCommand,
                 $startLine,
                 $this->ignoreError,
-                $this->tty
+                $this->tty,
+                $workingDirectory
             );
         }
 

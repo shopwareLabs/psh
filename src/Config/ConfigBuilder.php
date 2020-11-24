@@ -17,6 +17,9 @@ class ConfigBuilder
 
     private $environments = [];
 
+    /**
+     * @var string|null
+     */
     private $currentEnvironment;
 
     private $currentCommandPaths;
@@ -35,9 +38,21 @@ class ConfigBuilder
 
     private $imports;
 
+    /**
+     * @var string
+     */
+    private $workingDirectory;
+
     public function setHeader(?string $header = null): ConfigBuilder
     {
         $this->header = $header;
+
+        return $this;
+    }
+
+    public function setWorkingDirectory(string $workingDirectory): ConfigBuilder
+    {
+        $this->workingDirectory = $workingDirectory;
 
         return $this;
     }
@@ -63,7 +78,17 @@ class ConfigBuilder
 
     public function setCommandPaths(array $commandPaths): ConfigBuilder
     {
-        $this->currentCommandPaths = $commandPaths;
+        $this->currentCommandPaths = [];
+
+        foreach ($commandPaths as $path) {
+            $env = $this->currentEnvironment;
+
+            if ($env === self::DEFAULT_ENV) {
+                $env = null;
+            }
+
+            $this->currentCommandPaths[] = new ScriptsPath($path, $this->workingDirectory, $this->hidden, $env);
+        }
 
         return $this;
     }

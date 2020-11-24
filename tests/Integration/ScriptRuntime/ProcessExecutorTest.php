@@ -56,8 +56,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -75,8 +74,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -99,8 +97,7 @@ class ProcessExecutorTest extends TestCase
                 'destination' => __DIR__ . '/_test__VAR__.tpl',
             ]]), []),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -117,8 +114,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -156,8 +152,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -179,8 +174,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -204,8 +198,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $beginExecution = microtime(true);
@@ -236,8 +229,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $beginExecution = microtime(true);
@@ -274,8 +266,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $beginExecution = microtime(true);
@@ -314,8 +305,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            new BlackholeLogger(),
-            __DIR__
+            new BlackholeLogger()
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -353,7 +343,7 @@ class ProcessExecutorTest extends TestCase
 
     private function createScript(string $directory, string $scriptName): Script
     {
-        return new Script($directory, $scriptName, false);
+        return new Script($directory, $scriptName, false, __DIR__);
     }
 
     private function assertDeferredFile(string $file, float $totalWait): float

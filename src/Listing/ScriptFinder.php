@@ -56,7 +56,7 @@ class ScriptFinder
                 }
 
                 $description = $this->scriptDescriptionReader->read($path->getPath() . '/' . $fileName);
-                $newScript = new Script($path->getPath(), $fileName, $path->isHidden(), $path->getNamespace(), $description);
+                $newScript = new Script($path->getPath(), $fileName, $path->isHidden(), $path->getWorkingDirectory(), $path->getNamespace(), $description);
 
                 $scripts[$newScript->getName()] = $newScript;
             }
