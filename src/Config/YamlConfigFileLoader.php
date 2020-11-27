@@ -99,7 +99,8 @@ class YamlConfigFileLoader implements ConfigFileLoader
         );
 
         $this->configBuilder->setTemplates(
-            $this->extractTemplates($file, $rawConfigData)
+            $this->extractTemplates($file, $rawConfigData),
+            $this->getWorkingDir($file)
         );
 
         $this->configBuilder->setDotenvPaths(
@@ -140,7 +141,6 @@ class YamlConfigFileLoader implements ConfigFileLoader
 
         return array_map(function ($template) use ($file) {
             $template['source'] = $this->fixPath($this->applicationRootDirectory, $template['source'], $file);
-            $template['destination'] = $this->makeAbsolutePath($file, $template['destination']);
 
             return $template;
         }, $templates);

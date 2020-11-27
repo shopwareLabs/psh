@@ -12,8 +12,4 @@ use Shopware\Psh\PshErrorMessage;
  */
 class TemplateNotValid extends RuntimeException implements PshErrorMessage
 {
-    public function getPshMessage(): string
-    {
-        return $this->getMessage();
-    }
 }

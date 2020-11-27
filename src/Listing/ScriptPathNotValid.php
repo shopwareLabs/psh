@@ -11,8 +11,4 @@ use Shopware\Psh\PshErrorMessage;
  */
 class ScriptPathNotValid extends RuntimeException implements PshErrorMessage
 {
-    public function getPshMessage(): string
-    {
-        return $this->getMessage();
-    }
 }

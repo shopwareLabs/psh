@@ -102,19 +102,6 @@ class EnvironmentResolver
         return $resolvedVariables;
     }
 
-    /**
-     * @return Template[]
-     */
-    public function resolveTemplates(array $templates): array
-    {
-        $resolvedVariables = [];
-        foreach ($templates as $template) {
-            $resolvedVariables[] = new Template($template['source'], $template['destination']);
-        }
-
-        return $resolvedVariables;
-    }
-
     private function createProcess(string $shellCommand): Process
     {
         return new Process($shellCommand);

@@ -21,14 +21,21 @@ class TemplateCommand implements Command
      */
     private $lineNumber;
 
+    /**
+     * @var string
+     */
+    private $workingDirectory;
+
     public function __construct(
         string $source,
         string $destination,
+        string $workingDirectory,
         int $lineNumber
     ) {
         $this->source = $source;
         $this->destination = $destination;
         $this->lineNumber = $lineNumber;
+        $this->workingDirectory = $workingDirectory;
     }
 
     public function getLineNumber(): int
@@ -40,7 +47,8 @@ class TemplateCommand implements Command
     {
         return new Template(
             $this->source,
-            $this->destination
+            $this->destination,
+            $this->workingDirectory
         );
     }
 }

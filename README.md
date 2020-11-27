@@ -127,7 +127,7 @@ The minimum required file looks like this:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="https://github.com/shopwareLabs/psh/blob/master/resource/config.xsd">
+     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopwareLabs/psh/master/resource/config.xsd">
 
 </psh>
 ```

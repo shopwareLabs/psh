@@ -22,10 +22,16 @@ class Template
      */
     private $destination;
 
-    public function __construct(string $source, string $destination)
+    /**
+     * @var string
+     */
+    private $workingDir;
+
+    public function __construct(string $source, string $destination, string $workingDir)
     {
         $this->source = $source;
         $this->destination = $destination;
+        $this->workingDir = $workingDir;
     }
 
     public function getDestination(): string
@@ -36,6 +42,11 @@ class Template
     public function setDestination(string $destination): void
     {
         $this->destination = $destination;
+    }
+
+    public function getWorkingDir(): string
+    {
+        return $this->workingDir;
     }
 
     /**
@@ -52,6 +63,10 @@ class Template
 
     public function setContents(string $contents): void
     {
-        file_put_contents($this->destination, $contents);
+        $success = @file_put_contents($this->destination, $contents);
+
+        if ($success === false) {
+            throw new TemplateWriteNotSuccessful($this->destination);
+        }
     }
 }

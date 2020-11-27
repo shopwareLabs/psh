@@ -12,8 +12,4 @@ use Shopware\Psh\PshErrorMessage;
  */
 class InvalidParameter extends RuntimeException implements PshErrorMessage
 {
-    public function getPshMessage(): string
-    {
-        return $this->getMessage();
-    }
 }

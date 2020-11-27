@@ -8,8 +8,4 @@ use Shopware\Psh\PshErrorMessage;
 /** @psalm-immutable */
 class ScriptNotSupportedByParser extends RuntimeException implements PshErrorMessage
 {
-    public function getPshMessage(): string
-    {
-        return $this->getMessage();
-    }
 }

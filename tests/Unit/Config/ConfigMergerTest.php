@@ -268,6 +268,23 @@ class ConfigMergerTest extends TestCase
         self::assertEquals('overwrite/.c', $paths['.c']->getPath());
     }
 
+    public function test_require(): void
+    {
+        $configMerge = (new ConfigMerger())->mergeOverride(
+            new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
+                self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [], ['bar' => 'necessity']),
+            ], []),
+            new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
+                self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [], ['foo' => 'important']),
+            ], [])
+        );
+
+        self::assertCount(2, $configMerge->getRequiredVariables());
+
+        self::assertSame('BAR', $configMerge->getRequiredVariables()['BAR']->getName());
+        self::assertSame('FOO', $configMerge->getRequiredVariables()['FOO']->getName());
+    }
+
     public function test_hidden_override_with_both_false(): void
     {
         $configMerge = (new ConfigMerger())->mergeOverride(
@@ -323,7 +340,7 @@ class ConfigMergerTest extends TestCase
     {
         $configMerge = (new ConfigMerger())->mergeImport(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
-                self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('foo', '', false)], [], [], [['source' => 'baz', 'destination' => 'buz']]),
+                self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('foo', '', false)], [], [], [['source' => 'baz', 'destination' => 'buz']], [], ['bar' => 'I need this']),
             ], []),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(true, [new ScriptsPath('bar', '', false)], [], [], [['source' => 'biz', 'destination' => 'bez']]),
@@ -341,5 +358,6 @@ class ConfigMergerTest extends TestCase
             [['source' => 'baz', 'destination' => 'buz'], ['source' => 'biz', 'destination' => 'bez']],
             $configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->getTemplates()
         );
+        self::assertSame('BAR', $configMerge->getRequiredVariables()['BAR']->getName());
     }
 }

@@ -306,7 +306,7 @@ class YamlConfigFileLoaderTest extends TestCase
         self::assertInstanceOf(Config::class, $config);
 
         self::assertEquals([
-            new Template(__DIR__ . '/_the_template.tpl', __DIR__ . '/the_destination.txt'),
+            new Template(__DIR__ . '/_the_template.tpl', 'the_destination.txt', __DIR__),
         ], $config->getTemplates());
     }
 

@@ -162,9 +162,20 @@ class ConfigBuilder
         return $this;
     }
 
-    public function setTemplates(array $templates): ConfigBuilder
+    public function addTemplate(string $source, string $destination, string $baseFile): ConfigBuilder
     {
-        $this->templates = $templates;
+        $this->templates[] = new Template($source, $destination, $baseFile);
+
+        return $this;
+    }
+
+    public function setTemplates(array $templates, string $baseFile): ConfigBuilder
+    {
+        $this->templates = [];
+
+        foreach ($templates as $template) {
+            $this->addTemplate($template['source'], $template['destination'], $baseFile);
+        }
 
         return $this;
     }

@@ -181,6 +181,10 @@ class ProcessExecutor
         $renderedTemplateDestination = $this->templateEngine
             ->render($template->getDestination(), $this->environment->getAllValues());
 
+        if ($renderedTemplateDestination[0] !== \DIRECTORY_SEPARATOR) {
+            $renderedTemplateDestination = $template->getWorkingDir() . '/' . $renderedTemplateDestination;
+        }
+
         $template->setDestination($renderedTemplateDestination);
 
         $renderedTemplateContent = $this->templateEngine

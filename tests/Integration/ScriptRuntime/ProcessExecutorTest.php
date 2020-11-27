@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shopware\Psh\Config\EnvironmentResolver;
+use Shopware\Psh\Config\Template;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
@@ -92,10 +93,10 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             new ProcessEnvironment((new EnvironmentResolver())->resolveConstants([
                 'VAR' => 'value',
-            ]), [], (new EnvironmentResolver())->resolveTemplates([[
+            ]), [], $this->resolveTemplates([[
                 'source' => __DIR__ . '/_test_read.tpl',
-                'destination' => __DIR__ . '/_test__VAR__.tpl',
-            ]]), []),
+                'destination' => '_test__VAR__.tpl',
+            ]], __DIR__), []),
             $this->createTemplateEngine(),
             $logger
         );
@@ -358,5 +359,15 @@ class ProcessExecutorTest extends TestCase
         self::assertGreaterThan(0.0001, $currentWait);
 
         return $totalWait;
+    }
+
+    private function resolveTemplates(array $templates, string $workingDirectory): array
+    {
+        $resolvedVariables = [];
+        foreach ($templates as $template) {
+            $resolvedVariables[] = new Template($template['source'], $template['destination'], $workingDirectory);
+        }
+
+        return $resolvedVariables;
     }
 }

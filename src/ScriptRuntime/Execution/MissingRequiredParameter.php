@@ -14,9 +14,4 @@ class MissingRequiredParameter extends Exception implements PshErrorMessage
     {
         parent::__construct(sprintf('Missing required value for "%s"', $paramName), 0, $previous);
     }
-
-    public function getPshMessage(): string
-    {
-        return $this->getMessage();
-    }
 }

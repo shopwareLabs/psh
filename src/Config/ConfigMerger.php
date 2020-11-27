@@ -66,7 +66,8 @@ class ConfigMerger
             $this->mergeDynamicVariables($original, $override),
             $this->mergeConstants($original, $override),
             $this->overrideTemplates($original, $override),
-            $this->mergeDotenvPaths($original, $override)
+            $this->mergeDotenvPaths($original, $override),
+            $this->mergeRequiredVariables($original, $override)
         );
     }
 
@@ -78,7 +79,8 @@ class ConfigMerger
             $this->mergeDynamicVariables($original, $import),
             $this->mergeConstants($original, $import),
             $this->mergeTemplates($original, $import),
-            $this->mergeDotenvPaths($original, $import)
+            $this->mergeDotenvPaths($original, $import),
+            $this->mergeRequiredVariables($original, $import)
         );
     }
 
@@ -93,6 +95,14 @@ class ConfigMerger
     private function mergeDotenvPaths(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
     {
         return array_merge($configEnvironment->getDotenvPaths(), $overrideConfigEnv->getDotenvPaths());
+    }
+
+    /**
+     * @return ScriptsPath[]
+     */
+    private function mergeRequiredVariables(ConfigEnvironment $configEnvironment, ConfigEnvironment $overrideConfigEnv): array
+    {
+        return array_merge($configEnvironment->getRequiredVariables(), $overrideConfigEnv->getRequiredVariables());
     }
 
     /**

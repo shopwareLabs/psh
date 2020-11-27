@@ -71,10 +71,10 @@ class Config
 
     public function getTemplates(?string $environment = null): array
     {
-        return $this->resolver->resolveTemplates($this->createResult(
+        return $this->createResult(
             [$this->getEnvironment(), 'getTemplates'],
             [$this->getEnvironment($environment), 'getTemplates']
-        ));
+        );
     }
 
     public function getDynamicVariables(?string $environment = null): array
@@ -118,7 +118,7 @@ class Config
      */
     public function getRequiredVariables(?string $environment = null): array
     {
-        $requiredValues = $this->createResult(
+        $requiredValues = $this->createUpperCaseResult(
             [$this->getEnvironment(), 'getRequiredVariables'],
             [$this->getEnvironment($environment), 'getRequiredVariables']
         );

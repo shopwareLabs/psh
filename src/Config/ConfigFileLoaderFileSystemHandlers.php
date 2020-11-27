@@ -35,6 +35,15 @@ trait ConfigFileLoaderFileSystemHandlers
 
     protected function makeAbsolutePath(string $baseFile, string $path): string
     {
-        return pathinfo($baseFile, PATHINFO_DIRNAME) . '/' . $path;
+        if ($path[0] === DIRECTORY_SEPARATOR) {
+            return $path;
+        }
+
+        return $this->getWorkingDir($baseFile) . '/' . $path;
+    }
+
+    protected function getWorkingDir(string $baseFile): string
+    {
+        return pathinfo($baseFile, PATHINFO_DIRNAME);
     }
 }

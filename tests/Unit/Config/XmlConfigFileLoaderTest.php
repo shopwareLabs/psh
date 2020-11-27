@@ -14,6 +14,7 @@ use function count;
 use function file_put_contents;
 use function print_r;
 use function sprintf;
+use function sys_get_temp_dir;
 use function unlink;
 
 class XmlConfigFileLoaderTest extends TestCase
@@ -314,7 +315,24 @@ EOD
         self::assertInstanceOf(Config::class, $config);
 
         self::assertEquals([
-            new Template(__DIR__ . '/_the_template.tpl', __DIR__ . '/the_destination.txt'),
+            new Template(__DIR__ . '/_the_template.tpl', 'the_destination.txt', __DIR__),
+        ], $config->getTemplates());
+    }
+
+    public function test_it_loads_templates_with_absolute_destination_untouched(): void
+    {
+        $tempDir = sys_get_temp_dir();
+
+        $this->writeTempFile(<<<EOD
+<template source="_the_template.tpl" destination="$tempDir/the_destination.txt" />
+EOD
+);
+
+        $loader = $this->createConfigLoader();
+        $config = $loader->load(self::TEMP_FILE, []);
+
+        self::assertEquals([
+            new Template(__DIR__ . '/_the_template.tpl', $tempDir . '/the_destination.txt', __DIR__),
         ], $config->getTemplates());
     }
 

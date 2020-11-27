@@ -73,7 +73,8 @@ class Application
 
             throw ExitSignal::success();
         } catch (PshErrorMessage $error) {
-            $this->notifyError("\n" . $error->getPshMessage() . "\n");
+            $this->notifyError("\n" . $error->getMessage() . "\n");
+
             return ExitSignal::error()->signal();
         } catch (ExitSignal $signal) {
             return $signal->signal();

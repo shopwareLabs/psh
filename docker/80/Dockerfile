@@ -1,4 +1,4 @@
-FROM php:8.0.0RC2-cli
+FROM php:8.0.0RC5-cli
 
 ENV COMPOSER_CACHE_DIR=/.composer/cache
 ENV XDG_CACHE_HOME=/tmp

@@ -110,7 +110,8 @@ class XmlConfigFileLoader implements ConfigFileLoader
         }
 
         $this->configBuilder->setTemplates(
-            $this->extractTemplates($file, $pshConfigNode)
+            $this->extractTemplates($file, $pshConfigNode),
+            $this->getWorkingDir($file)
         );
     }
 
@@ -154,10 +155,7 @@ class XmlConfigFileLoader implements ConfigFileLoader
                     $template->getAttribute(self::NODE_TEMPLATE_SOURCE),
                     $file
                 ),
-                'destination' => $this->makeAbsolutePath(
-                    $file,
-                    $template->getAttribute(self::NODE_TEMPLATE_DESTINATION)
-                ),
+                'destination' => $template->getAttribute(self::NODE_TEMPLATE_DESTINATION),
             ];
         }, $templates);
     }

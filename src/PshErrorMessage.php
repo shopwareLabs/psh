@@ -7,5 +7,6 @@ use Throwable;
 /** @psalm-immutable */
 interface PshErrorMessage extends Throwable
 {
-    public function getPshMessage(): string;
+    // Incompatible signature in php 7.2 til 8.0
+//    public function getPshMessage(): string;
 }
