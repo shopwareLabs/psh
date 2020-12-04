@@ -29,3 +29,11 @@ jobs:
       - name: build phar
         run: |
           ./psh build
+          cp build/psh.phar .
+
+      - name: execute example scripts
+        run: |
+          ./psh.phar
+          ./psh.phar test
+          ./psh.phar test-env --env=ci
+
