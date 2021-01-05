@@ -104,10 +104,9 @@ class PshScriptParser implements ScriptParser
                 list($rawSource, $rawDestination) = explode(':', $definition);
 
                 $source = $script->getDirectory() . '/' . $rawSource;
-                $destination = $script->getDirectory() . '/' . $rawDestination;
 
                 $this->commandBuilder
-                    ->addTemplateCommand($source, $destination, $script->getDirectory(), $lineNumber);
+                    ->addTemplateCommand($source, $rawDestination, $script->getDirectory(), $lineNumber);
 
                 return '';
             },

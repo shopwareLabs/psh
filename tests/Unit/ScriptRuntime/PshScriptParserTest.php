@@ -132,7 +132,7 @@ class PshScriptParserTest extends TestCase
         self::assertFalse($commands[0]->isIgnoreError());
 
         self::assertInstanceOf(TemplateCommand::class, $commands[1]);
-        self::assertEquals(__DIR__ . '/_scripts/complex.sh', $commands[1]->createTemplate()->getDestination());
+        self::assertEquals('complex.sh', $commands[1]->createTemplate()->getDestination());
         self::assertEquals(file_get_contents(__DIR__ . '/_scripts/simple.sh'), $commands[1]->createTemplate()->getContent());
 
         $lastCommand = array_pop($commands);
