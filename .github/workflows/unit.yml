@@ -21,6 +21,9 @@ jobs:
           - "locked"
           - "lowest"
           - "highest"
+        exclude:
+          - php-version: "8.0"
+            deps: "lowest"
 
     steps:
       - name: "Checkout"
