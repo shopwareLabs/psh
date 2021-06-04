@@ -17,6 +17,10 @@ jobs:
           - "7.3"
           - "7.4"
           - "8.0"
+        deps:
+          - "locked"
+          - "lowest"
+          - "highest"
 
     steps:
       - name: "Checkout"
@@ -30,8 +34,9 @@ jobs:
           ini-values: "zend.assertions=1"
 
       - name: Prepare project
-        run: |
-          composer install
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: "${{ matrix.deps }}"
 
       - name: Check
         run: |
