@@ -119,7 +119,7 @@ class ConfigFactory
      */
     public function mergeConfigs(array $configs): Config
     {
-        $mainConfig = array_shift($configs);
+        $mainConfig = array_pop($configs);
 
         while (count($configs) !== 0) {
             $mainConfig = $this->configMerger->mergeImport($mainConfig, array_pop($configs));
