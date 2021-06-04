@@ -5,7 +5,9 @@ ENV XDG_CACHE_HOME=/tmp
 
 RUN apt-get update -qq && apt-get install -y -qq libbz2-dev unzip zlib1g-dev git \
     && docker-php-ext-install bz2 \
-    && docker-php-ext-install zip
+    && docker-php-ext-install zip \
+    && pecl install pcov-1.0.3 \
+    && docker-php-ext-enable pcov
 
 COPY --from=composer:1 /usr/bin/composer /usr/local/bin/composer
 
