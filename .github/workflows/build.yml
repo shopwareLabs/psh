@@ -37,6 +37,7 @@ jobs:
           path: build/psh.phar
 
   check:
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
