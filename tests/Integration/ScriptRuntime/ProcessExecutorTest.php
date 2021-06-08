@@ -34,7 +34,7 @@ use function unlink;
 
 class ProcessExecutorTest extends TestCase
 {
-    const DEFERED_FILES = [
+    private const DEFERED_FILES = [
         __DIR__ . '/1.json',
         __DIR__ . '/2.json',
         __DIR__ . '/3.json',

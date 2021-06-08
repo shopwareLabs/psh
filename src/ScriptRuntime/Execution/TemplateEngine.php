@@ -15,9 +15,9 @@ use function str_replace;
  */
 class TemplateEngine
 {
-    const REGEX = '/__[A-Z0-9,_,-]+?__(?!\(sic\!\))/';
+    public const REGEX = '/__[A-Z0-9,_,-]+?__(?!\(sic\!\))/';
 
-    const REGEX_SIC = '/__[A-Z0-9,_,-]+?__(\(sic\!\))/';
+    public const REGEX_SIC = '/__[A-Z0-9,_,-]+?__(\(sic\!\))/';
 
     /**
      * @param ValueProvider[] $allValues

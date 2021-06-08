@@ -12,7 +12,7 @@ use function pathinfo;
  */
 class ConfigBuilder
 {
-    const DEFAULT_ENV = '##default##';
+    private const DEFAULT_ENV = '##default##';
 
     private $header = '';
 

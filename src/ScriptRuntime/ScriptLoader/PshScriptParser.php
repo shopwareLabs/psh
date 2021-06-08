@@ -19,23 +19,23 @@ use function trim;
  */
 class PshScriptParser implements ScriptParser
 {
-    const TOKEN_MODIFIER_TTY = 'TTY: ';
+    private const TOKEN_MODIFIER_TTY = 'TTY: ';
 
-    const TOKEN_MODIFIER_IGNORE_ERROR = 'I: ';
+    private const TOKEN_MODIFIER_IGNORE_ERROR = 'I: ';
 
-    const TOKEN_MODIFIER_DEFERRED = 'D: ';
+    private const TOKEN_MODIFIER_DEFERRED = 'D: ';
 
-    const TOKEN_INCLUDE = 'INCLUDE: ';
+    private const TOKEN_INCLUDE = 'INCLUDE: ';
 
-    const TOKEN_ACTION = 'ACTION: ';
+    private const TOKEN_ACTION = 'ACTION: ';
 
-    const TOKEN_WAIT = 'WAIT:';
+    private const TOKEN_WAIT = 'WAIT:';
 
-    const TOKEN_TEMPLATE = 'TEMPLATE: ';
+    private const TOKEN_TEMPLATE = 'TEMPLATE: ';
 
-    const CONCATENATE_PREFIX = '   ';
+    private const CONCATENATE_PREFIX = '   ';
 
-    const TOKEN_WILDCARD = '*';
+    private const TOKEN_WILDCARD = '*';
 
     /**
      * @var CommandBuilder

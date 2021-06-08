@@ -94,6 +94,7 @@ return PhpCsFixer\Config::create()
         'static_lambda' => true,
         'linebreak_after_opening_tag' => false,
         'php_unit_method_casing' => ['case' => 'snake_case'],
+        'visibility_required' => ['property', 'method', 'const'],
     ])
     ->setRiskyAllowed(true)
     ->setUsingCache(true)

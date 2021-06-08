@@ -15,7 +15,7 @@ use function scandir;
  */
 class ScriptFinder
 {
-    const VALID_EXTENSIONS = [
+    private const VALID_EXTENSIONS = [
         'sh',
         'psh',
     ];

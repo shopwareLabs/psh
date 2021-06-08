@@ -16,7 +16,7 @@ use function time;
  */
 class ClimateLogger implements Logger
 {
-    const WARNING_TEMPLATE = <<<EOD
+    private const WARNING_TEMPLATE = <<<EOD
 <yellow>
 ##############################################################################################################
                <bold>WARNING</bold>

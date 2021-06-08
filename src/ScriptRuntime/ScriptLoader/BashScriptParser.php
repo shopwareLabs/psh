@@ -12,9 +12,9 @@ use function mb_strpos;
 
 class BashScriptParser implements ScriptParser
 {
-    const TYPE_DIRECT_EXECUTE = '<PSH_EXECUTE_THROUGH_CMD>';
+    private const TYPE_DIRECT_EXECUTE = '<PSH_EXECUTE_THROUGH_CMD>';
 
-    const SHOULD_BE_PRESENT = 'set -euo pipefail';
+    private const SHOULD_BE_PRESENT = 'set -euo pipefail';
 
     /**
      * {@inheritdoc}

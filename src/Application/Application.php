@@ -24,7 +24,7 @@ use function sprintf;
  */
 class Application
 {
-    const MIN_PADDING_SIZE = 30;
+    private const MIN_PADDING_SIZE = 30;
 
     /**
      * @var CLImate

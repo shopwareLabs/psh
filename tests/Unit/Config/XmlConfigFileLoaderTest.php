@@ -20,7 +20,7 @@ use function unlink;
 
 class XmlConfigFileLoaderTest extends TestCase
 {
-    const CONFIG_TEMPLATE = <<<EOD
+    private const CONFIG_TEMPLATE = <<<EOD
 <?xml version="1.0" encoding="UTF-8"?>
 
 <psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -29,7 +29,7 @@ class XmlConfigFileLoaderTest extends TestCase
 </psh>
 EOD;
 
-    const TEMP_FILE = __DIR__ . '/xml_test_file';
+    public const TEMP_FILE = __DIR__ . '/xml_test_file';
 
     protected function tearDown(): void
     {

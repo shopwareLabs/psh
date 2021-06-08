@@ -6,7 +6,7 @@ use ReflectionClass;
 
 class ApplicationOptions
 {
-    const FLAG_NO_HEADER = '--no-header';
+    public const FLAG_NO_HEADER = '--no-header';
 
     public static function getAllFlags(): array
     {

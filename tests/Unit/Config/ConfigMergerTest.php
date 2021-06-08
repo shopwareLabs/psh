@@ -13,7 +13,7 @@ use Shopware\Psh\Config\SimpleValueProvider;
 
 class ConfigMergerTest extends TestCase
 {
-    const DEFAULT_ENV = 'env';
+    private const DEFAULT_ENV = 'env';
 
     public function test_it_can_be_created(): void
     {

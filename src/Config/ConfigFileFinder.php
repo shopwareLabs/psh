@@ -15,7 +15,7 @@ use function pathinfo;
  */
 class ConfigFileFinder
 {
-    const VALID_FILE_NAME_GLOB = '.psh.*';
+    private const VALID_FILE_NAME_GLOB = '.psh.*';
 
     public function discoverFiles(string $fromDirectory): array
     {

@@ -17,19 +17,19 @@ class YamlConfigFileLoader implements ConfigFileLoader
 {
     use ConfigFileLoaderFileSystemHandlers;
 
-    const KEY_HEADER = 'header';
+    private const KEY_HEADER = 'header';
 
-    const KEY_DYNAMIC_VARIABLES = 'dynamic';
+    private const KEY_DYNAMIC_VARIABLES = 'dynamic';
 
-    const KEY_CONST_VARIABLES = 'const';
+    private const KEY_CONST_VARIABLES = 'const';
 
-    const KEY_DOTENV_PATHS = 'dotenv';
+    private const KEY_DOTENV_PATHS = 'dotenv';
 
-    const KEY_COMMAND_PATHS = 'paths';
+    private const KEY_COMMAND_PATHS = 'paths';
 
-    const KEY_ENVIRONMENTS = 'environments';
+    private const KEY_ENVIRONMENTS = 'environments';
 
-    const KEY_TEMPLATES = 'templates';
+    private const KEY_TEMPLATES = 'templates';
 
     /**
      * @var Parser
