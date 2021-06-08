@@ -5,6 +5,7 @@ namespace Shopware\Psh\Listing;
 use function getmypid;
 use function mb_strpos;
 use function pathinfo;
+use function sprintf;
 
 /**
  * ValueObject containing all information for a single script to be executed

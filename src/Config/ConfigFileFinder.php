@@ -61,19 +61,19 @@ class ConfigFileFinder
             return $configFileCandidates;
         }
 
-        $overrideFiles = array_filter($configFileCandidates, function (string $file) {
+        $overrideFiles = array_filter($configFileCandidates, static function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'override';
         });
 
-        $distFiles = array_filter($configFileCandidates, function (string $file) {
+        $distFiles = array_filter($configFileCandidates, static function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'dist';
         });
 
-        $configFiles = array_filter($configFileCandidates, function (string $file) {
+        $configFiles = array_filter($configFileCandidates, static function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension !== 'override' && $extension !== 'dist';

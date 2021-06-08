@@ -67,7 +67,7 @@ class ScriptFinder
 
     public function getAllVisibleScripts(): array
     {
-        return array_filter($this->getAllScripts(), function (Script $script): bool {
+        return array_filter($this->getAllScripts(), static function (Script $script): bool {
             return !$script->isHidden();
         });
     }
@@ -76,7 +76,7 @@ class ScriptFinder
     {
         $scripts = $this->getAllVisibleScripts();
 
-        return array_filter($scripts, function ($key) use ($query) {
+        return array_filter($scripts, static function ($key) use ($query) {
             return mb_strpos($key, $query) > -1 || levenshtein($key, $query) < 3;
         }, ARRAY_FILTER_USE_KEY);
     }

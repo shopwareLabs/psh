@@ -39,7 +39,6 @@ class ApplicationFactory
     {
         $runtimeParameters = (new ParameterParser())->parseAllParams($params);
 
-
         $configFinder = new ConfigFileFinder();
         $configFiles = $configFinder->discoverFiles($rootDirectory);
 

@@ -5,6 +5,7 @@ namespace Shopware\Psh\Config;
 use Shopware\Psh\Application\RuntimeParameters;
 use function array_map;
 use function array_merge;
+use function in_array;
 use function mb_strtoupper;
 
 /**
@@ -142,7 +143,7 @@ class Config
             [$this->getEnvironment($environment), 'getDotenvPaths']
         );
 
-        return array_map(function (string $path): DotenvFile {
+        return array_map(static function (string $path): DotenvFile {
             return new DotenvFile($path);
         }, $paths);
     }
@@ -167,7 +168,6 @@ class Config
     {
         return $this->defaultEnvironment;
     }
-
 
     public function hasOption(string $name): bool
     {
