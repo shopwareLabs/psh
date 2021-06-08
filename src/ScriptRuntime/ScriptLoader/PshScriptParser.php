@@ -123,7 +123,7 @@ class PshScriptParser implements ScriptParser
             self::TOKEN_MODIFIER_TTY => function (string $currentLine): string {
                 $this->commandBuilder->setTty();
 
-                return  $this->removeFromStart(self::TOKEN_MODIFIER_TTY, $currentLine);
+                return $this->removeFromStart(self::TOKEN_MODIFIER_TTY, $currentLine);
             },
 
             self::TOKEN_MODIFIER_DEFERRED => function (string $currentLine): string {

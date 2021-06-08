@@ -2,12 +2,14 @@
 
 namespace Shopware\Psh\Application;
 
+use ReflectionClass;
+
 class ApplicationOptions
 {
     const FLAG_NO_HEADER = '--no-header';
 
     public static function getAllFlags(): array
     {
-        return (new \ReflectionClass(self::class))->getConstants();
+        return (new ReflectionClass(self::class))->getConstants();
     }
 }

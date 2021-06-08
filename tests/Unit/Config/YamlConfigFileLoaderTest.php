@@ -357,7 +357,7 @@ class YamlConfigFileLoaderTest extends TestCase
         self::assertEquals(__DIR__ . '/_foo/.buz', $config->getDotenvPaths('env')['.buz']->getPath());
     }
 
-    public function test_fixPath_throws_exception(): void
+    public function test_fix_path_throws_exception(): void
     {
         $loader = $this->createConfigLoader();
 

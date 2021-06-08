@@ -39,7 +39,7 @@ class ApplicationTest extends TestCase
         self::assertStringNotContainsString('test:.hidden', MockWriter::$content);
     }
 
-    public function test_no_header_option()
+    public function test_no_header_option(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
@@ -49,7 +49,6 @@ class ApplicationTest extends TestCase
         $this->assertNoErrorExitCode($exitCode);
         self::assertStringNotContainsString(PHP_EOL . 'SHOPWARE PHP-SH' . PHP_EOL, MockWriter::$content);
         self::assertStringContainsString('8 script(s) available', MockWriter::$content);
-
     }
 
     public function test_hidden_execution(): void
@@ -189,8 +188,8 @@ class ApplicationTest extends TestCase
         self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
 
         self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
-        self::assertStringContainsString('default:' . PHP_EOL . " - error", MockWriter::$content);
-        self::assertStringContainsString('test:' . PHP_EOL . " - test:env", MockWriter::$content);
+        self::assertStringContainsString('default:' . PHP_EOL . ' - error', MockWriter::$content);
+        self::assertStringContainsString('test:' . PHP_EOL . ' - test:env', MockWriter::$content);
     }
 
     public function test_bash_autocomplete_listing(): void
@@ -231,7 +230,7 @@ class ApplicationTest extends TestCase
         self::assertStringContainsString('Script with name pkdi not found', MockWriter::$content);
     }
 
-    public function test_showListings_returns_no_scripts_available(): void
+    public function test_show_listings_returns_no_scripts_available(): void
     {
         $application = new Application(__DIR__ . '/_app-empty');
         MockWriter::addToApplication($application);
@@ -241,7 +240,7 @@ class ApplicationTest extends TestCase
         self::assertStringContainsString('Currently no scripts available', MockWriter::$content);
     }
 
-    public function test_it_throws_exception_InvalidArgumentException_and_it_is_catched(): void
+    public function test_it_throws_exception__invalid_argument_exception_and_it_is_catched(): void
     {
         $application = new Application(__DIR__ . '/_app_invalid_template');
         MockWriter::addToApplication($application);
@@ -280,14 +279,14 @@ class ApplicationTest extends TestCase
         self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
     }
 
-    public function test_it_throws_exception_InvalidReferencedPath_and_it_is_catched(): void
+    public function test_it_throws_exception__invalid_referenced_path_and_it_is_catched(): void
     {
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
 
         $exitCode = $application->run(['', 'simple', '-param']);
 
-        self::assertSame(PHP_EOL . 'Unable to parse parameter "-param". Use -- for correct usage' . PHP_EOL. PHP_EOL, MockWriter::$content);
+        self::assertSame(PHP_EOL . 'Unable to parse parameter "-param". Use -- for correct usage' . PHP_EOL . PHP_EOL, MockWriter::$content);
         self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 

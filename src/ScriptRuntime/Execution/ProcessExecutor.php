@@ -228,7 +228,7 @@ class ProcessExecutor
     {
         $deferredProcess = new DeferredProcess($parsedCommand, $command, $process);
 
-        $process->start(function (string $type, string $response) use ($deferredProcess): void {
+        $process->start(static function (string $type, string $response) use ($deferredProcess): void {
             $deferredProcess->log(new LogMessage($response, $type === Process::ERR));
         });
 

@@ -13,10 +13,9 @@ use Shopware\Psh\PshErrorMessage;
 use Shopware\Psh\ScriptRuntime\Execution\ExecutionError;
 use function array_key_exists;
 use function array_map;
-use function array_merge;
 use function count;
-use function explode;
 use function implode;
+use function max;
 use function mb_strlen;
 use function sprintf;
 
@@ -90,6 +89,7 @@ class Application
 
         if (!count($scripts)) {
             $this->cliMate->yellow()->bold("-> Currently no scripts available\n");
+
             return;
         }
 
@@ -161,7 +161,7 @@ class Application
 
         $scripts = $scriptFinder->getAllVisibleScripts();
 
-        $commands = array_map(function (Script $script) {
+        $commands = array_map(static function (Script $script) {
             return $script->getName();
         }, $scripts);
 
@@ -183,7 +183,7 @@ class Application
 
     private function printHead(Config $config, ApplicationConfigLogger $logger): void
     {
-        if($config->hasOption(ApplicationOptions::FLAG_NO_HEADER)) {
+        if ($config->hasOption(ApplicationOptions::FLAG_NO_HEADER)) {
             return;
         }
 

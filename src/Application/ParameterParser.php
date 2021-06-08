@@ -2,14 +2,17 @@
 
 namespace Shopware\Psh\Application;
 
+use function array_merge;
 use function array_slice;
+use function array_splice;
+use function array_unique;
 use function count;
 use function explode;
+use function in_array;
 use function mb_strpos;
 use function mb_substr;
 use function sprintf;
 use function str_replace;
-
 
 /**
  * ./psh --no-header unit --filter once
@@ -30,8 +33,8 @@ class ParameterParser
         $commandsAreAt = 0;
 
         $appOptions = [];
-        foreach($params as $commandsAreAt => $param) {
-            if(!in_array($param, ApplicationOptions::getAllFlags())) {
+        foreach ($params as $commandsAreAt => $param) {
+            if (!in_array($param, ApplicationOptions::getAllFlags(), true)) {
                 break;
             }
 
@@ -97,7 +100,7 @@ class ParameterParser
 
     private function explodeScriptNames(array $params, int $position): array
     {
-        if(!isset($params[$position])) {
+        if (!isset($params[$position])) {
             return [];
         }
 

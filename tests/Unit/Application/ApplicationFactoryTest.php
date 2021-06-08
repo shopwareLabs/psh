@@ -5,12 +5,11 @@ namespace Shopware\Psh\Test\Unit\Application;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shopware\Psh\Application\ApplicationFactory;
-use Shopware\Psh\Application\ParameterParser;
 use Shopware\Psh\Config\ConfigLogger;
 
 class ApplicationFactoryTest extends TestCase
 {
-    public function test_createConfig_with_invalid_config_file(): void
+    public function test_create_config_with_invalid_config_file(): void
     {
         $testParams = [
             './psh',
@@ -27,7 +26,6 @@ class ApplicationFactoryTest extends TestCase
             $testParams
         );
     }
-
 
     private function getApplicationFactory(): ApplicationFactory
     {

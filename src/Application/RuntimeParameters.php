@@ -8,10 +8,12 @@ class RuntimeParameters
      * @var array
      */
     private $appParams;
+
     /**
      * @var array
      */
     private $overwrites;
+
     /**
      * @var array
      */
@@ -27,25 +29,16 @@ class RuntimeParameters
         $this->commands = $commands;
     }
 
-    /**
-     * @return array
-     */
     public function getAppParams(): array
     {
         return $this->appParams;
     }
 
-    /**
-     * @return array
-     */
     public function getOverwrites(): array
     {
         return $this->overwrites;
     }
 
-    /**
-     * @return array
-     */
     public function getCommands(): array
     {
         return $this->commands;

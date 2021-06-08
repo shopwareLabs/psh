@@ -3,13 +3,12 @@
 namespace Shopware\Psh\Test\Unit\Application;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Shopware\Psh\Application\ApplicationOptions;
 use Shopware\Psh\Application\ParameterParser;
-use Shopware\Psh\Config\ConfigLogger;
 
 class ParameterParserTest extends TestCase
 {
-
     public function provideData()
     {
         return [
@@ -27,14 +26,14 @@ class ParameterParserTest extends TestCase
                 ['./psh', 'unit', '--env1=dev', '--env2', 'dev', '--env3="dev"', '--env4="dev"', '--env5="gh""ttg"', '--env6="gh""t=tg"'],
                 [],
                 ['unit'],
-                ['env1' => 'dev', 'env2' => 'dev', 'env3' => 'dev', 'env4' => 'dev', 'env5' => 'gh""ttg', 'env6' => 'gh""t=tg']
+                ['env1' => 'dev', 'env2' => 'dev', 'env3' => 'dev', 'env4' => 'dev', 'env5' => 'gh""ttg', 'env6' => 'gh""t=tg'],
             ],
             [
                 ['./psh', 'unit', '--filter', '--filter aaaa'],
                 [],
                 ['unit'],
-                ['filter' => '--filter aaaa']
-            ]
+                ['filter' => '--filter aaaa'],
+            ],
         ];
     }
 
@@ -46,7 +45,7 @@ class ParameterParserTest extends TestCase
     /**
      * @dataProvider provideData
      */
-    public function test_possibilities(array $in, array $appParams, array $commands, array $overwrites)
+    public function test_possibilities(array $in, array $appParams, array $commands, array $overwrites): void
     {
         $result = (new ParameterParser())->parseAllParams($in);
 
@@ -55,11 +54,11 @@ class ParameterParserTest extends TestCase
         self::assertSame($overwrites, $result->getOverwrites(), 'overwrites broken');
     }
 
-    public function test_reformatParams_expects_exception(): void
+    public function test_reformat_params_expects_exception(): void
     {
         $paramParser = new ParameterParser();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $paramParser->parseAllParams(['./psh', 'unit', 'someFalseParameter']);
     }
 }

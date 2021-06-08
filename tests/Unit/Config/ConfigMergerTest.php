@@ -3,7 +3,6 @@
 namespace Shopware\Psh\Test\Unit\Config;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Psh\Application\ApplicationOptions;
 use Shopware\Psh\Application\RuntimeParameters;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigEnvironment;
@@ -57,7 +56,6 @@ class ConfigMergerTest extends TestCase
     {
         $config = new Config(new EnvironmentResolver(), 'default env', [self::DEFAULT_ENV => new ConfigEnvironment(false)], $this->createRuntimeParameters(), 'my header');
         $override = new Config(new EnvironmentResolver(), '', [], $this->createRuntimeParameters(), '');
-
 
         $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
