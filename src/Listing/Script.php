@@ -59,7 +59,7 @@ class Script
 
     public function getTmpPath(): string
     {
-        return $this->directory . '/.tmp_' . getmypid() . '_' . $this->scriptName;
+        return sprintf('%s/.tmp_%s_%s', $this->directory, getmypid(), $this->scriptName);
     }
 
     public function getPath(): string

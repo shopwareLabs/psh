@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\Application\RuntimeParameters;
 use Symfony\Component\Yaml\Parser;
 use function array_key_exists;
 use function array_map;
@@ -57,7 +58,7 @@ class YamlConfigFileLoader implements ConfigFileLoader
         return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.yaml', '.psh.yml', '.psh.yml.dist', '.psh.yml.override', '.psh.yaml.dist', '.psh.yaml.override'], true);
     }
 
-    public function load(string $file, array $params): Config
+    public function load(string $file, RuntimeParameters $runtimeParameters): Config
     {
         $contents = $this->loadFileContents($file);
         $rawConfigData = $this->parseFileContents($contents);
@@ -81,7 +82,7 @@ class YamlConfigFileLoader implements ConfigFileLoader
         }
 
         return $this->configBuilder
-            ->create($params);
+            ->create($runtimeParameters);
     }
 
     private function setConfigData(string $file, array $rawConfigData): void

@@ -5,6 +5,7 @@ namespace Shopware\Psh\Config;
 use DOMElement;
 use DOMNodeList;
 use DOMXPath;
+use Shopware\Psh\Application\RuntimeParameters;
 use Symfony\Component\Config\Util\XmlUtils;
 use function array_map;
 use function count;
@@ -64,7 +65,7 @@ class XmlConfigFileLoader implements ConfigFileLoader
         return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.xml', '.psh.xml.dist', '.psh.xml.override'], true);
     }
 
-    public function load(string $file, array $params): Config
+    public function load(string $file, RuntimeParameters $runtimeParameters): Config
     {
         $pshConfigNode = $this->loadXmlRoot($file);
 
@@ -94,7 +95,7 @@ class XmlConfigFileLoader implements ConfigFileLoader
         }
 
         return $this->configBuilder
-            ->create($params);
+            ->create($runtimeParameters);
     }
 
     private function setConfigData(string $file, DOMElement $pshConfigNode): void

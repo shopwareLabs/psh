@@ -4,6 +4,7 @@ namespace Shopware\Psh\Test\Unit\Config;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Shopware\Psh\Application\RuntimeParameters;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileLoader;
@@ -76,7 +77,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
         $this->assertVariables($config, ['FILESYSTEM' => 'ls -al']);
     }
 
@@ -95,7 +96,7 @@ EOD
 
         $loader = $this->createConfigLoader();
 
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
         $this->assertConstants($config, ['FOO' => 'bar']);
     }
 
@@ -113,7 +114,7 @@ EOD
 );
         $loader = $this->createConfigLoader();
 
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         $scripts = $config->getAllScriptsPaths();
         self::assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
@@ -137,7 +138,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
     }
@@ -158,7 +159,7 @@ EOD
         );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
     }
@@ -180,7 +181,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
@@ -213,7 +214,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertTrue($config->getEnvironments()['namespace']->isHidden());
 
@@ -238,7 +239,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
@@ -280,7 +281,7 @@ EOD
         );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
@@ -310,7 +311,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
@@ -329,7 +330,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertEquals([
             new Template(__DIR__ . '/_the_template.tpl', $tempDir . '/the_destination.txt', __DIR__),
@@ -346,7 +347,7 @@ EOD
         $loader = $this->createConfigLoader();
 
         $this->expectException(InvalidArgumentException::class);
-        $loader->load(self::TEMP_FILE, []);
+        $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
     }
 
     public function test_multiple_placeholder_elements_are_supported(): void
@@ -362,7 +363,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
         self::assertCount(2, $config->getConstants());
     }
 
@@ -375,7 +376,7 @@ EOD
 );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
         self::assertSame('YES', $config->getHeader());
     }
 
@@ -390,7 +391,7 @@ EOD
         );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
         self::assertCount(2, $config->getDotenvPaths(), print_r($config->getDotenvPaths(), true));
         self::assertEquals(__DIR__ . '/.fiz', $config->getDotenvPaths()['.fiz']->getPath());
         self::assertEquals(__DIR__ . '/.baz', $config->getDotenvPaths()['.baz']->getPath());
@@ -413,7 +414,7 @@ EOD
         );
 
         $loader = $this->createConfigLoader();
-        $config = $loader->load(self::TEMP_FILE, []);
+        $config = $loader->load(self::TEMP_FILE, $this->createRuntimeParameters());
 
         self::assertCount(3, $config->getDotenvPaths('env'));
         self::assertEquals(__DIR__ . '/_foo/.fiz', $config->getDotenvPaths('env')['.fiz']->getPath());
@@ -439,5 +440,10 @@ EOD
         }
 
         self::assertCount(count($keyValues), $config->getDynamicVariables($environment));
+    }
+
+    protected function createRuntimeParameters(array $overrideParams = []): RuntimeParameters
+    {
+        return new RuntimeParameters([], [], $overrideParams);
     }
 }

@@ -8,12 +8,12 @@ use function pathinfo;
 
 trait ConfigFileLoaderFileSystemHandlers
 {
-    protected function loadFileContents(string $file): string
+    private function loadFileContents(string $file): string
     {
         return file_get_contents($file);
     }
 
-    protected function fixPath(
+    private function fixPath(
         string $applicationRootDirectory,
         string $absoluteOrRelativePath,
         string $baseFile
@@ -33,7 +33,7 @@ trait ConfigFileLoaderFileSystemHandlers
         throw new InvalidReferencedPath($absoluteOrRelativePath, $possiblyValidFiles);
     }
 
-    protected function makeAbsolutePath(string $baseFile, string $path): string
+    private function makeAbsolutePath(string $baseFile, string $path): string
     {
         if ($path[0] === DIRECTORY_SEPARATOR) {
             return $path;
@@ -42,7 +42,7 @@ trait ConfigFileLoaderFileSystemHandlers
         return $this->getWorkingDir($baseFile) . '/' . $path;
     }
 
-    protected function getWorkingDir(string $baseFile): string
+    private function getWorkingDir(string $baseFile): string
     {
         return pathinfo($baseFile, PATHINFO_DIRNAME);
     }

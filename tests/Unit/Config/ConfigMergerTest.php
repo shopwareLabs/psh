@@ -3,6 +3,8 @@
 namespace Shopware\Psh\Test\Unit\Config;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Psh\Application\ApplicationOptions;
+use Shopware\Psh\Application\RuntimeParameters;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigEnvironment;
 use Shopware\Psh\Config\ConfigMerger;
@@ -16,15 +18,14 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_can_be_created(): void
     {
-        self::assertInstanceOf(ConfigMerger::class, new ConfigMerger());
+        self::assertInstanceOf(ConfigMerger::class, $this->createConfigMerger());
     }
 
     public function test_it_should_return_config(): void
     {
-        $config = new Config(new EnvironmentResolver(), '', [], [], 'my header');
+        $config = new Config(new EnvironmentResolver(), '', [], $this->createRuntimeParameters(), 'my header');
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config);
+        $result = $this->createConfigMerger()->mergeOverride($config);
 
         self::assertInstanceOf(Config::class, $config);
         self::assertEquals($config, $result);
@@ -32,11 +33,10 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_override_header(): void
     {
-        $config = new Config(new EnvironmentResolver(), '', [], [], 'my header');
-        $override = new Config(new EnvironmentResolver(), '', [], [], 'override');
+        $config = new Config(new EnvironmentResolver(), '', [], $this->createRuntimeParameters(), 'my header');
+        $override = new Config(new EnvironmentResolver(), '', [], $this->createRuntimeParameters(), 'override');
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertInstanceOf(Config::class, $result);
         self::assertEquals('override', $result->getHeader());
@@ -44,11 +44,10 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_override_default_environment(): void
     {
-        $config = new Config(new EnvironmentResolver(), 'default env', [], []);
-        $override = new Config(new EnvironmentResolver(), 'default env override', [], []);
+        $config = new Config(new EnvironmentResolver(), 'default env', [], $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), 'default env override', [], $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertInstanceOf(Config::class, $result);
         self::assertEquals('default env override', $result->getDefaultEnvironment());
@@ -56,11 +55,11 @@ class ConfigMergerTest extends TestCase
 
     public function test_it_should_use_original_config_if_override_is_empty(): void
     {
-        $config = new Config(new EnvironmentResolver(), 'default env', [self::DEFAULT_ENV => new ConfigEnvironment(false)], [], 'my header');
-        $override = new Config(new EnvironmentResolver(), '', [], [], '');
+        $config = new Config(new EnvironmentResolver(), 'default env', [self::DEFAULT_ENV => new ConfigEnvironment(false)], $this->createRuntimeParameters(), 'my header');
+        $override = new Config(new EnvironmentResolver(), '', [], $this->createRuntimeParameters(), '');
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertEquals('my header', $result->getHeader());
         self::assertEquals('default env', $result->getDefaultEnvironment());
@@ -72,11 +71,10 @@ class ConfigMergerTest extends TestCase
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], ['foo' => 'bar'])];
         $newEnv = ['newEnv' => new ConfigEnvironment(false, [])];
 
-        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
-        $override = new Config(new EnvironmentResolver(), '', $newEnv, []);
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), '', $newEnv, $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $mergedConfig = $merger->mergeOverride($config, $override);
+        $mergedConfig = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertInstanceOf(Config::class, $mergedConfig);
 
@@ -90,11 +88,10 @@ class ConfigMergerTest extends TestCase
     {
         $envs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('actions', '', false)])];
 
-        $config = new Config(new EnvironmentResolver(), '', $envs, []);
-        $override = new Config(new EnvironmentResolver(), '', [], []);
+        $config = new Config(new EnvironmentResolver(), '', $envs, $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), '', [], $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertInstanceOf(Config::class, $result);
         self::assertEquals('actions', $result->getAllScriptsPaths()[0]->getPath());
@@ -106,11 +103,10 @@ class ConfigMergerTest extends TestCase
 
         $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('override/actions', '', false)])];
 
-        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
-        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertInstanceOf(Config::class, $result);
         self::assertEquals('override/actions', $result->getAllScriptsPaths()[0]->getPath());
@@ -122,11 +118,10 @@ class ConfigMergerTest extends TestCase
 
         $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [], ['DYNAMIC_VAR' => 'dynamic value override'])];
 
-        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
-        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertArrayHasKey('DYNAMIC_VAR', $result->getDynamicVariables(self::DEFAULT_ENV));
         self::assertSame('dynamic value override', $result->getDynamicVariables(self::DEFAULT_ENV)['DYNAMIC_VAR']->getCommand());
@@ -138,11 +133,10 @@ class ConfigMergerTest extends TestCase
 
         $overrideEnvs = [self::DEFAULT_ENV => new ConfigEnvironment(false, [], ['DYNAMIC_VAR' => 'dynamic value override', 'DYNAMIC_OVERRIDE_VAR' => 'dynamic override value'])];
 
-        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
-        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertCount(3, $result->getDynamicVariables(self::DEFAULT_ENV));
 
@@ -172,11 +166,10 @@ class ConfigMergerTest extends TestCase
             ]),
         ];
 
-        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
-        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = $this->createConfigMerger()->mergeOverride($config, $override);
 
         self::assertCount(3, $result->getConstants(self::DEFAULT_ENV));
 
@@ -204,11 +197,10 @@ class ConfigMergerTest extends TestCase
             ]),
         ];
 
-        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, ['const' => 'the real value']);
-        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $override = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $override);
+        $result = (new ConfigMerger($this->createRuntimeParameters(['const' => 'the real value'])))->mergeOverride($config, $override);
 
         self::assertCount(1, $result->getConstants(self::DEFAULT_ENV));
 
@@ -230,11 +222,11 @@ class ConfigMergerTest extends TestCase
             ]),
         ];
 
-        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, []);
-        $overrideConfig = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, []);
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $overrideConfig = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, $this->createRuntimeParameters());
 
-        $merger = new ConfigMerger();
-        $result = $merger->mergeOverride($config, $overrideConfig);
+        $result = $this->createConfigMerger()
+            ->mergeOverride($config, $overrideConfig);
 
         self::assertEquals(
             ['source' => '/tmp/override.tpl', 'destination' => '/tmp/override.php'],
@@ -244,19 +236,19 @@ class ConfigMergerTest extends TestCase
 
     public function test_dotenv_paths(): void
     {
-        $configMerge = (new ConfigMerger())->mergeOverride(
+        $configMerge = $this->createConfigMerger()->mergeOverride(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [
                     '.a' => 'first/.a',
                     '.b' => 'first/.b',
                 ]),
-            ], []),
+            ], $this->createRuntimeParameters()),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [
                     '.a' => 'overwrite/.a',
                     '.c' => 'overwrite/.c',
                 ]),
-            ], [])
+            ], $this->createRuntimeParameters())
         );
 
         self::assertCount(3, $configMerge->getDotenvPaths());
@@ -270,13 +262,13 @@ class ConfigMergerTest extends TestCase
 
     public function test_require(): void
     {
-        $configMerge = (new ConfigMerger())->mergeOverride(
+        $configMerge = $this->createConfigMerger()->mergeOverride(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [], ['bar' => 'necessity']),
-            ], []),
+            ], $this->createRuntimeParameters()),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [], [], ['foo' => 'important']),
-            ], [])
+            ], $this->createRuntimeParameters())
         );
 
         self::assertCount(2, $configMerge->getRequiredVariables());
@@ -287,13 +279,13 @@ class ConfigMergerTest extends TestCase
 
     public function test_hidden_override_with_both_false(): void
     {
-        $configMerge = (new ConfigMerger())->mergeOverride(
+        $configMerge = $this->createConfigMerger()->mergeOverride(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false),
-            ], []),
+            ], $this->createRuntimeParameters()),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false),
-            ], [])
+            ], $this->createRuntimeParameters())
         );
 
         self::assertFalse($configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->isHidden());
@@ -301,13 +293,13 @@ class ConfigMergerTest extends TestCase
 
     public function test_hidden_override_with_hidden_base(): void
     {
-        $configMerge = (new ConfigMerger())->mergeOverride(
+        $configMerge = $this->createConfigMerger()->mergeOverride(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(true),
-            ], []),
+            ], $this->createRuntimeParameters()),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false),
-            ], [])
+            ], $this->createRuntimeParameters())
         );
 
         self::assertTrue($configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->isHidden());
@@ -315,13 +307,13 @@ class ConfigMergerTest extends TestCase
 
     public function test_hidden_override_with_hidden_override(): void
     {
-        $configMerge = (new ConfigMerger())->mergeOverride(
+        $configMerge = $this->createConfigMerger()->mergeOverride(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false),
-            ], []),
+            ], $this->createRuntimeParameters()),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(true),
-            ], [])
+            ], $this->createRuntimeParameters())
         );
 
         self::assertTrue($configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->isHidden());
@@ -329,22 +321,22 @@ class ConfigMergerTest extends TestCase
 
     public function test_merge_override_with_a_single_argument_just_returns_it(): void
     {
-        $config = new Config(new EnvironmentResolver(), '', [], []);
+        $config = new Config(new EnvironmentResolver(), '', [], $this->createRuntimeParameters());
 
-        $mergedConfig = (new ConfigMerger())->mergeImport($config);
+        $mergedConfig = $this->createConfigMerger()->mergeImport($config);
 
         self::assertSame($config, $mergedConfig);
     }
 
     public function test_merge_import_shows_a_different_behaviour(): void
     {
-        $configMerge = (new ConfigMerger())->mergeImport(
+        $configMerge = $this->createConfigMerger()->mergeImport(
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(false, [new ScriptsPath('foo', '', false)], [], [], [['source' => 'baz', 'destination' => 'buz']], [], ['bar' => 'I need this']),
-            ], []),
+            ], $this->createRuntimeParameters()),
             new Config(new EnvironmentResolver(), self::DEFAULT_ENV, [
                 self::DEFAULT_ENV => new ConfigEnvironment(true, [new ScriptsPath('bar', '', false)], [], [], [['source' => 'biz', 'destination' => 'bez']]),
-            ], [])
+            ], $this->createRuntimeParameters())
         );
 
         self::assertSame(
@@ -359,5 +351,15 @@ class ConfigMergerTest extends TestCase
             $configMerge->getEnvironments()[$configMerge->getDefaultEnvironment()]->getTemplates()
         );
         self::assertSame('BAR', $configMerge->getRequiredVariables()['BAR']->getName());
+    }
+
+    protected function createConfigMerger(): ConfigMerger
+    {
+        return new ConfigMerger($this->createRuntimeParameters());
+    }
+
+    protected function createRuntimeParameters(array $overrideParams = []): RuntimeParameters
+    {
+        return new RuntimeParameters([], [], $overrideParams);
     }
 }

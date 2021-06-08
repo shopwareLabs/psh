@@ -82,6 +82,20 @@ class ScriptFinder
     }
 
     /**
+     * @param string[] $scriptNames
+     * @return Script[]
+     */
+    public function findScriptsInOrder(array $scriptNames): array
+    {
+        $scripts = [];
+        foreach ($scriptNames as $scriptName) {
+            $scripts[] = $this->findScriptByName($scriptName);
+        }
+
+        return $scripts;
+    }
+
+    /**
      * @throws ScriptNotFound
      */
     public function findScriptByName(string $scriptName): Script

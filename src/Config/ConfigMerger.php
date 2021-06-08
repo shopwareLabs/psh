@@ -2,11 +2,22 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\Application\RuntimeParameters;
 use function array_keys;
 use function array_merge;
 
 class ConfigMerger
 {
+    /**
+     * @var RuntimeParameters
+     */
+    private $runtimeParameters;
+
+    public function __construct(RuntimeParameters $runtimeParameters)
+    {
+        $this->runtimeParameters = $runtimeParameters;
+    }
+
     public function mergeOverride(Config $config, ?Config $override = null): Config
     {
         if ($override === null) {
@@ -26,7 +37,7 @@ class ConfigMerger
             $defaultEnvironment = $override->getDefaultEnvironment();
         }
 
-        return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $config->getParams(), $header);
+        return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $this->runtimeParameters, $header);
     }
 
     public function mergeImport(Config $config, ?Config $import = null): Config
@@ -39,7 +50,7 @@ class ConfigMerger
         $defaultEnvironment = $config->getDefaultEnvironment();
         $environments = $this->mergeImportConfigEnvironments($config, $import);
 
-        return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $config->getParams(), $header);
+        return new Config(new EnvironmentResolver(), $defaultEnvironment, $environments, $this->runtimeParameters, $header);
     }
 
     private function mergeOverrideConfigEnvironments(Config $config, Config $override): array
@@ -163,7 +174,6 @@ class ConfigMerger
         $environments = [];
 
         $foundEnvironments = $this->getAllEnvironmentNames($config, $override);
-
         foreach ($foundEnvironments as $name) {
             if (!isset($override->getEnvironments()[$name])) {
                 $environments[$name] = $config->getEnvironments()[$name];

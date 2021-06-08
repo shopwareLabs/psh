@@ -10,16 +10,47 @@ use function mb_substr;
 use function sprintf;
 use function str_replace;
 
+
+/**
+ * ./psh --no-header unit --filter once
+ */
 class ParameterParser
 {
-    public function parseParams(array $params): array
+    public function parseAllParams(array $params): RuntimeParameters
     {
-        if (count($params) < 2) {
-            return [];
+        if (count($params) === 0) {
+            return new RuntimeParameters(
+                [],
+                [],
+                []
+            );
         }
 
-        $params = array_slice($params, 2);
+        $params = array_splice($params, 1);
+        $commandsAreAt = 0;
 
+        $appOptions = [];
+        foreach($params as $commandsAreAt => $param) {
+            if(!in_array($param, ApplicationOptions::getAllFlags())) {
+                break;
+            }
+
+            $appOptions[] = $param;
+            $commandsAreAt++;
+        }
+
+        $scriptNames = [[], $this->explodeScriptNames($params, $commandsAreAt)];
+        $overwrites = [[], $this->extractParams(array_slice($params, $commandsAreAt + 1))];
+
+        return new RuntimeParameters(
+            array_unique($appOptions),
+            array_merge(...$scriptNames),
+            array_merge(...$overwrites)
+        );
+    }
+
+    private function extractParams(array $params): array
+    {
         $reformattedParams = [];
         $paramsCount = count($params);
         for ($i = 0; $i < $paramsCount; $i++) {
@@ -62,5 +93,14 @@ class ParameterParser
     private function isEnclosedInAmpersand(string $value): bool
     {
         return mb_strpos($value, '"') === 0;
+    }
+
+    private function explodeScriptNames(array $params, int $position): array
+    {
+        if(!isset($params[$position])) {
+            return [];
+        }
+
+        return explode(',', $params[$position]);
     }
 }

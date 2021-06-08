@@ -66,10 +66,6 @@ class PshScriptParser implements ScriptParser
                 if ($this->startsWith($token, $currentLine)) {
                     $currentLine = $handler($currentLine, $lineNumber, $script);
                 }
-
-                if ($currentLine === '') {
-                    break;
-                }
             }
         }
 
@@ -161,10 +157,6 @@ class PshScriptParser implements ScriptParser
     private function isExecutableLine(string $command): bool
     {
         $command = trim($command);
-
-        if (!$command) {
-            return false;
-        }
 
         if ($this->startsWith('#', $command)) {
             return false;

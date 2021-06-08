@@ -28,13 +28,28 @@ class ApplicationTest extends TestCase
         $exitCode = $application->run([]);
 
         $this->assertNoErrorExitCode($exitCode);
+        self::assertStringContainsString(PHP_EOL . 'SHOPWARE PHP-SH' . PHP_EOL, MockWriter::$content);
         self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
         self::assertStringContainsString('Available commands:', MockWriter::$content);
+        self::assertStringContainsString('- very-long-script-name-to-test-padding-works-as-expected               desc', MockWriter::$content);
         self::assertStringContainsString('test:env', MockWriter::$content);
         self::assertStringContainsString('test:env2', MockWriter::$content);
-        self::assertStringContainsString('7 script(s) available', MockWriter::$content);
+        self::assertStringContainsString('8 script(s) available', MockWriter::$content);
         self::assertStringNotContainsString('Duration:', MockWriter::$content);
         self::assertStringNotContainsString('test:.hidden', MockWriter::$content);
+    }
+
+    public function test_no_header_option()
+    {
+        $application = new Application(__DIR__ . '/_app');
+        MockWriter::addToApplication($application);
+
+        $exitCode = $application->run(['-', '--no-header']);
+
+        $this->assertNoErrorExitCode($exitCode);
+        self::assertStringNotContainsString(PHP_EOL . 'SHOPWARE PHP-SH' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('8 script(s) available', MockWriter::$content);
+
     }
 
     public function test_hidden_execution(): void
@@ -103,6 +118,7 @@ class ApplicationTest extends TestCase
         $application = new Application(__DIR__ . '/_app');
         MockWriter::addToApplication($application);
         $exitCode = $application->run(['', 'error']);
+        self::assertStringEndsWith('Execution aborted, a subcommand failed!' . PHP_EOL . PHP_EOL, MockWriter::$content);
         self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
         self::assertNotEquals(0, $exitCode);
     }
@@ -173,8 +189,8 @@ class ApplicationTest extends TestCase
         self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
 
         self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
-        self::assertStringContainsString('default:', MockWriter::$content);
-        self::assertStringContainsString('test:', MockWriter::$content);
+        self::assertStringContainsString('default:' . PHP_EOL . " - error", MockWriter::$content);
+        self::assertStringContainsString('test:' . PHP_EOL . " - test:env", MockWriter::$content);
     }
 
     public function test_bash_autocomplete_listing(): void
@@ -186,7 +202,7 @@ class ApplicationTest extends TestCase
         self::assertEquals(ExitSignal::RESULT_SUCCESS, $exitCode);
 
         self::assertStringNotContainsString('Using .psh.xml', MockWriter::$content);
-        self::assertStringContainsString('error simple test:env test:env2', MockWriter::$content);
+        self::assertStringContainsString('error simple very-long-script-name-to-test-padding-works-as-expected test:env test:env2', MockWriter::$content);
     }
 
     public function test_script_not_found_listing_with_guess(): void
@@ -217,10 +233,10 @@ class ApplicationTest extends TestCase
 
     public function test_showListings_returns_no_scripts_available(): void
     {
-        $application = new Application(__DIR__);
+        $application = new Application(__DIR__ . '/_app-empty');
         MockWriter::addToApplication($application);
 
-        $application->showListing([]);
+        $application->run([]);
 
         self::assertStringContainsString('Currently no scripts available', MockWriter::$content);
     }
@@ -271,7 +287,7 @@ class ApplicationTest extends TestCase
 
         $exitCode = $application->run(['', 'simple', '-param']);
 
-        self::assertStringContainsString('Unable to parse parameter "-param"', MockWriter::$content);
+        self::assertSame(PHP_EOL . 'Unable to parse parameter "-param". Use -- for correct usage' . PHP_EOL. PHP_EOL, MockWriter::$content);
         self::assertEquals(ExitSignal::RESULT_ERROR, $exitCode);
     }
 

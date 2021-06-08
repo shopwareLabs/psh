@@ -117,6 +117,7 @@ class PshScriptParserTest extends TestCase
     public function test_action_throws_exception(): void
     {
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to find script named "action_not_exists"');
         $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_action.sh'));
     }
 

@@ -468,7 +468,10 @@ echo __PLACEHOLDER__
 
 ## Executing it
 
-Executing the script will print a listing overview of all available commands
+The general format ist `./psh.phar <application-options> <script-names> <script-options>`. The only currently supported application option is `--no-header`, script names are a comma separated list of actions (or one) and script options are key vbalues pairs to overwrite placeholders. Let's look at some examples:
+
+
+Executing the phar will print a listing overview of all available commands
 
 ```sh
 > ./psh.phar

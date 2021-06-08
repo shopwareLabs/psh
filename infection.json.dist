@@ -8,6 +8,7 @@
         "text": "build/infection.log"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "MBString": false
     }
 }

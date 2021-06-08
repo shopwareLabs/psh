@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\Application\RuntimeParameters;
 use function array_map;
 use function array_merge;
 use function mb_strtoupper;
@@ -32,9 +33,9 @@ class Config
     private $environments;
 
     /**
-     * @var array
+     * @var RuntimeParameters
      */
-    private $params;
+    private $runtimeParameters;
 
     /**
      * @param ConfigEnvironment[] $environments
@@ -43,13 +44,13 @@ class Config
         EnvironmentResolver $resolver,
         string $defaultEnvironment,
         array $environments,
-        array $params,
+        RuntimeParameters $runtimeParameters,
         ?string $header = null
     ) {
         $this->resolver = $resolver;
         $this->defaultEnvironment = $defaultEnvironment;
         $this->environments = $environments;
-        $this->params = $params;
+        $this->runtimeParameters = $runtimeParameters;
         $this->header = $header;
     }
 
@@ -167,14 +168,25 @@ class Config
         return $this->defaultEnvironment;
     }
 
-    public function getParams(): array
+
+    public function hasOption(string $name): bool
     {
-        return $this->params;
+        return in_array($name, $this->runtimeParameters->getAppParams(), true);
     }
 
     public function getImports(): array
     {
         return $this->getEnvironment()->getImports();
+    }
+
+    public function getScriptNames(): array
+    {
+        return $this->runtimeParameters->getCommands();
+    }
+
+    private function getParams(): array
+    {
+        return $this->runtimeParameters->getOverwrites();
     }
 
     private function createResult(callable ...$valueProviders): array
