@@ -58,7 +58,7 @@ jobs:
         with:
           name: psh.phar
       - shell: bash
-        run: chmod+x psh.phar
+        run: chmod +x psh.phar
 
       - name: execute example scripts
         run: |
