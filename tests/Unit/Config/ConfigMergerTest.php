@@ -232,6 +232,35 @@ class ConfigMergerTest extends TestCase
         );
     }
 
+    public function test_merged_config_returns_base_templates_as_well(): void
+    {
+        $envs = [
+            self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [
+                'a',
+            ]),
+            'custom' => new ConfigEnvironment(false, [], [], [], [
+                'b',
+            ]),
+        ];
+
+        $overrideEnvs = [
+            self::DEFAULT_ENV => new ConfigEnvironment(false, [], [], [], [
+                'a1',
+            ]),
+        ];
+
+        $config = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $envs, $this->createRuntimeParameters());
+        $overrideConfig = new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $overrideEnvs, $this->createRuntimeParameters());
+
+        $result = $this->createConfigMerger()
+            ->mergeOverride($config, $overrideConfig);
+
+        self::assertEquals(
+            ['a1', 'b'],
+            $result->getTemplates('custom')
+        );
+    }
+
     public function test_dotenv_paths(): void
     {
         $configMerge = $this->createConfigMerger()->mergeOverride(

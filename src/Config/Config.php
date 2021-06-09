@@ -73,15 +73,22 @@ class Config
 
     public function getTemplates(?string $environment = null): array
     {
-        return $this->createResult(
-            [$this->getEnvironment(), 'getTemplates'],
-            [$this->getEnvironment($environment), 'getTemplates']
-        );
+        $templates = $this->getEnvironment()->getTemplates();
+
+        if ($environment === null) {
+            return $templates;
+        }
+
+        foreach ($this->getEnvironment($environment)->getTemplates() as $template) {
+            $templates[] = $template;
+        }
+
+        return $templates;
     }
 
     public function getDynamicVariables(?string $environment = null): array
     {
-        return $this->resolver->resolveVariables($this->createUpperCaseResult(
+        return $this->resolver->resolveVariables($this->createMergedUpperCaseResult(
             [$this->getEnvironment(), 'getDynamicVariables'],
             [$this->getEnvironment($environment), 'getDynamicVariables']
         ));
@@ -89,7 +96,7 @@ class Config
 
     public function getConstants(?string $environment = null): array
     {
-        return $this->resolver->resolveConstants($this->createUpperCaseResult(
+        return $this->resolver->resolveConstants($this->createMergedUpperCaseResult(
             [$this->getEnvironment(), 'getConstants'],
             [$this->getEnvironment($environment), 'getConstants'],
             [$this, 'getParams']
@@ -120,7 +127,7 @@ class Config
      */
     public function getRequiredVariables(?string $environment = null): array
     {
-        $requiredValues = $this->createUpperCaseResult(
+        $requiredValues = $this->createMergedUpperCaseResult(
             [$this->getEnvironment(), 'getRequiredVariables'],
             [$this->getEnvironment($environment), 'getRequiredVariables']
         );
@@ -138,7 +145,7 @@ class Config
      */
     public function getDotenvPaths(?string $environment = null): array
     {
-        $paths = $this->createResult(
+        $paths = $this->createMergedResult(
             [$this->getEnvironment(), 'getDotenvPaths'],
             [$this->getEnvironment($environment), 'getDotenvPaths']
         );
@@ -189,7 +196,7 @@ class Config
         return $this->runtimeParameters->getOverwrites();
     }
 
-    private function createResult(callable ...$valueProviders): array
+    private function createMergedResult(callable ...$valueProviders): array
     {
         $mergedKeyValues = [];
 
@@ -202,7 +209,7 @@ class Config
         return $mergedKeyValues;
     }
 
-    private function createUpperCaseResult(callable ...$valueProviders): array
+    private function createMergedUpperCaseResult(callable ...$valueProviders): array
     {
         $mergedKeyValues = [];
 
