@@ -2,9 +2,9 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\Application\RuntimeParameters;
 use function array_merge;
 use function array_pop;
-use function array_shift;
 use function count;
 use function dirname;
 use function glob;
@@ -49,7 +49,7 @@ class ConfigFactory
      */
     public function gatherConfigs(
         array $configFiles,
-        array $overwrittenConsts
+        RuntimeParameters $runtimeParameters
     ): array {
         $configs = [];
         $additionalConfigs = [[]];
@@ -61,10 +61,10 @@ class ConfigFactory
                 }
 
                 $config = $configLoader
-                    ->load($configFile, $overwrittenConsts);
+                    ->load($configFile, $runtimeParameters);
 
                 $additionalConfigs[] = $this
-                    ->loadImports($config, dirname($configFile), $overwrittenConsts);
+                    ->loadImports($config, dirname($configFile), $runtimeParameters);
 
                 $configs[] = $config;
             }
@@ -82,7 +82,7 @@ class ConfigFactory
     private function loadImports(
         Config $config,
         string $fromPath,
-        array $overwrittenConsts
+        RuntimeParameters $runtimeParameters
     ): array {
         $additionalConfigs = [];
 
@@ -103,7 +103,7 @@ class ConfigFactory
                 $foundSomething = true;
                 $this->configLogger->importConfigFiles($importPath, ...$foundConfigFiles);
                 $additionalConfigs[] = $this
-                    ->gatherConfigs($foundConfigFiles, $overwrittenConsts);
+                    ->gatherConfigs($foundConfigFiles, $runtimeParameters);
             }
 
             if (!$foundSomething) {
@@ -119,7 +119,7 @@ class ConfigFactory
      */
     public function mergeConfigs(array $configs): Config
     {
-        $mainConfig = array_shift($configs);
+        $mainConfig = array_pop($configs);
 
         while (count($configs) !== 0) {
             $mainConfig = $this->configMerger->mergeImport($mainConfig, array_pop($configs));

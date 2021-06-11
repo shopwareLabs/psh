@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 $finder = PhpCsFixer\Finder::create()
     ->ignoreUnreadableDirs()
     ->exclude([
@@ -90,6 +91,10 @@ return PhpCsFixer\Config::create()
             'less_and_greater' => false,
         ],
         'nullable_type_declaration_for_default_null_value' => true,
+        'static_lambda' => true,
+        'linebreak_after_opening_tag' => false,
+        'php_unit_method_casing' => ['case' => 'snake_case'],
+        'visibility_required' => ['property', 'method', 'const'],
     ])
     ->setRiskyAllowed(true)
     ->setUsingCache(true)

@@ -37,18 +37,21 @@ class ApplicationFactory
      */
     public function createConfig(ConfigLogger $logger, string $rootDirectory, array $params): Config
     {
-        $overwrittenConsts = (new ParameterParser())->parseParams($params);
+        $runtimeParameters = (new ParameterParser())->parseAllParams($params);
+
         $configFinder = new ConfigFileFinder();
         $configFiles = $configFinder->discoverFiles($rootDirectory);
-        $merger = new ConfigMerger();
+
+        $merger = new ConfigMerger($runtimeParameters);
         $configLoaders = [
             new YamlConfigFileLoader(new Parser(), new ConfigBuilder(), $rootDirectory),
             new XmlConfigFileLoader(new ConfigBuilder(), $rootDirectory),
         ];
+
         $configFactory = new ConfigFactory($merger, $configFinder, $logger, $configLoaders);
 
         $logger->mainConfigFiles(...$configFiles);
-        $configs = $configFactory->gatherConfigs($configFiles, $overwrittenConsts);
+        $configs = $configFactory->gatherConfigs($configFiles, $runtimeParameters);
 
         if (count($configs) === 0) {
             throw new RuntimeException('Unable to read any configuration from "' . implode(', ', $configFiles) . '"');
@@ -65,8 +68,7 @@ class ApplicationFactory
     public function createProcessExecutor(
         Script $script,
         Config $config,
-        Logger $logger,
-        string $rootDirectory
+        Logger $logger
     ): ProcessExecutor {
         return new ProcessExecutor(
             new ProcessEnvironment(
@@ -76,8 +78,7 @@ class ApplicationFactory
                 $config->getDotenvVariables($script->getEnvironment())
             ),
             new TemplateEngine(),
-            $logger,
-            $rootDirectory
+            $logger
         );
     }
 

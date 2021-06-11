@@ -1,0 +1,118 @@
+#!/usr/bin/env php
+<?php
+
+if (file_exists($a = __DIR__.'/../../autoload.php')) {
+    require_once $a;
+} else {
+    require_once __DIR__.'/vendor/autoload.php';
+}
+
+$rootDir = getcwd();
+
+if(count($argv) !== 2 || !is_file($argv[1])) {
+    echo "no valid file passed as argument\n";
+    exit(1);
+}
+
+$file = $argv[1];
+
+echo "Warning: THIS IS NOT GUARANTEED TO WORK\n";
+echo "Converting $file\n";
+
+echo "Reding $file\n";
+
+$yamlArray = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($file));
+
+echo "Generating xml\n";
+$xmlContents = sprintf(Template::FILE, psh_convert_yaml_to_xml($yamlArray));
+
+$destination = str_replace(['yaml', 'yml'], 'xml', $file);
+
+echo "Writing to $destination\n";
+file_put_contents($destination, $xmlContents);
+
+
+class Template {
+    public const FILE = <<<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+<psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopwareLabs/psh/master/resource/config.xsd">
+%s
+</psh>
+EOT;
+
+    public const HEADER = <<<EOT
+<header><![CDATA[
+ %s
+]]></header>
+EOT;
+
+    public const PATH = '<path>%s</path>' . PHP_EOL;
+    public const CONST_ = '<const name="%s">%s</const>'. PHP_EOL;
+    public const DYNAMIC = '<dynamic name="%s">%s</dynamic>'. PHP_EOL;
+    public const ENV = '<dotenv>%s</dotenv>'. PHP_EOL;
+    public const PLACEHOLDERS = '<placeholder>'. PHP_EOL . '%s</placeholder>'. PHP_EOL;
+    public const ENVIRONMENT = PHP_EOL . '<environment name="%s">'. PHP_EOL . '%s</environment>'. PHP_EOL;
+    public const TEMPALTE = <<<EOD
+<template 
+    source="%s" 
+    destination="%s"
+/>
+EOD;
+
+}
+
+function psh_convert_yaml_to_xml(array $yamlArray): string
+{
+    $result = '';
+
+    if(array_key_exists('header', $yamlArray)) {
+        $result .= sprintf(Template::HEADER, $yamlArray['header']);
+    }
+
+    if(array_key_exists('templates', $yamlArray)) {
+        foreach($yamlArray['templates'] as $template) {
+            $result .= sprintf(Template::TEMPALTE, $template['source'], $template['destination']);
+        }
+    }
+
+    if(array_key_exists('paths', $yamlArray)) {
+        foreach($yamlArray['paths'] as $path) {
+            $result .= sprintf(Template::PATH, $path);
+        }
+    }
+
+
+    $placeholders = '';
+    if(array_key_exists('const', $yamlArray)) {
+        foreach($yamlArray['const'] as $key => $value) {
+            $placeholders .= sprintf(Template::CONST_, $key, $value);
+        }
+    }
+
+    if(array_key_exists('dynamic', $yamlArray)) {
+        foreach($yamlArray['dynamic'] as $key => $value) {
+            $placeholders .= sprintf(Template::DYNAMIC, $key, $value);
+        }
+    }
+
+    if(array_key_exists('dotenv', $yamlArray)) {
+        foreach($yamlArray['dotenv'] as $value) {
+            $placeholders .= sprintf(Template::ENV, $value);
+        }
+    }
+
+    if(mb_strlen($placeholders) > 0) {
+        $result .= sprintf(Template::PLACEHOLDERS, $placeholders);
+    }
+
+    if(array_key_exists('environments', $yamlArray)) {
+        foreach($yamlArray['environments'] as $name => $environment) {
+            $result .= sprintf(Template::ENVIRONMENT, $name, psh_convert_yaml_to_xml($environment));
+        }
+    }
+
+
+    return $result;
+}
+echo "DONE\n";

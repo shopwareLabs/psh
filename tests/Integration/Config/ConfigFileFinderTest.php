@@ -3,8 +3,8 @@
 namespace Shopware\Psh\Test\Integration\Config;
 
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Shopware\Psh\Config\ConfigFileFinder;
+use Shopware\Psh\Config\NoConfigFileFound;
 use function sys_get_temp_dir;
 
 class ConfigFileFinderTest extends TestCase
@@ -13,7 +13,7 @@ class ConfigFileFinderTest extends TestCase
     {
         $loader = new ConfigFileFinder();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(NoConfigFileFound::class);
         $loader->discoverFiles(sys_get_temp_dir());
     }
 

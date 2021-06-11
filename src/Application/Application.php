@@ -2,21 +2,20 @@
 
 namespace Shopware\Psh\Application;
 
-use InvalidArgumentException;
 use Khill\Duration\Duration;
 use League\CLImate\CLImate;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\RequiredValue;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
-use Shopware\Psh\Listing\ScriptNotFoundException;
-use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
+use Shopware\Psh\Listing\ScriptNotFound;
+use Shopware\Psh\PshErrorMessage;
+use Shopware\Psh\ScriptRuntime\Execution\ExecutionError;
 use function array_key_exists;
 use function array_map;
-use function array_merge;
 use function count;
-use function explode;
 use function implode;
+use function max;
 use function mb_strlen;
 use function sprintf;
 
@@ -25,7 +24,7 @@ use function sprintf;
  */
 class Application
 {
-    const MIN_PADDING_SIZE = 30;
+    private const MIN_PADDING_SIZE = 30;
 
     /**
      * @var CLImate
@@ -67,11 +66,15 @@ class Application
 
             $scriptFinder = $this->applicationFactory->createScriptFinder($config);
 
-            $this->executeScript($inputArgs, $scriptFinder, $config);
+            $this->executeScript($scriptFinder, $config);
 
             $this->showListing($scriptFinder->getAllVisibleScripts());
 
             throw ExitSignal::success();
+        } catch (PshErrorMessage $error) {
+            $this->notifyError("\n" . $error->getMessage() . "\n");
+
+            return ExitSignal::error()->signal();
         } catch (ExitSignal $signal) {
             return $signal->signal();
         }
@@ -80,19 +83,20 @@ class Application
     /**
      * @param Script[] $scripts
      */
-    public function showListing(array $scripts): void
+    private function showListing(array $scripts): void
     {
         $this->cliMate->green()->bold('Available commands:')->br();
 
         if (!count($scripts)) {
-            $this->cliMate->yellow()->bold('-> Currently no scripts available');
+            $this->cliMate->yellow()->bold("-> Currently no scripts available\n");
+
+            return;
         }
 
         $paddingSize = $this->getPaddingSize($scripts);
         $padding = $this->cliMate->padding($paddingSize)->char(' ');
 
-        $scriptEnvironment = false;
-
+        $scriptEnvironment = 'default';
         foreach ($scripts as $script) {
             if ($script->getEnvironment() !== $scriptEnvironment) {
                 $scriptEnvironment = $script->getEnvironment();
@@ -100,20 +104,11 @@ class Application
             }
 
             $padding
-                ->label('<bold> - ' . $script->getName() . '</bold>')
-                ->result('<dim>' . $script->getDescription() . '</dim>');
+                ->label(sprintf('<bold> - %s</bold>', $script->getName()))
+                ->result(sprintf('<dim>%s</dim>', $script->getDescription()));
         }
 
-        $this->cliMate->green()->bold("\n" . count($scripts) . " script(s) available\n");
-    }
-
-    private function extractScriptNames(array $inputArgs): array
-    {
-        if (!isset($inputArgs[1])) {
-            return [];
-        }
-
-        return explode(',', $inputArgs[1]);
+        $this->cliMate->green()->bold(sprintf("\n %s script(s) available\n", count($scripts)));
     }
 
     private function execute(Script $script, Config $config, ScriptFinder $scriptFinder): void
@@ -123,11 +118,11 @@ class Application
 
         $logger = new ClimateLogger($this->cliMate, $this->duration);
         $executor = $this->applicationFactory
-            ->createProcessExecutor($script, $config, $logger, $this->rootDirectory);
+            ->createProcessExecutor($script, $config, $logger);
 
         try {
             $executor->execute($script, $commands);
-        } catch (ExecutionErrorException $e) {
+        } catch (ExecutionError $e) {
             $this->notifyError("\nExecution aborted, a subcommand failed!\n");
 
             throw ExitSignal::error();
@@ -147,21 +142,16 @@ class Application
     /**
      * @param $string
      */
-    public function notifyError(string $string): void
+    private function notifyError(string $string): void
     {
         $this->cliMate->bold()->red($string);
     }
 
     private function getPaddingSize(array $scripts): int
     {
-        $maxScriptNameLength = 0;
-        foreach ($scripts as $script) {
-            if (mb_strlen($script->getName()) > $maxScriptNameLength) {
-                $maxScriptNameLength = mb_strlen($script->getName());
-            }
-        }
-
-        return $maxScriptNameLength + self::MIN_PADDING_SIZE;
+        return self::MIN_PADDING_SIZE + max(array_map(static function (Script $script) {
+            return mb_strlen($script->getName());
+        }, $scripts));
     }
 
     private function showAutocompleteListing(Config $config): void
@@ -171,32 +161,33 @@ class Application
 
         $scripts = $scriptFinder->getAllVisibleScripts();
 
-        $commands = array_map(function (Script $script) {
+        $commands = array_map(static function (Script $script) {
             return $script->getName();
         }, $scripts);
 
         $this->cliMate->out(implode(' ', $commands));
     }
 
-    private function showScriptNotFoundListing(ScriptNotFoundException $ex, array $scriptNames, ScriptFinder $scriptFinder): void
+    private function showScriptNotFoundListing(string $scriptName, ScriptFinder $scriptFinder): void
     {
-        $this->notifyError("Script with name {$ex->getScriptName()} not found\n");
+        $this->notifyError(sprintf("Script with name %s not found\n", $scriptName));
 
-        $scripts = [];
-        foreach ($scriptNames as $scriptName) {
-            $newScripts = $scriptFinder->findScriptsByPartialName($scriptName);
-            $scripts = array_merge($scripts, $newScripts);
-        }
+        $scripts = $scriptFinder->findScriptsByPartialName($scriptName);
 
         if (count($scripts) > 0) {
             $this->cliMate->yellow()->bold('Have you been looking for this?');
-            $this->showListing($scripts);
         }
+
+        $this->showListing($scripts);
     }
 
     private function printHead(Config $config, ApplicationConfigLogger $logger): void
     {
-        $this->cliMate->green()->bold()->out("\n###################");
+        if ($config->hasOption(ApplicationOptions::FLAG_NO_HEADER)) {
+            return;
+        }
+
+        $this->cliMate->green()->bold()->out("\n################### PSH@" . PSH_VERSION);
 
         if ($config->getHeader()) {
             $this->cliMate->out("\n" . $config->getHeader());
@@ -243,14 +234,8 @@ class Application
     {
         $configLogger = new ApplicationConfigLogger($this->rootDirectory, $this->cliMate);
 
-        try {
-            $config = $this->applicationFactory
-                ->createConfig($configLogger, $this->rootDirectory, $inputArgs);
-        } catch (InvalidParameterException | InvalidArgumentException $e) {
-            $this->notifyError("\n" . $e->getMessage() . "\n");
-
-            throw ExitSignal::error();
-        }
+        $config = $this->applicationFactory
+            ->createConfig($configLogger, $this->rootDirectory, $inputArgs);
 
         if (count($inputArgs) > 1 && $inputArgs[1] === 'bash_autocompletion_dump') {
             $this->showAutocompleteListing($config);
@@ -264,22 +249,23 @@ class Application
         return $config;
     }
 
-    private function executeScript(array $inputArgs, ScriptFinder $scriptFinder, Config $config): void
+    private function executeScript(ScriptFinder $scriptFinder, Config $config): void
     {
-        $scriptNames = $this->extractScriptNames($inputArgs);
+        $scriptNames = $config->getScriptNames();
 
         if (!count($scriptNames)) {
             return;
         }
 
         try {
-            foreach ($scriptNames as $scriptName) {
-                $this->execute($scriptFinder->findScriptByName($scriptName), $config, $scriptFinder);
-            }
-        } catch (ScriptNotFoundException $e) {
-            $this->showScriptNotFoundListing($e, $scriptNames, $scriptFinder);
-
+            $scripts = $scriptFinder->findScriptsInOrder($scriptNames);
+        } catch (ScriptNotFound $e) {
+            $this->showScriptNotFoundListing($e->getScriptName(), $scriptFinder);
             throw ExitSignal::error();
+        }
+
+        foreach ($scripts as $script) {
+            $this->execute($script, $config, $scriptFinder);
         }
 
         throw ExitSignal::success();

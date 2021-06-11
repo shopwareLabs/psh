@@ -5,9 +5,11 @@ namespace Shopware\Psh\Config;
 use DOMElement;
 use DOMNodeList;
 use DOMXPath;
+use Shopware\Psh\Application\RuntimeParameters;
 use Symfony\Component\Config\Util\XmlUtils;
 use function array_map;
 use function count;
+use function dirname;
 use function in_array;
 use function pathinfo;
 
@@ -63,10 +65,13 @@ class XmlConfigFileLoader implements ConfigFileLoader
         return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.xml', '.psh.xml.dist', '.psh.xml.override'], true);
     }
 
-    public function load(string $file, array $params): Config
+    public function load(string $file, RuntimeParameters $runtimeParameters): Config
     {
         $pshConfigNode = $this->loadXmlRoot($file);
-        $this->configBuilder->start();
+
+        $this->configBuilder
+            ->setWorkingDirectory(dirname($file))
+            ->start();
 
         $headers = $this->extractNodes(self::NODE_HEADER, $pshConfigNode);
         foreach ($headers as $header) {
@@ -90,7 +95,7 @@ class XmlConfigFileLoader implements ConfigFileLoader
         }
 
         return $this->configBuilder
-            ->create($params);
+            ->create($runtimeParameters);
     }
 
     private function setConfigData(string $file, DOMElement $pshConfigNode): void
@@ -106,7 +111,8 @@ class XmlConfigFileLoader implements ConfigFileLoader
         }
 
         $this->configBuilder->setTemplates(
-            $this->extractTemplates($file, $pshConfigNode)
+            $this->extractTemplates($file, $pshConfigNode),
+            $this->getWorkingDir($file)
         );
     }
 
@@ -150,10 +156,7 @@ class XmlConfigFileLoader implements ConfigFileLoader
                     $template->getAttribute(self::NODE_TEMPLATE_SOURCE),
                     $file
                 ),
-                'destination' => $this->makeAbsolutePath(
-                    $file,
-                    $template->getAttribute(self::NODE_TEMPLATE_DESTINATION)
-                ),
+                'destination' => $template->getAttribute(self::NODE_TEMPLATE_DESTINATION),
             ];
         }, $templates);
     }

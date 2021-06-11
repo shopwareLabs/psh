@@ -6,7 +6,10 @@
     "autoload": {
         "psr-4": {
             "Shopware\\Psh\\": "src"
-        }
+        },
+        "files": [
+            "resource/version.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -14,21 +17,21 @@
         }
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.2|^8.0",
         "ext-dom": "*",
-        "symfony/finder": "^4.4",
-        "symfony/process": "^4.4",
-        "symfony/filesystem": "^4.4",
-        "symfony/yaml": "^4.4",
+        "symfony/finder": "^4.4|^5.0",
+        "symfony/process": "^4.4|^5.0",
+        "symfony/filesystem": "^4.4|^5.0",
+        "symfony/yaml": "^4.4|^5.0",
         "league/climate": "^3.6",
         "khill/php-duration": "^1.0",
         "vlucas/phpdotenv": "^5.2",
-        "symfony/config": "^4.4"
+        "symfony/config": "^4.4|^5.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
         "friendsofphp/php-cs-fixer": "^2",
-        "phpunit/phpunit": "^8",
+        "phpunit/phpunit": "^8 || ^9",
         "bamarni/composer-bin-plugin": "^1.4"
     },
     "license": "MIT",

@@ -13,9 +13,9 @@ class ConfigEnvironment
     private $hidden;
 
     /**
-     * @var array
+     * @var ScriptsPath[]
      */
-    private $commandPaths;
+    private $scriptPaths;
 
     /**
      * @var array
@@ -49,7 +49,7 @@ class ConfigEnvironment
 
     public function __construct(
         bool $hidden,
-        array $commandPaths = [],
+        array $scriptPaths = [],
         array $dynamicVariables = [],
         array $constants = [],
         array $templates = [],
@@ -58,7 +58,7 @@ class ConfigEnvironment
         array $imports = []
     ) {
         $this->hidden = $hidden;
-        $this->commandPaths = $commandPaths;
+        $this->scriptPaths = $scriptPaths;
         $this->dynamicVariables = $dynamicVariables;
         $this->constants = $constants;
         $this->templates = $templates;
@@ -74,7 +74,7 @@ class ConfigEnvironment
 
     public function getAllScriptsPaths(): array
     {
-        return $this->commandPaths;
+        return $this->scriptPaths;
     }
 
     public function getDynamicVariables(): array

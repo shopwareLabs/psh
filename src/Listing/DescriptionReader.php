@@ -10,7 +10,7 @@ use function trim;
 
 class DescriptionReader
 {
-    const KEY_WORD = 'DESCRIPTION:';
+    private const KEY_WORD = 'DESCRIPTION:';
 
     public function read(string $filePath): string
     {

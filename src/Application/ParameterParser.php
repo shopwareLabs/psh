@@ -2,25 +2,58 @@
 
 namespace Shopware\Psh\Application;
 
+use function array_merge;
 use function array_slice;
+use function array_splice;
+use function array_unique;
 use function count;
 use function explode;
+use function in_array;
 use function mb_strpos;
-use function mb_strtoupper;
 use function mb_substr;
 use function sprintf;
 use function str_replace;
 
+/**
+ * ./psh --no-header unit --filter once
+ */
 class ParameterParser
 {
-    public function parseParams(array $params): array
+    public function parseAllParams(array $params): RuntimeParameters
     {
-        if (count($params) < 2) {
-            return [];
+        if (count($params) === 0) {
+            return new RuntimeParameters(
+                [],
+                [],
+                []
+            );
         }
 
-        $params = array_slice($params, 2);
+        $params = array_splice($params, 1);
+        $commandsAreAt = 0;
 
+        $appOptions = [];
+        foreach ($params as $commandsAreAt => $param) {
+            if (!in_array($param, ApplicationOptions::getAllFlags(), true)) {
+                break;
+            }
+
+            $appOptions[] = $param;
+            $commandsAreAt++;
+        }
+
+        $scriptNames = [[], $this->explodeScriptNames($params, $commandsAreAt)];
+        $overwrites = [[], $this->extractParams(array_slice($params, $commandsAreAt + 1))];
+
+        return new RuntimeParameters(
+            array_unique($appOptions),
+            array_merge(...$scriptNames),
+            array_merge(...$overwrites)
+        );
+    }
+
+    private function extractParams(array $params): array
+    {
         $reformattedParams = [];
         $paramsCount = count($params);
         for ($i = 0; $i < $paramsCount; $i++) {
@@ -40,7 +73,7 @@ class ParameterParser
             }
 
             $key = str_replace('--', '', $key);
-            $reformattedParams[mb_strtoupper($key)] = $value;
+            $reformattedParams[$key] = $value;
         }
 
         return $reformattedParams;
@@ -49,8 +82,8 @@ class ParameterParser
     private function testParameterFormat(string $key): void
     {
         if (mb_strpos($key, '--') !== 0) {
-            throw new InvalidParameterException(
-                sprintf('Unable to parse parameter %s. Use -- for correct usage', $key)
+            throw new InvalidParameter(
+                sprintf('Unable to parse parameter "%s". Use -- for correct usage', $key)
             );
         }
     }
@@ -63,5 +96,14 @@ class ParameterParser
     private function isEnclosedInAmpersand(string $value): bool
     {
         return mb_strpos($value, '"') === 0;
+    }
+
+    private function explodeScriptNames(array $params, int $position): array
+    {
+        if (!isset($params[$position])) {
+            return [];
+        }
+
+        return explode(',', $params[$position]);
     }
 }

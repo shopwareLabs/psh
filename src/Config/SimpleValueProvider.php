@@ -19,6 +19,6 @@ class SimpleValueProvider implements ValueProvider
 
     public function getValue(): string
     {
-        return  $this->value;
+        return $this->value;
     }
 }

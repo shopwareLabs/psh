@@ -8,7 +8,9 @@ use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
+use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\ScriptRuntime\Command;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\BashScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
@@ -97,8 +99,8 @@ class PshScriptParserTest extends TestCase
     public function test_action_with_local_commands(): void
     {
         $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'local_action.sh'), [
-            new ScriptsPath(__DIR__ . '/_scripts/', false),
-            new ScriptsPath(__DIR__ . '/_scripts/', false, 'env'),
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false),
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false, 'env'),
         ]);
 
         self::assertCount(8, $commands);
@@ -114,9 +116,33 @@ class PshScriptParserTest extends TestCase
         self::assertFalse($lastCommand->isIgnoreError());
     }
 
+    public function test_include_cmd_scripts(): void
+    {
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'include_cmd_scripts.sh'), [
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false),
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false, 'env'),
+        ]);
+
+        self::assertCount(4, $commands);
+        self::assertContainsOnlyInstancesOf(Command::class, $commands);
+
+        self::assertEquals(2, $commands[0]->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
+        self::assertFalse($commands[0]->isIgnoreError());
+
+        self::assertInstanceOf(BashCommand::class, $commands[1]);
+        self::assertInstanceOf(BashCommand::class, $commands[2]);
+
+        $lastCommand = array_pop($commands);
+        self::assertEquals(5, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertFalse($lastCommand->isIgnoreError());
+    }
+
     public function test_action_throws_exception(): void
     {
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to find script named "action_not_exists"');
         $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'exception_action.sh'));
     }
 
@@ -132,7 +158,7 @@ class PshScriptParserTest extends TestCase
         self::assertFalse($commands[0]->isIgnoreError());
 
         self::assertInstanceOf(TemplateCommand::class, $commands[1]);
-        self::assertEquals(__DIR__ . '/_scripts/complex.sh', $commands[1]->createTemplate()->getDestination());
+        self::assertEquals('complex.sh', $commands[1]->createTemplate()->getDestination());
         self::assertEquals(file_get_contents(__DIR__ . '/_scripts/simple.sh'), $commands[1]->createTemplate()->getContent());
 
         $lastCommand = array_pop($commands);
@@ -147,6 +173,7 @@ class PshScriptParserTest extends TestCase
     public function createCommands(Script $script, array $availableSubScripts = []): array
     {
         $scriptLoader = new ScriptLoader(
+            new BashScriptParser(),
             new PshScriptParser(new CommandBuilder(), new ScriptFinder($availableSubScripts, new DescriptionReader()))
         );
 
@@ -155,6 +182,6 @@ class PshScriptParserTest extends TestCase
 
     private function createScript(string $directory, string $scriptName): Script
     {
-        return new Script($directory, $scriptName, false);
+        return new Script($directory, $scriptName, false, __DIR__);
     }
 }

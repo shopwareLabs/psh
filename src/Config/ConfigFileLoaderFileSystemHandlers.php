@@ -2,21 +2,18 @@
 
 namespace Shopware\Psh\Config;
 
-use InvalidArgumentException;
 use function file_exists;
 use function file_get_contents;
 use function pathinfo;
-use function print_r;
-use function sprintf;
 
 trait ConfigFileLoaderFileSystemHandlers
 {
-    protected function loadFileContents(string $file): string
+    private function loadFileContents(string $file): string
     {
         return file_get_contents($file);
     }
 
-    protected function fixPath(
+    private function fixPath(
         string $applicationRootDirectory,
         string $absoluteOrRelativePath,
         string $baseFile
@@ -33,15 +30,20 @@ trait ConfigFileLoaderFileSystemHandlers
             }
         }
 
-        throw new InvalidArgumentException(sprintf(
-            'Unable to find a file referenced by "%s", tried: %s',
-            $absoluteOrRelativePath,
-            print_r($possiblyValidFiles, true)
-        ));
+        throw new InvalidReferencedPath($absoluteOrRelativePath, $possiblyValidFiles);
     }
 
-    protected function makeAbsolutePath(string $baseFile, string $path): string
+    private function makeAbsolutePath(string $baseFile, string $path): string
     {
-        return pathinfo($baseFile, PATHINFO_DIRNAME) . '/' . $path;
+        if ($path[0] === DIRECTORY_SEPARATOR) {
+            return $path;
+        }
+
+        return $this->getWorkingDir($baseFile) . '/' . $path;
+    }
+
+    private function getWorkingDir(string $baseFile): string
+    {
+        return pathinfo($baseFile, PATHINFO_DIRNAME);
     }
 }

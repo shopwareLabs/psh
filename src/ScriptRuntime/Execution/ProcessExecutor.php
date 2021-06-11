@@ -41,11 +41,6 @@ class ProcessExecutor
     private $logger;
 
     /**
-     * @var string
-     */
-    private $applicationDirectory;
-
-    /**
      * @var DeferredProcess[]
      */
     private $deferredProcesses = [];
@@ -53,13 +48,11 @@ class ProcessExecutor
     public function __construct(
         ProcessEnvironment $environment,
         TemplateEngine $templateEngine,
-        Logger $logger,
-        string $applicationDirectory
+        Logger $logger
     ) {
         $this->environment = $environment;
         $this->templateEngine = $templateEngine;
         $this->logger = $logger;
-        $this->applicationDirectory = $applicationDirectory;
     }
 
     /**
@@ -164,7 +157,7 @@ class ProcessExecutor
 
     private function setProcessDefaults(Process $process, ProcessCommand $command): void
     {
-        $process->setWorkingDirectory($this->applicationDirectory);
+        $process->setWorkingDirectory($command->getWorkingDirectory());
         $process->setTimeout(0);
         $process->setTty($command->isTTy());
     }
@@ -179,7 +172,7 @@ class ProcessExecutor
     private function testProcessResultValid(Process $process, ProcessCommand $command): void
     {
         if (!$this->isProcessResultValid($process, $command)) {
-            throw new ExecutionErrorException('Command exited with Error');
+            throw new ExecutionError('Execution aborted, a subcommand failed!');
         }
     }
 
@@ -187,6 +180,10 @@ class ProcessExecutor
     {
         $renderedTemplateDestination = $this->templateEngine
             ->render($template->getDestination(), $this->environment->getAllValues());
+
+        if ($renderedTemplateDestination[0] !== \DIRECTORY_SEPARATOR) {
+            $renderedTemplateDestination = $template->getWorkingDir() . '/' . $renderedTemplateDestination;
+        }
 
         $template->setDestination($renderedTemplateDestination);
 
@@ -231,7 +228,7 @@ class ProcessExecutor
     {
         $deferredProcess = new DeferredProcess($parsedCommand, $command, $process);
 
-        $process->start(function (string $type, string $response) use ($deferredProcess): void {
+        $process->start(static function (string $type, string $response) use ($deferredProcess): void {
             $deferredProcess->log(new LogMessage($response, $type === Process::ERR));
         });
 

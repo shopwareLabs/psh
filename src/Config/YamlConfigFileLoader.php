@@ -2,9 +2,11 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\Application\RuntimeParameters;
 use Symfony\Component\Yaml\Parser;
 use function array_key_exists;
 use function array_map;
+use function dirname;
 use function in_array;
 use function pathinfo;
 
@@ -15,19 +17,19 @@ class YamlConfigFileLoader implements ConfigFileLoader
 {
     use ConfigFileLoaderFileSystemHandlers;
 
-    const KEY_HEADER = 'header';
+    private const KEY_HEADER = 'header';
 
-    const KEY_DYNAMIC_VARIABLES = 'dynamic';
+    private const KEY_DYNAMIC_VARIABLES = 'dynamic';
 
-    const KEY_CONST_VARIABLES = 'const';
+    private const KEY_CONST_VARIABLES = 'const';
 
-    const KEY_DOTENV_PATHS = 'dotenv';
+    private const KEY_DOTENV_PATHS = 'dotenv';
 
-    const KEY_COMMAND_PATHS = 'paths';
+    private const KEY_COMMAND_PATHS = 'paths';
 
-    const KEY_ENVIRONMENTS = 'environments';
+    private const KEY_ENVIRONMENTS = 'environments';
 
-    const KEY_TEMPLATES = 'templates';
+    private const KEY_TEMPLATES = 'templates';
 
     /**
      * @var Parser
@@ -56,12 +58,14 @@ class YamlConfigFileLoader implements ConfigFileLoader
         return in_array(pathinfo($file, PATHINFO_BASENAME), ['.psh.yaml', '.psh.yml', '.psh.yml.dist', '.psh.yml.override', '.psh.yaml.dist', '.psh.yaml.override'], true);
     }
 
-    public function load(string $file, array $params): Config
+    public function load(string $file, RuntimeParameters $runtimeParameters): Config
     {
         $contents = $this->loadFileContents($file);
         $rawConfigData = $this->parseFileContents($contents);
 
-        $this->configBuilder->start();
+        $this->configBuilder
+            ->setWorkingDirectory(dirname($file))
+            ->start();
 
         $this->configBuilder
             ->setHeader(
@@ -78,7 +82,7 @@ class YamlConfigFileLoader implements ConfigFileLoader
         }
 
         return $this->configBuilder
-            ->create($params);
+            ->create($runtimeParameters);
     }
 
     private function setConfigData(string $file, array $rawConfigData): void
@@ -96,7 +100,8 @@ class YamlConfigFileLoader implements ConfigFileLoader
         );
 
         $this->configBuilder->setTemplates(
-            $this->extractTemplates($file, $rawConfigData)
+            $this->extractTemplates($file, $rawConfigData),
+            $this->getWorkingDir($file)
         );
 
         $this->configBuilder->setDotenvPaths(
@@ -137,7 +142,6 @@ class YamlConfigFileLoader implements ConfigFileLoader
 
         return array_map(function ($template) use ($file) {
             $template['source'] = $this->fixPath($this->applicationRootDirectory, $template['source'], $file);
-            $template['destination'] = $this->makeAbsolutePath($file, $template['destination']);
 
             return $template;
         }, $templates);

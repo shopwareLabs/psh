@@ -51,21 +51,23 @@ class CommandBuilder
         $this->deferred = false;
     }
 
-    public function addProcessCommand(string $shellCommand, int $startLine): CommandBuilder
+    public function addProcessCommand(string $shellCommand, int $startLine, string $workingDirectory): CommandBuilder
     {
         if ($this->deferred) {
             $this->allCommands[] = new DeferredProcessCommand(
                 $shellCommand,
                 $startLine,
                 $this->ignoreError,
-                $this->tty
+                $this->tty,
+                $workingDirectory
             );
         } else {
             $this->allCommands[] = new SynchronusProcessCommand(
                 $shellCommand,
                 $startLine,
                 $this->ignoreError,
-                $this->tty
+                $this->tty,
+                $workingDirectory
             );
         }
 
@@ -77,13 +79,18 @@ class CommandBuilder
     /**
      * @return $this
      */
-    public function addTemplateCommand(string $source, string $destination, int $lineNumber): CommandBuilder
+    public function addTemplateCommand(
+        string $source,
+        string $destination,
+        string $workingDirectory,
+        int $lineNumber): CommandBuilder
     {
         $this->reset();
 
         $this->allCommands[] = new TemplateCommand(
             $source,
             $destination,
+            $workingDirectory,
             $lineNumber
         );
 
@@ -119,9 +126,17 @@ class CommandBuilder
         return $this;
     }
 
-    public function replaceCommands(array $commands): CommandBuilder
+    public function scopeEmpty(callable $fkt): CommandBuilder
     {
-        $this->allCommands = $commands;
+        $allCommandsSoFar = $this->getAll();
+
+        $commands = $fkt();
+
+        $this->allCommands = $allCommandsSoFar;
+
+        foreach ($commands as $command) {
+            $this->allCommands[] = $command;
+        }
 
         return $this;
     }

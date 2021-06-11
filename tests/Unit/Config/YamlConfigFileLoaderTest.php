@@ -2,12 +2,13 @@
 
 namespace Shopware\Psh\Test\Unit\Config;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use Shopware\Psh\Application\RuntimeParameters;
 use Shopware\Psh\Config\Config;
 use Shopware\Psh\Config\ConfigBuilder;
 use Shopware\Psh\Config\ConfigFileLoader;
+use Shopware\Psh\Config\InvalidReferencedPath;
 use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Config\Template;
 use Shopware\Psh\Config\YamlConfigFileLoader;
@@ -60,8 +61,8 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
-        $this->assertVariables($config, ['filesystem' => 'ls -al']);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
+        $this->assertVariables($config, ['FILESYSTEM' => 'ls -al']);
     }
 
     public function test_it_works_if_no_dynamics_are_present(): void
@@ -79,7 +80,7 @@ class YamlConfigFileLoaderTest extends TestCase
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
 
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
         $this->assertConstants($config, ['FOO' => 'bar']);
     }
 
@@ -98,7 +99,7 @@ class YamlConfigFileLoaderTest extends TestCase
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
 
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         $scripts = $config->getAllScriptsPaths();
         self::assertContainsOnlyInstancesOf(ScriptsPath::class, $scripts);
@@ -124,7 +125,7 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
     }
@@ -147,7 +148,7 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
     }
@@ -175,12 +176,12 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
+            'FILESYSTEM' => 'ls -al',
         ]);
 
         $this->assertConstants($config, [
@@ -218,12 +219,12 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
+            'FILESYSTEM' => 'ls -al',
         ], 'namespace');
 
         $this->assertConstants($config, [
@@ -267,18 +268,18 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
         $this->assertVariables($config, [
-            'filesystem' => 'ls -al',
-            'booh' => 'bar',
+            'FILESYSTEM' => 'ls -al',
+            'BOOH' => 'bar',
         ], 'namespace');
 
         $this->assertConstants($config, [
             'FOO' => 'bar',
-            'booh' => 'hah',
+            'BOOH' => 'hah',
         ], 'namespace');
 
         $scripts = $config->getAllScriptsPaths();
@@ -301,12 +302,12 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertInstanceOf(Config::class, $config);
 
         self::assertEquals([
-            new Template(__DIR__ . '/_the_template.tpl', __DIR__ . '/the_destination.txt'),
+            new Template(__DIR__ . '/_the_template.tpl', 'the_destination.txt', __DIR__),
         ], $config->getTemplates());
     }
 
@@ -322,7 +323,7 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertCount(2, $config->getDotenvPaths());
         self::assertEquals(__DIR__ . '/.fiz', $config->getDotenvPaths()['.fiz']->getPath());
@@ -348,7 +349,7 @@ class YamlConfigFileLoaderTest extends TestCase
         ]);
 
         $loader = $this->createConfigLoader($yamlMock->reveal());
-        $config = $loader->load(__DIR__ . '/_test.txt', []);
+        $config = $loader->load(__DIR__ . '/_test.txt', $this->createRuntimeParameters());
 
         self::assertCount(3, $config->getDotenvPaths('env'));
         self::assertEquals(__DIR__ . '/_foo/.fiz', $config->getDotenvPaths('env')['.fiz']->getPath());
@@ -356,14 +357,14 @@ class YamlConfigFileLoaderTest extends TestCase
         self::assertEquals(__DIR__ . '/_foo/.buz', $config->getDotenvPaths('env')['.buz']->getPath());
     }
 
-    public function test_fixPath_throws_exception(): void
+    public function test_fix_path_throws_exception(): void
     {
         $loader = $this->createConfigLoader();
 
         $method = new ReflectionMethod(YamlConfigFileLoader::class, 'fixPath');
         $method->setAccessible(true);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidReferencedPath::class);
 
         $method->invoke($loader, __DIR__, 'absoluteOrRelativePath', 'baseFile');
     }
@@ -386,5 +387,10 @@ class YamlConfigFileLoaderTest extends TestCase
         }
 
         self::assertCount(count($keyValues), $config->getDynamicVariables($environment));
+    }
+
+    protected function createRuntimeParameters(array $overrideParams = []): RuntimeParameters
+    {
+        return new RuntimeParameters([], [], $overrideParams);
     }
 }

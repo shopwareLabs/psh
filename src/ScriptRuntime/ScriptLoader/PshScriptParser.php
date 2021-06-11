@@ -19,23 +19,23 @@ use function trim;
  */
 class PshScriptParser implements ScriptParser
 {
-    const TOKEN_MODIFIER_TTY = 'TTY: ';
+    private const TOKEN_MODIFIER_TTY = 'TTY: ';
 
-    const TOKEN_MODIFIER_IGNORE_ERROR = 'I: ';
+    private const TOKEN_MODIFIER_IGNORE_ERROR = 'I: ';
 
-    const TOKEN_MODIFIER_DEFERRED = 'D: ';
+    private const TOKEN_MODIFIER_DEFERRED = 'D: ';
 
-    const TOKEN_INCLUDE = 'INCLUDE: ';
+    private const TOKEN_INCLUDE = 'INCLUDE: ';
 
-    const TOKEN_ACTION = 'ACTION: ';
+    private const TOKEN_ACTION = 'ACTION: ';
 
-    const TOKEN_WAIT = 'WAIT:';
+    private const TOKEN_WAIT = 'WAIT:';
 
-    const TOKEN_TEMPLATE = 'TEMPLATE: ';
+    private const TOKEN_TEMPLATE = 'TEMPLATE: ';
 
-    const CONCATENATE_PREFIX = '   ';
+    private const CONCATENATE_PREFIX = '   ';
 
-    const TOKEN_WILDCARD = '*';
+    private const TOKEN_WILDCARD = '*';
 
     /**
      * @var CommandBuilder
@@ -66,10 +66,6 @@ class PshScriptParser implements ScriptParser
                 if ($this->startsWith($token, $currentLine)) {
                     $currentLine = $handler($currentLine, $lineNumber, $script);
                 }
-
-                if ($currentLine === '') {
-                    break;
-                }
             }
         }
 
@@ -83,18 +79,20 @@ class PshScriptParser implements ScriptParser
                 $scriptName = $this->removeFromStart(self::TOKEN_ACTION, $currentLine);
                 $actionScript = $this->scriptFinder->findScriptByName($scriptName);
 
-                $commands = $loader->loadScript($actionScript);
-                $this->commandBuilder->replaceCommands($commands);
+                $this->commandBuilder->scopeEmpty(static function () use ($loader, $actionScript) {
+                    return $loader->loadScript($actionScript);
+                });
 
                 return '';
             },
 
             self::TOKEN_INCLUDE => function (string $currentLine, int $lineNumber, Script $script) use ($loader): string {
                 $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
-                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME), false);
+                $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME), false, $script->getWorkingDirectory());
 
-                $commands = $loader->loadScript($includeScript);
-                $this->commandBuilder->replaceCommands($commands);
+                $this->commandBuilder->scopeEmpty(static function () use ($loader, $includeScript) {
+                    return $loader->loadScript($includeScript);
+                });
 
                 return '';
             },
@@ -104,10 +102,9 @@ class PshScriptParser implements ScriptParser
                 list($rawSource, $rawDestination) = explode(':', $definition);
 
                 $source = $script->getDirectory() . '/' . $rawSource;
-                $destination = $script->getDirectory() . '/' . $rawDestination;
 
                 $this->commandBuilder
-                    ->addTemplateCommand($source, $destination, $lineNumber);
+                    ->addTemplateCommand($source, $rawDestination, $script->getDirectory(), $lineNumber);
 
                 return '';
             },
@@ -128,7 +125,7 @@ class PshScriptParser implements ScriptParser
             self::TOKEN_MODIFIER_TTY => function (string $currentLine): string {
                 $this->commandBuilder->setTty();
 
-                return  $this->removeFromStart(self::TOKEN_MODIFIER_TTY, $currentLine);
+                return $this->removeFromStart(self::TOKEN_MODIFIER_TTY, $currentLine);
             },
 
             self::TOKEN_MODIFIER_DEFERRED => function (string $currentLine): string {
@@ -137,9 +134,9 @@ class PshScriptParser implements ScriptParser
                 return $this->removeFromStart(self::TOKEN_MODIFIER_DEFERRED, $currentLine);
             },
 
-            self::TOKEN_WILDCARD => function (string $currentLine, int $lineNumber): string {
+            self::TOKEN_WILDCARD => function (string $currentLine, int $lineNumber, Script $script): string {
                 $this->commandBuilder
-                    ->addProcessCommand($currentLine, $lineNumber);
+                    ->addProcessCommand($currentLine, $lineNumber, $script->getWorkingDirectory());
 
                 return '';
             },
@@ -162,10 +159,6 @@ class PshScriptParser implements ScriptParser
     private function isExecutableLine(string $command): bool
     {
         $command = trim($command);
-
-        if (!$command) {
-            return false;
-        }
 
         if ($this->startsWith('#', $command)) {
             return false;

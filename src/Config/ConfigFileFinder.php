@@ -2,7 +2,6 @@
 
 namespace Shopware\Psh\Config;
 
-use RuntimeException;
 use function array_filter;
 use function array_merge;
 use function count;
@@ -16,7 +15,7 @@ use function pathinfo;
  */
 class ConfigFileFinder
 {
-    const VALID_FILE_NAME_GLOB = '.psh.*';
+    private const VALID_FILE_NAME_GLOB = '.psh.*';
 
     public function discoverFiles(string $fromDirectory): array
     {
@@ -50,7 +49,7 @@ class ConfigFileFinder
             $currentDirectory = dirname($currentDirectory);
         } while ($currentDirectory !== '/');
 
-        throw new RuntimeException('No config file found, make sure you have created a .psh.xml or .psh.xml.dist file');
+        throw new NoConfigFileFound();
     }
 
     /**
@@ -62,19 +61,19 @@ class ConfigFileFinder
             return $configFileCandidates;
         }
 
-        $overrideFiles = array_filter($configFileCandidates, function (string $file) {
+        $overrideFiles = array_filter($configFileCandidates, static function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'override';
         });
 
-        $distFiles = array_filter($configFileCandidates, function (string $file) {
+        $distFiles = array_filter($configFileCandidates, static function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension === 'dist';
         });
 
-        $configFiles = array_filter($configFileCandidates, function (string $file) {
+        $configFiles = array_filter($configFileCandidates, static function (string $file) {
             $extension = pathinfo($file, PATHINFO_EXTENSION);
 
             return $extension !== 'override' && $extension !== 'dist';

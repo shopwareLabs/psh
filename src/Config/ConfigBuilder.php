@@ -2,6 +2,7 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\Application\RuntimeParameters;
 use function pathinfo;
 
 /**
@@ -11,12 +12,15 @@ use function pathinfo;
  */
 class ConfigBuilder
 {
-    const DEFAULT_ENV = '##default##';
+    private const DEFAULT_ENV = '##default##';
 
     private $header = '';
 
     private $environments = [];
 
+    /**
+     * @var string|null
+     */
     private $currentEnvironment;
 
     private $currentCommandPaths;
@@ -35,9 +39,21 @@ class ConfigBuilder
 
     private $imports;
 
+    /**
+     * @var string
+     */
+    private $workingDirectory;
+
     public function setHeader(?string $header = null): ConfigBuilder
     {
         $this->header = $header;
+
+        return $this;
+    }
+
+    public function setWorkingDirectory(string $workingDirectory): ConfigBuilder
+    {
+        $this->workingDirectory = $workingDirectory;
 
         return $this;
     }
@@ -63,7 +79,17 @@ class ConfigBuilder
 
     public function setCommandPaths(array $commandPaths): ConfigBuilder
     {
-        $this->currentCommandPaths = $commandPaths;
+        $this->currentCommandPaths = [];
+
+        foreach ($commandPaths as $path) {
+            $env = $this->currentEnvironment;
+
+            if ($env === self::DEFAULT_ENV) {
+                $env = null;
+            }
+
+            $this->currentCommandPaths[] = new ScriptsPath($path, $this->workingDirectory, $this->hidden, $env);
+        }
 
         return $this;
     }
@@ -137,18 +163,22 @@ class ConfigBuilder
         return $this;
     }
 
-    public function setTemplates(array $templates): ConfigBuilder
+    public function setTemplates(array $templates, string $baseFile): ConfigBuilder
     {
-        $this->templates = $templates;
+        $this->templates = [];
+
+        foreach ($templates as $template) {
+            $this->templates[] = new Template($template['source'], $template['destination'], $baseFile);
+        }
 
         return $this;
     }
 
-    public function create(array $params): Config
+    public function create(RuntimeParameters $runtimeParameters): Config
     {
         $this->reset();
 
-        return new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $this->environments, $params, $this->header);
+        return new Config(new EnvironmentResolver(), self::DEFAULT_ENV, $this->environments, $runtimeParameters, $this->header);
     }
 
     private function reset(): void

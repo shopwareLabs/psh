@@ -15,7 +15,7 @@ use function scandir;
  */
 class ScriptFinder
 {
-    const VALID_EXTENSIONS = [
+    private const VALID_EXTENSIONS = [
         'sh',
         'psh',
     ];
@@ -40,7 +40,7 @@ class ScriptFinder
     }
 
     /**
-     * @throws ScriptPathNotValidException
+     * @throws ScriptPathNotValid
      * @return Script[]
      */
     public function getAllScripts(): array
@@ -56,7 +56,7 @@ class ScriptFinder
                 }
 
                 $description = $this->scriptDescriptionReader->read($path->getPath() . '/' . $fileName);
-                $newScript = new Script($path->getPath(), $fileName, $path->isHidden(), $path->getNamespace(), $description);
+                $newScript = new Script($path->getPath(), $fileName, $path->isHidden(), $path->getWorkingDirectory(), $path->getNamespace(), $description);
 
                 $scripts[$newScript->getName()] = $newScript;
             }
@@ -67,7 +67,7 @@ class ScriptFinder
 
     public function getAllVisibleScripts(): array
     {
-        return array_filter($this->getAllScripts(), function (Script $script): bool {
+        return array_filter($this->getAllScripts(), static function (Script $script): bool {
             return !$script->isHidden();
         });
     }
@@ -76,13 +76,27 @@ class ScriptFinder
     {
         $scripts = $this->getAllVisibleScripts();
 
-        return array_filter($scripts, function ($key) use ($query) {
-            return mb_strpos($key, $query) > -1 || levenshtein($key, $query) < 3;
+        return array_filter($scripts, static function ($key) use ($query) {
+            return mb_strpos($key, $query) !== false || levenshtein($key, $query) < 3;
         }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
-     * @throws ScriptNotFoundException
+     * @param string[] $scriptNames
+     * @return Script[]
+     */
+    public function findScriptsInOrder(array $scriptNames): array
+    {
+        $scripts = [];
+        foreach ($scriptNames as $scriptName) {
+            $scripts[] = $this->findScriptByName($scriptName);
+        }
+
+        return $scripts;
+    }
+
+    /**
+     * @throws ScriptNotFound
      */
     public function findScriptByName(string $scriptName): Script
     {
@@ -92,7 +106,7 @@ class ScriptFinder
             }
         }
 
-        throw (new ScriptNotFoundException('Unable to find script named "' . $scriptName . '"'))->setScriptName($scriptName);
+        throw (new ScriptNotFound('Unable to find script named "' . $scriptName . '"'))->setScriptName($scriptName);
     }
 
     /**
@@ -108,7 +122,7 @@ class ScriptFinder
     private function testPathValidity(ScriptsPath $path): void
     {
         if (!$path->isValid()) {
-            throw new ScriptPathNotValidException("The given script path: '{$path->getPath()}' is not a valid directory");
+            throw new ScriptPathNotValid("The given script path: '{$path->getPath()}' is not a valid directory");
         }
     }
 }

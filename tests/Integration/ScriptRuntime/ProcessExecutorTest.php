@@ -6,13 +6,14 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shopware\Psh\Config\EnvironmentResolver;
+use Shopware\Psh\Config\Template;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
 use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\ScriptRuntime\Command;
 use Shopware\Psh\ScriptRuntime\DeferredProcessCommand;
-use Shopware\Psh\ScriptRuntime\Execution\ExecutionErrorException;
+use Shopware\Psh\ScriptRuntime\Execution\ExecutionError;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessEnvironment;
 use Shopware\Psh\ScriptRuntime\Execution\ProcessExecutor;
 use Shopware\Psh\ScriptRuntime\Execution\TemplateEngine;
@@ -33,7 +34,7 @@ use function unlink;
 
 class ProcessExecutorTest extends TestCase
 {
-    const DEFERED_FILES = [
+    private const DEFERED_FILES = [
         __DIR__ . '/1.json',
         __DIR__ . '/2.json',
         __DIR__ . '/3.json',
@@ -56,8 +57,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -75,8 +75,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -94,13 +93,12 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             new ProcessEnvironment((new EnvironmentResolver())->resolveConstants([
                 'VAR' => 'value',
-            ]), [], (new EnvironmentResolver())->resolveTemplates([[
+            ]), [], $this->resolveTemplates([[
                 'source' => __DIR__ . '/_test_read.tpl',
-                'destination' => __DIR__ . '/_test__VAR__.tpl',
-            ]]), []),
+                'destination' => '_test__VAR__.tpl',
+            ]], __DIR__), []),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -117,8 +115,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -156,14 +153,48 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
         self::assertFileNotExists($script->getTmpPath());
 
         self::assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
+    }
+
+    public function test_executor_executes_two_bash_commands_subsequently(): void
+    {
+        $script = $this->createScript(__DIR__ . '/_scripts', 'bash_include.sh');
+        $commands = $this->loadCommands($script);
+        $logger = new BlackholeLogger();
+
+        self::assertCount(6, $commands);
+        self::assertInstanceOf(BashCommand::class, $commands[1]);
+        self::assertTrue($commands[1]->hasWarning());
+        self::assertInstanceOf(BashCommand::class, $commands[2]);
+        self::assertTrue($commands[2]->hasWarning());
+        self::assertInstanceOf(BashCommand::class, $commands[4]);
+        self::assertTrue($commands[4]->hasWarning());
+        self::assertSame(1, $commands[4]->getLineNumber());
+        self::assertFalse($commands[4]->isIgnoreError());
+
+        $executor = new ProcessExecutor(
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
+            $logger
+        );
+
+        $executor->execute($script, $commands);
+        self::assertFileNotExists($script->getTmpPath());
+
+        self::assertSame([
+            __DIR__  . PHP_EOL,
+            __DIR__ . 'BAR' . PHP_EOL,
+            __DIR__ . 'BAR' . PHP_EOL,
+            __DIR__  . PHP_EOL,
+            __DIR__ . 'BAR' . PHP_EOL,
+            __DIR__  . PHP_EOL,
+        ], $logger->output);
     }
 
     public function test_executor_recognises_secure_bash_commands(): void
@@ -179,8 +210,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $executor->execute($script, $commands);
@@ -204,8 +234,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $beginExecution = microtime(true);
@@ -236,18 +265,17 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $beginExecution = microtime(true);
 
         try {
             $executor->execute($script, $commands);
-        } catch (ExecutionErrorException $e) {
+        } catch (ExecutionError $e) {
         }
         $executionTime = microtime(true) - $beginExecution;
-        self::assertInstanceOf(ExecutionErrorException::class, $e);
+        self::assertInstanceOf(ExecutionError::class, $e);
 
         // check a wait occurred
         $totalWait = 0;
@@ -274,18 +302,17 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            $logger,
-            __DIR__
+            $logger
         );
 
         $beginExecution = microtime(true);
 
         try {
             $executor->execute($script, $commands);
-        } catch (ExecutionErrorException $e) {
+        } catch (ExecutionError $e) {
         }
         $executionTime = microtime(true) - $beginExecution;
-        self::assertInstanceOf(ExecutionErrorException::class, $e);
+        self::assertInstanceOf(ExecutionError::class, $e);
 
         // check a wait occurred
         $totalWait = 0;
@@ -314,8 +341,7 @@ class ProcessExecutorTest extends TestCase
         $executor = new ProcessExecutor(
             $this->createProcessEnvironment(),
             $this->createTemplateEngine(),
-            new BlackholeLogger(),
-            __DIR__
+            new BlackholeLogger()
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -353,7 +379,7 @@ class ProcessExecutorTest extends TestCase
 
     private function createScript(string $directory, string $scriptName): Script
     {
-        return new Script($directory, $scriptName, false);
+        return new Script($directory, $scriptName, false, __DIR__);
     }
 
     private function assertDeferredFile(string $file, float $totalWait): float
@@ -368,5 +394,15 @@ class ProcessExecutorTest extends TestCase
         self::assertGreaterThan(0.0001, $currentWait);
 
         return $totalWait;
+    }
+
+    private function resolveTemplates(array $templates, string $workingDirectory): array
+    {
+        $resolvedVariables = [];
+        foreach ($templates as $template) {
+            $resolvedVariables[] = new Template($template['source'], $template['destination'], $workingDirectory);
+        }
+
+        return $resolvedVariables;
     }
 }

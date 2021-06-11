@@ -127,7 +127,7 @@ The minimum required file looks like this:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <psh xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="https://github.com/shopwareLabs/psh/blob/master/resource/config.xsd">
+     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopwareLabs/psh/master/resource/config.xsd">
 
 </psh>
 ```
@@ -468,7 +468,10 @@ echo __PLACEHOLDER__
 
 ## Executing it
 
-Executing the script will print a listing overview of all available commands
+The general format is `./psh.phar <application-options> <script-names> <script-options>`. The only currently supported application option is `--no-header`, script names are a comma separated list of actions (or one) and script options are key value pairs to overwrite placeholders. Let's look at some examples:
+
+
+Executing the phar will print a listing overview of all available commands
 
 ```sh
 > ./psh.phar

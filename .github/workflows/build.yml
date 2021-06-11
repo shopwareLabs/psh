@@ -1,0 +1,70 @@
+name: PHAR build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.4"
+          coverage: "pcov"
+          ini-values: "zend.assertions=1"
+
+      - name: Prepare project
+        run: |
+          composer install
+          composer bin all install
+
+      - name: build phar
+        run: |
+          ./psh build
+          cp build/psh.phar .
+
+      - name: Upload phar
+        uses: actions/upload-artifact@v2
+        with:
+          name: psh.phar
+          path: build/psh.phar
+
+  check:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version:
+          - "7.2"
+          - "7.3"
+          - "7.4"
+          - "8.0"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+
+      - name: download psh
+        uses: actions/download-artifact@v2
+        with:
+          name: psh.phar
+      - shell: bash
+        run: chmod +x psh.phar
+
+      - name: execute example scripts
+        run: |
+          ./psh.phar
+          ./psh.phar test
+          ./psh.phar test-env --env=ci

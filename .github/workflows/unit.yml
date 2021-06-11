@@ -1,0 +1,46 @@
+name: CI-Unit
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version:
+          - "7.2"
+          - "7.3"
+          - "7.4"
+          - "8.0"
+        deps:
+          - "locked"
+          - "lowest"
+          - "highest"
+        exclude:
+          - php-version: "8.0"
+            deps: "lowest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "pcov"
+          ini-values: "zend.assertions=1"
+
+      - name: Prepare project
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: "${{ matrix.deps }}"
+
+      - name: Check
+        run: |
+          ./psh unit

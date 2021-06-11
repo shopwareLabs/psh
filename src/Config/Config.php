@@ -2,8 +2,11 @@
 
 namespace Shopware\Psh\Config;
 
+use Shopware\Psh\Application\RuntimeParameters;
 use function array_map;
 use function array_merge;
+use function in_array;
+use function mb_strtoupper;
 
 /**
  * Represents the global configuration consisting of multiple environments
@@ -31,9 +34,9 @@ class Config
     private $environments;
 
     /**
-     * @var array
+     * @var RuntimeParameters
      */
-    private $params;
+    private $runtimeParameters;
 
     /**
      * @param ConfigEnvironment[] $environments
@@ -42,13 +45,13 @@ class Config
         EnvironmentResolver $resolver,
         string $defaultEnvironment,
         array $environments,
-        array $params,
+        RuntimeParameters $runtimeParameters,
         ?string $header = null
     ) {
         $this->resolver = $resolver;
         $this->defaultEnvironment = $defaultEnvironment;
         $this->environments = $environments;
-        $this->params = $params;
+        $this->runtimeParameters = $runtimeParameters;
         $this->header = $header;
     }
 
@@ -61,11 +64,7 @@ class Config
 
         foreach ($this->environments as $name => $environmentConfig) {
             foreach ($environmentConfig->getAllScriptsPaths() as $path) {
-                if ($name !== $this->defaultEnvironment) {
-                    $paths[] = new ScriptsPath($path, $environmentConfig->isHidden(), $name);
-                } else {
-                    $paths[] = new ScriptsPath($path, false);
-                }
+                $paths[] = $path;
             }
         }
 
@@ -74,15 +73,22 @@ class Config
 
     public function getTemplates(?string $environment = null): array
     {
-        return $this->resolver->resolveTemplates($this->createResult(
-            [$this->getEnvironment(), 'getTemplates'],
-            [$this->getEnvironment($environment), 'getTemplates']
-        ));
+        $templates = $this->getEnvironment()->getTemplates();
+
+        if ($environment === null) {
+            return $templates;
+        }
+
+        foreach ($this->getEnvironment($environment)->getTemplates() as $template) {
+            $templates[] = $template;
+        }
+
+        return $templates;
     }
 
     public function getDynamicVariables(?string $environment = null): array
     {
-        return $this->resolver->resolveVariables($this->createResult(
+        return $this->resolver->resolveVariables($this->createMergedUpperCaseResult(
             [$this->getEnvironment(), 'getDynamicVariables'],
             [$this->getEnvironment($environment), 'getDynamicVariables']
         ));
@@ -90,7 +96,7 @@ class Config
 
     public function getConstants(?string $environment = null): array
     {
-        return $this->resolver->resolveConstants($this->createResult(
+        return $this->resolver->resolveConstants($this->createMergedUpperCaseResult(
             [$this->getEnvironment(), 'getConstants'],
             [$this->getEnvironment($environment), 'getConstants'],
             [$this, 'getParams']
@@ -121,7 +127,7 @@ class Config
      */
     public function getRequiredVariables(?string $environment = null): array
     {
-        $requiredValues = $this->createResult(
+        $requiredValues = $this->createMergedUpperCaseResult(
             [$this->getEnvironment(), 'getRequiredVariables'],
             [$this->getEnvironment($environment), 'getRequiredVariables']
         );
@@ -139,12 +145,12 @@ class Config
      */
     public function getDotenvPaths(?string $environment = null): array
     {
-        $paths = $this->createResult(
+        $paths = $this->createMergedResult(
             [$this->getEnvironment(), 'getDotenvPaths'],
             [$this->getEnvironment($environment), 'getDotenvPaths']
         );
 
-        return array_map(function (string $path): DotenvFile {
+        return array_map(static function (string $path): DotenvFile {
             return new DotenvFile($path);
         }, $paths);
     }
@@ -170,9 +176,9 @@ class Config
         return $this->defaultEnvironment;
     }
 
-    public function getParams(): array
+    public function hasOption(string $name): bool
     {
-        return $this->params;
+        return in_array($name, $this->runtimeParameters->getAppParams(), true);
     }
 
     public function getImports(): array
@@ -180,13 +186,36 @@ class Config
         return $this->getEnvironment()->getImports();
     }
 
-    private function createResult(callable ...$valueProviders): array
+    public function getScriptNames(): array
+    {
+        return $this->runtimeParameters->getCommands();
+    }
+
+    private function getParams(): array
+    {
+        return $this->runtimeParameters->getOverwrites();
+    }
+
+    private function createMergedResult(callable ...$valueProviders): array
     {
         $mergedKeyValues = [];
 
         foreach ($valueProviders as $valueProvider) {
             foreach ($valueProvider() as $key => $value) {
                 $mergedKeyValues[$key] = $value;
+            }
+        }
+
+        return $mergedKeyValues;
+    }
+
+    private function createMergedUpperCaseResult(callable ...$valueProviders): array
+    {
+        $mergedKeyValues = [];
+
+        foreach ($valueProviders as $valueProvider) {
+            foreach ($valueProvider() as $key => $value) {
+                $mergedKeyValues[mb_strtoupper($key)] = $value;
             }
         }
 

@@ -3,7 +3,9 @@
 namespace Shopware\Psh\ScriptRuntime\ScriptLoader;
 
 use RuntimeException;
+use Shopware\Psh\PshErrorMessage;
 
-class ScriptNotSupportedByParser extends RuntimeException
+/** @psalm-immutable */
+class ScriptNotSupportedByParser extends RuntimeException implements PshErrorMessage
 {
 }

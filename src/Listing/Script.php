@@ -5,6 +5,7 @@ namespace Shopware\Psh\Listing;
 use function getmypid;
 use function mb_strpos;
 use function pathinfo;
+use function sprintf;
 
 /**
  * ValueObject containing all information for a single script to be executed
@@ -34,29 +35,32 @@ class Script
     /**
      * @var bool
      */
-    private $inHiddenPath;
+    private $isHiddenPath;
 
     /**
-     * @param string $environment
-     * @param string $description
+     * @var string
      */
+    private $workingDirectory;
+
     public function __construct(
         string $directory,
         string $scriptName,
-        bool $inHiddenPath,
+        bool $isHiddenPath,
+        string $workingDirectory,
         ?string $environment = null,
-        $description = ''
+        string $description = ''
     ) {
         $this->directory = $directory;
         $this->scriptName = $scriptName;
         $this->environment = $environment;
         $this->description = $description;
-        $this->inHiddenPath = $inHiddenPath;
+        $this->isHiddenPath = $isHiddenPath;
+        $this->workingDirectory = $workingDirectory;
     }
 
     public function getTmpPath(): string
     {
-        return $this->directory . '/.tmp_' . getmypid() . '_' . $this->scriptName;
+        return sprintf('%s/.tmp_%s_%s', $this->directory, getmypid(), $this->scriptName);
     }
 
     public function getPath(): string
@@ -95,6 +99,11 @@ class Script
 
     public function isHidden(): bool
     {
-        return $this->inHiddenPath || mb_strpos($this->scriptName, '.') === 0;
+        return $this->isHiddenPath || mb_strpos($this->scriptName, '.') === 0;
+    }
+
+    public function getWorkingDirectory(): string
+    {
+        return $this->workingDirectory;
     }
 }
