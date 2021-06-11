@@ -187,7 +187,7 @@ class Application
             return;
         }
 
-        $this->cliMate->green()->bold()->out("\n###################");
+        $this->cliMate->green()->bold()->out("\n################### PSH@" . PSH_VERSION);
 
         if ($config->getHeader()) {
             $this->cliMate->out("\n" . $config->getHeader());

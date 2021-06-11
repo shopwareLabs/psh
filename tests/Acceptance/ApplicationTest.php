@@ -298,18 +298,19 @@ class ApplicationTest extends TestCase
     private function assertSimpleScript(int $exitCode, string $envName): void
     {
         $this->assertNoErrorExitCode($exitCode);
+        self::assertStringContainsString('# PSH@' . PSH_VERSION . PHP_EOL, MockWriter::$content);
         self::assertStringContainsString('ls -al', MockWriter::$content);
-        self::assertStringContainsString('Using .psh.xml', MockWriter::$content);
-        self::assertStringContainsString('Importing glob/.psh.xml extended by glob/.psh.xml.override from "gl*b"', MockWriter::$content);
-        self::assertStringContainsString('NOTICE: No import found for path "foo/"', MockWriter::$content);
-        self::assertStringContainsString('(1/4) Starting', MockWriter::$content);
-        self::assertStringContainsString('(2/4) Starting', MockWriter::$content);
-        self::assertStringContainsString('(3/4) Starting', MockWriter::$content);
-        self::assertStringContainsString('(4/4) Deferring', MockWriter::$content);
-        self::assertStringContainsString('WAITING...', MockWriter::$content);
-        self::assertStringContainsString('(1/1) Output from', MockWriter::$content);
+        self::assertStringContainsString('Using .psh.xml' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('Importing glob/.psh.xml extended by glob/.psh.xml.override from "gl*b"' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('NOTICE: No import found for path "foo/"' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('(1/4) Starting' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('(2/4) Starting' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('(3/4) Starting' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('(4/4) Deferring' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('WAITING...' . PHP_EOL, MockWriter::$content);
+        self::assertStringContainsString('(1/1) Output from' . PHP_EOL, MockWriter::$content);
         self::assertStringContainsString(' echo "' . $envName . '"', MockWriter::$content);
-        self::assertStringContainsString('All commands successfully executed!', MockWriter::$content);
+        self::assertStringContainsString('All commands successfully executed!' . PHP_EOL, MockWriter::$content);
         self::assertStringContainsString('Duration:', MockWriter::$content);
 
         self::assertStringEqualsFile(__DIR__ . '/_app/result.txt', $envName);

@@ -6,7 +6,10 @@
     "autoload": {
         "psr-4": {
             "Shopware\\Psh\\": "src"
-        }
+        },
+        "files": [
+            "resource/version.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
