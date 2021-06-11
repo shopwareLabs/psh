@@ -188,12 +188,12 @@ class ProcessExecutorTest extends TestCase
         self::assertFileNotExists($script->getTmpPath());
 
         self::assertSame([
-            '/psh/tests/Integration/ScriptRuntime' . PHP_EOL,
-            '/psh/tests/Integration/ScriptRuntimeBAR' . PHP_EOL,
-            '/psh/tests/Integration/ScriptRuntimeBAR' . PHP_EOL,
-            '/psh/tests/Integration/ScriptRuntime' . PHP_EOL,
-            '/psh/tests/Integration/ScriptRuntimeBAR' . PHP_EOL,
-            '/psh/tests/Integration/ScriptRuntime' . PHP_EOL,
+            __DIR__  . PHP_EOL,
+            __DIR__ . 'BAR' . PHP_EOL,
+            __DIR__ . 'BAR' . PHP_EOL,
+            __DIR__  . PHP_EOL,
+            __DIR__ . 'BAR' . PHP_EOL,
+            __DIR__  . PHP_EOL,
         ], $logger->output);
     }
 
