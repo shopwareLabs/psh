@@ -162,6 +162,41 @@ class ProcessExecutorTest extends TestCase
         self::assertStringEndsWith('/psh/tests/Integration/ScriptRuntimeBAR', trim(implode('', $logger->output)));
     }
 
+    public function test_executor_executes_two_bash_commands_subsequently(): void
+    {
+        $script = $this->createScript(__DIR__ . '/_scripts', 'bash_include.sh');
+        $commands = $this->loadCommands($script);
+        $logger = new BlackholeLogger();
+
+        self::assertCount(6, $commands);
+        self::assertInstanceOf(BashCommand::class, $commands[1]);
+        self::assertTrue($commands[1]->hasWarning());
+        self::assertInstanceOf(BashCommand::class, $commands[2]);
+        self::assertTrue($commands[2]->hasWarning());
+        self::assertInstanceOf(BashCommand::class, $commands[4]);
+        self::assertTrue($commands[4]->hasWarning());
+        self::assertSame(1, $commands[4]->getLineNumber());
+        self::assertFalse($commands[4]->isIgnoreError());
+
+        $executor = new ProcessExecutor(
+            $this->createProcessEnvironment(),
+            $this->createTemplateEngine(),
+            $logger
+        );
+
+        $executor->execute($script, $commands);
+        self::assertFileNotExists($script->getTmpPath());
+
+        self::assertSame([
+            '/psh/tests/Integration/ScriptRuntime' . PHP_EOL,
+            '/psh/tests/Integration/ScriptRuntimeBAR' . PHP_EOL,
+            '/psh/tests/Integration/ScriptRuntimeBAR' . PHP_EOL,
+            '/psh/tests/Integration/ScriptRuntime' . PHP_EOL,
+            '/psh/tests/Integration/ScriptRuntimeBAR' . PHP_EOL,
+            '/psh/tests/Integration/ScriptRuntime' . PHP_EOL,
+        ], $logger->output);
+    }
+
     public function test_executor_recognises_secure_bash_commands(): void
     {
         $script = $this->createScript(__DIR__ . '/_scripts', 'better_bash.sh');

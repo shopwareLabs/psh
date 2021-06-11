@@ -8,7 +8,9 @@ use Shopware\Psh\Config\ScriptsPath;
 use Shopware\Psh\Listing\DescriptionReader;
 use Shopware\Psh\Listing\Script;
 use Shopware\Psh\Listing\ScriptFinder;
+use Shopware\Psh\ScriptRuntime\BashCommand;
 use Shopware\Psh\ScriptRuntime\Command;
+use Shopware\Psh\ScriptRuntime\ScriptLoader\BashScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\CommandBuilder;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\PshScriptParser;
 use Shopware\Psh\ScriptRuntime\ScriptLoader\ScriptLoader;
@@ -114,6 +116,29 @@ class PshScriptParserTest extends TestCase
         self::assertFalse($lastCommand->isIgnoreError());
     }
 
+    public function test_include_cmd_scripts(): void
+    {
+        $commands = $this->createCommands($this->createScript(__DIR__ . '/_scripts', 'include_cmd_scripts.sh'), [
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false),
+            new ScriptsPath(__DIR__ . '/_scripts/', __DIR__, false, 'env'),
+        ]);
+
+        self::assertCount(4, $commands);
+        self::assertContainsOnlyInstancesOf(Command::class, $commands);
+
+        self::assertEquals(2, $commands[0]->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $commands[0]->getShellCommand());
+        self::assertFalse($commands[0]->isIgnoreError());
+
+        self::assertInstanceOf(BashCommand::class, $commands[1]);
+        self::assertInstanceOf(BashCommand::class, $commands[2]);
+
+        $lastCommand = array_pop($commands);
+        self::assertEquals(5, $lastCommand->getLineNumber());
+        self::assertEquals('bin/phpunit --debug --verbose', $lastCommand->getShellCommand());
+        self::assertFalse($lastCommand->isIgnoreError());
+    }
+
     public function test_action_throws_exception(): void
     {
         $this->expectException(RuntimeException::class);
@@ -148,6 +173,7 @@ class PshScriptParserTest extends TestCase
     public function createCommands(Script $script, array $availableSubScripts = []): array
     {
         $scriptLoader = new ScriptLoader(
+            new BashScriptParser(),
             new PshScriptParser(new CommandBuilder(), new ScriptFinder($availableSubScripts, new DescriptionReader()))
         );
 

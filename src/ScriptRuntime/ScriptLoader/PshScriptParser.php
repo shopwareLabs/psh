@@ -79,8 +79,9 @@ class PshScriptParser implements ScriptParser
                 $scriptName = $this->removeFromStart(self::TOKEN_ACTION, $currentLine);
                 $actionScript = $this->scriptFinder->findScriptByName($scriptName);
 
-                $commands = $loader->loadScript($actionScript);
-                $this->commandBuilder->replaceCommands($commands);
+                $this->commandBuilder->scopeEmpty(static function () use ($loader, $actionScript) {
+                    return $loader->loadScript($actionScript);
+                });
 
                 return '';
             },
@@ -89,8 +90,9 @@ class PshScriptParser implements ScriptParser
                 $path = $this->findInclude($script, $this->removeFromStart(self::TOKEN_INCLUDE, $currentLine));
                 $includeScript = new Script(pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_BASENAME), false, $script->getWorkingDirectory());
 
-                $commands = $loader->loadScript($includeScript);
-                $this->commandBuilder->replaceCommands($commands);
+                $this->commandBuilder->scopeEmpty(static function () use ($loader, $includeScript) {
+                    return $loader->loadScript($includeScript);
+                });
 
                 return '';
             },

@@ -77,7 +77,7 @@ class ScriptFinder
         $scripts = $this->getAllVisibleScripts();
 
         return array_filter($scripts, static function ($key) use ($query) {
-            return mb_strpos($key, $query) > -1 || levenshtein($key, $query) < 3;
+            return mb_strpos($key, $query) !== false || levenshtein($key, $query) < 3;
         }, ARRAY_FILTER_USE_KEY);
     }
 

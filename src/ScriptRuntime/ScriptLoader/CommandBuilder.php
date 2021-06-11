@@ -126,9 +126,17 @@ class CommandBuilder
         return $this;
     }
 
-    public function replaceCommands(array $commands): CommandBuilder
+    public function scopeEmpty(callable $fkt): CommandBuilder
     {
-        $this->allCommands = $commands;
+        $allCommandsSoFar = $this->getAll();
+
+        $commands = $fkt();
+
+        $this->allCommands = $allCommandsSoFar;
+
+        foreach ($commands as $command) {
+            $this->allCommands[] = $command;
+        }
 
         return $this;
     }
