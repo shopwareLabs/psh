@@ -106,6 +106,7 @@ PSH is used to build itself. You need to clone the repository and install the co
 git clone https://github.com/shopwareLabs/psh.git
 cd psh
 composer install # assuming you have composer installed globally
+composer bin box install # box is needed to build phar file
 
 ./psh unit # verify your installation by executing the test suite.
 ./psh build 
